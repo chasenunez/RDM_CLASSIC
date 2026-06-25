@@ -1,0 +1,4 @@
+talked to Maria about threshold
+she said use 0.5 not 0.3
+also the sensor at site 7 was broken in March
+need to check pH values — some look weird

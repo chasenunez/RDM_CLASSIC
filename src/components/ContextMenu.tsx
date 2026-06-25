@@ -1,0 +1,105 @@
+import React, { useEffect, useRef } from 'react';
+import { useGame } from '../GameContext';
+
+// Candidate absences that can be reported from the desktop / folder background
+const ABSENCE_CANDIDATES = [
+  'README',
+  'LICENSE',
+  'Data availability statement',
+  'DOI',
+  'Backup plan',
+];
+
+export function ContextMenu() {
+  const { contextMenu, hideContextMenu, handleReportProblem, handleReportAbsence, openFile, fileTree } = useGame();
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click or Escape
+  useEffect(() => {
+    if (!contextMenu) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') hideContextMenu();
+    };
+    const onOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        hideContextMenu();
+      }
+    };
+
+    document.addEventListener('keydown', onKey);
+    // Use setTimeout so this listener doesn't immediately fire on the same click
+    setTimeout(() => document.addEventListener('mousedown', onOutside), 0);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onOutside);
+    };
+  }, [contextMenu, hideContextMenu]);
+
+  if (!contextMenu) return null;
+
+  const { x, y, target } = contextMenu;
+
+  // Adjust position so menu doesn't go off-screen
+  const style: React.CSSProperties = {
+    left: Math.min(x, window.innerWidth - 200),
+    top: Math.min(y, window.innerHeight - 220),
+  };
+
+  const isDesktop = target.kind === 'desktop';
+  const isFile = target.kind === 'file';
+
+  return (
+    <div className="context-menu" style={style} ref={menuRef} role="menu">
+      {/* Open — only for file targets */}
+      {isFile && (
+        <>
+          <div
+            className="context-menu__item"
+            role="menuitem"
+            onClick={() => {
+              hideContextMenu();
+              const filePath = (target as { kind: 'file'; path: string }).path;
+              const entry = fileTree.find(e => e.name === filePath);
+              if (entry) openFile(entry);
+            }}
+          >
+            Open
+          </div>
+          <div className="context-menu__separator" />
+        </>
+      )}
+
+      {/* Report RDM problem */}
+      <div
+        className="context-menu__item"
+        role="menuitem"
+        onClick={() => handleReportProblem(target)}
+      >
+        Report a RDM problem
+      </div>
+
+      {/* Report missing artifact — desktop and folder backgrounds */}
+      {(isDesktop || target.kind === 'absence') && (
+        <div className="context-menu__submenu-wrapper">
+          <div className="context-menu__item" role="menuitem">
+            Report missing artifact
+            <span className="context-menu__arrow">▶</span>
+          </div>
+          <div className="context-menu__submenu" role="menu">
+            {ABSENCE_CANDIDATES.map(name => (
+              <div
+                key={name}
+                className="context-menu__item"
+                role="menuitem"
+                onClick={() => handleReportAbsence(name)}
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

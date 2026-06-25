@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RDM Problems and Fixes Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  body { font-family: Georgia, serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #111; }
+  h1 { font-family: 'Press Start 2P', monospace; font-size: 1.1rem; border-bottom: 3px solid black; padding-bottom: 8px; }
+  h2 { font-family: 'Press Start 2P', monospace; font-size: 0.85rem; margin-top: 2.5rem; border-left: 4px solid black; padding-left: 12px; }
+  h3 { font-family: 'Press Start 2P', monospace; font-size: 0.7rem; }
+  pre { background: #f5f5f5; border: 1px solid #ccc; padding: 12px; overflow-x: auto; font-size: 0.85em; }
+  code { background: #f0f0f0; padding: 1px 4px; font-size: 0.9em; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+  th { background: #eee; }
+  a { color: #0000cc; }
+  @media print { a[href]:after { content: " (" attr(href) ")"; font-size: 0.8em; } }
+</style>
+</head>
+<body>
+<h1>RDM Problems in the Sample Dataset — and How to Fix Them</h1>
+<p>This document accompanies the sample dataset (<code>sample_project/</code>), which is deliberately designed to contain every research data management problem discussed in the Lib4RI "Basics of Research Data Management" workshop. Below is a comprehensive catalogue of what's wrong, why it matters, and how to fix it, with resources for each issue.</p>
+<p>---</p>
+<h2>The Sample Project at a Glance</h2>
+<p>The sample project simulates a soil science study that collected soil chemistry and temperature/humidity sensor data from alpine sites. Here is what the folder currently looks like:</p>
+<pre><code>sample_project/
+├── Figure 1 (1).png
+├── Figure 1.png
+├── MANUSCRIPT FINAL SUBMISSION.docx
+├── Soil Samples COPY.xlsx
+├── analysis v3 (Marias edits).py
+├── analysis_results_USE THIS ONE.docx
+├── cleaned data.xlsx
+├── data_new(1).xlsx
+├── data_new.xlsx
+├── fig1_updated.jpg
+├── manuscript draft.docx
+├── manuscript_draft_v2_JK comments.docx
+├── meeting_notes_feb.txt
+├── microscopy_sample_12.jpg
+├── notes.txt
+├── results_final.xlsx
+├── script.py
+├── script_old.py
+├── sensor_output.dat
+├── soil samples.xlsx
+├── soil_samples_preview.csv
+├── temp&amp;humidity_data_FINAL.xlsx
+├── temp&amp;humidity_data_FINAL_v2.xlsx
+└── temp&amp;humidity_data_REALLY FINAL.xlsx</code></pre>
+<p>Everything is in a single flat directory. There are 24 files with no structure, no documentation, no license, and no clear way for anyone — including the project's own authors — to figure out what's going on.</p>
+<p>---</p>
+<h2>Problem 1: No Folder Structure</h2>
+<p><strong>What's wrong:</strong> All 24 files — raw data, processed data, code, figures, manuscripts, and personal notes — are dumped in a single directory. There is no separation between data stages, no distinction between inputs and outputs, and no logical grouping.</p>
+<p><strong>Why it matters:</strong> Without structure, it's impossible to tell at a glance what stage a file belongs to, whether it's an input or output, or what depends on what. This gets worse as projects grow. A new team member would have no idea where to start.</p>
+<p><strong>How to fix it:</strong> Adopt a consistent folder hierarchy that separates concerns. For example:</p>
+<pre><code>20260301_AlpineSoilSurvey/
+├── protocol/
+│   ├── DMP/
+│   └── references/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── code/
+├── results/
+│   └── figures/
+├── reports/
+│   └── manuscripts/
+├── README.md
+└── LICENSE</code></pre>
+<p>Key principles: separate raw from processed data, keep code in its own folder, isolate outputs (figures, results) from inputs, and put documentation (README, LICENSE) at the root.</p>
+<p><strong>Resources:</strong>
+- The Turing Way — Research Data Management: <a href="https://the-turing-way.netlify.app/reproducible-research/rdm">https://the-turing-way.netlify.app/reproducible-research/rdm</a>
+- CESSDA Data Management Guide: <a href="https://dmeg.cessda.eu/">https://dmeg.cessda.eu/</a></p>
+<p>---</p>
+<h2>Problem 2: Bad File Naming</h2>
+<p><strong>What's wrong:</strong> Nearly every file in the project violates good naming practices:</p>
+<table border="1"><tr><th>File</th><th>Problems</th></tr><tr><td><code>soil samples.xlsx</code></td><td>Spaces in filename</td></tr><tr><td><code>Soil Samples COPY.xlsx</code></td><td>Spaces, no date, unclear purpose ("COPY" of what?)</td></tr><tr><td><code>data_new.xlsx</code> / <code>data_new(1).xlsx</code></td><td>Meaningless names, browser-download duplicate</td></tr><tr><td><code>temp&amp;humidity_data_FINAL.xlsx</code></td><td>Ampersand (&amp;) is a special character, "FINAL" is not a version</td></tr><tr><td><code>temp&amp;humidity_data_FINAL_v2.xlsx</code></td><td>"FINAL" yet there's a v2 — contradictory</td></tr><tr><td><code>temp&amp;humidity_data_REALLY FINAL.xlsx</code></td><td>Spaces, caps, "REALLY FINAL" is not versioning</td></tr><tr><td><code>cleaned data.xlsx</code></td><td>Spaces, no date, no indication of what was cleaned or how</td></tr><tr><td><code>analysis_results_USE THIS ONE.docx</code></td><td>Spaces, caps, instructions in the filename</td></tr><tr><td><code>analysis v3 (Marias edits).py</code></td><td>Spaces, parentheses, person's name instead of a version</td></tr><tr><td><code>script.py</code> / <code>script_old.py</code></td><td>Completely generic, "old" is relative and meaningless</td></tr><tr><td><code>Figure 1.png</code> / <code>Figure 1 (1).png</code> / <code>fig1_updated.jpg</code></td><td>Inconsistent naming for the same figure, browser duplicate</td></tr><tr><td><code>notes.txt</code> / <code>meeting_notes_feb.txt</code></td><td>No date (which February?), no project name</td></tr></table>
+<p><strong>Why it matters:</strong> Bad file names make it impossible to sort, search, or identify files without opening them. They cause errors in scripts (spaces and special characters break command-line tools), create confusion about which version is current, and are meaningless to anyone outside the project.</p>
+<p><strong>How to fix it:</strong> Adopt the convention from the workshop: <code>Date_ProjectName_DocumentType_Version.extension</code></p>
+<p>The same files renamed properly:</p>
+<table border="1"><tr><th>Original</th><th>Fixed</th></tr><tr><td><code>soil samples.xlsx</code></td><td><code>20260315_AlpineSoil_RawChemistry_v1.0.csv</code></td></tr><tr><td><code>temp&amp;humidity_data_REALLY FINAL.xlsx</code></td><td><code>20260401_AlpineSoil_TempHumidity_v1.2.csv</code></td></tr><tr><td><code>cleaned data.xlsx</code></td><td><code>20260410_AlpineSoil_ProcessedMerged_v1.0.csv</code></td></tr><tr><td><code>script.py</code></td><td><code>20260410_AlpineSoil_DataCleaning_v1.0.py</code></td></tr><tr><td><code>analysis v3 (Marias edits).py</code></td><td><code>20260415_AlpineSoil_Analysis_v1.3.py</code></td></tr><tr><td><code>Figure 1.png</code></td><td><code>20260420_AlpineSoil_FigScatterRatioBysite_v1.0.png</code></td></tr><tr><td><code>manuscript draft.docx</code></td><td><code>20260501_AlpineSoil_Manuscript_v0.1.docx</code></td></tr></table>
+<p>Rules: no spaces (use underscores or hyphens), no special characters, date in YYYYMMDD format, descriptive but short project name, document type, semantic version number.</p>
+<p><strong>Resources:</strong>
+- Bulk Rename Utility (Windows): <a href="https://www.bulkrenameutility.co.uk/">https://www.bulkrenameutility.co.uk/</a>
+- Renamer 6 (Mac): <a href="https://renamer.com/">https://renamer.com/</a>
+- Thunar Bulk Rename (Linux): built into the Thunar file manager
+- Jenny Bryan's naming convention guide: <a href="https://speakerdeck.com/jennybc/how-to-name-files">https://speakerdeck.com/jennybc/how-to-name-files</a></p>
+<p>---</p>
+<h2>Problem 3: No Versioning System</h2>
+<p><strong>What's wrong:</strong> The project uses ad-hoc "versioning" through filename suffixes like <code>FINAL</code>, <code>FINAL_v2</code>, <code>REALLY FINAL</code>, <code>old</code>, <code>COPY</code>, <code>USE THIS ONE</code>, and <code>(Marias edits)</code>. There is no version control for code, and no systematic data versioning. There is no way to know what changed between versions, when, or why.</p>
+<p><strong>Why it matters:</strong> Without proper versioning, you can't trace the history of changes, you can't undo mistakes, you can't tell which version of the code produced which results, and you risk accidentally working on or sharing the wrong version.</p>
+<p><strong>How to fix it:</strong></p>
+<p>For <strong>code</strong>: Use Git. Initialize a repository, commit changes with descriptive messages, and use branches for experimental work. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.</p>
+<p>For <strong>data</strong>: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and maintain a changelog — either in the README or a separate CHANGELOG file — that records what changed in each version. For large datasets, consider tools like DVC (Data Version Control), Git LFS, or LakeFS.</p>
+<p>For <strong>documents</strong>: Use tracked changes in Word, or better yet, write in plain text (Markdown/LaTeX) under version control.</p>
+<p><strong>Resources:</strong>
+- Git: <a href="https://git-scm.com/">https://git-scm.com/</a>
+- Git GUIs: <a href="https://git-scm.com/downloads/guis">https://git-scm.com/downloads/guis</a>
+- DVC (Data Version Control): <a href="https://dvc.org/">https://dvc.org/</a>
+- Git LFS: <a href="https://git-lfs.com/">https://git-lfs.com/</a>
+- LakeFS: <a href="https://docs.lakefs.io/">https://docs.lakefs.io/</a>
+- Software Carpentry Git lesson: <a href="https://swcarpentry.github.io/git-novice/">https://swcarpentry.github.io/git-novice/</a></p>
+<p>---</p>
+<h2>Problem 4: Proprietary and Inappropriate File Formats</h2>
+<p><strong>What's wrong:</strong> The project uses several problematic formats:</p>
+<table border="1"><tr><th>File</th><th>Format Problem</th></tr><tr><td>All data in <code>.xlsx</code></td><td>Proprietary (Microsoft Excel). Not guaranteed to be readable by all tools or in 10 years. Can silently corrupt data (e.g., gene names auto-formatted as dates).</td></tr><tr><td><code>analysis_results_USE THIS ONE.docx</code></td><td>Data stored in a Word document — not machine-readable.</td></tr><tr><td><code>sensor_output.dat</code></td><td>Proprietary instrument format with unknown calibration.</td></tr><tr><td><code>microscopy_sample_12.jpg</code></td><td>JPEG is lossy — every save degrades quality. Microscopy images should be in a lossless format.</td></tr><tr><td><code>fig1_updated.jpg</code></td><td>Same issue — figures for publication should be in lossless formats.</td></tr></table>
+<p><strong>Why it matters:</strong> Proprietary formats can't always be opened without specific (often paid) software. Lossy formats permanently destroy information. Both violate the "interoperable" FAIR principle.</p>
+<p><strong>How to fix it:</strong></p>
+<table border="1"><tr><th>Data type</th><th>Current format</th><th>Recommended format</th></tr><tr><td>Tabular data</td><td>.xlsx</td><td>.csv (with UTF-8 encoding)</td></tr><tr><td>Text/reports</td><td>.docx</td><td>.pdf/A or plain text (.md, .txt)</td></tr><tr><td>Microscopy images</td><td>.jpg</td><td>.tiff (uncompressed) or .png</td></tr><tr><td>Figures for publication</td><td>.jpg</td><td>.png or .tiff</td></tr><tr><td>Sensor data</td><td>.dat (proprietary)</td><td>.csv with header metadata</td></tr><tr><td>Code</td><td>.py (this one is fine)</td><td>.py (keep as-is — Python is open)</td></tr></table>
+<p>Keep the proprietary original if you need it for your workflow, but always save an additional copy in an open format for archiving and sharing.</p>
+<p><strong>Resources:</strong>
+- Library of Congress Recommended Formats: <a href="https://www.loc.gov/preservation/resources/rfs/">https://www.loc.gov/preservation/resources/rfs/</a>
+- UK Data Service file format guidance: <a href="https://ukdataservice.ac.uk/learning-hub/research-data-management/format-your-data/recommended-formats/">https://ukdataservice.ac.uk/learning-hub/research-data-management/format-your-data/recommended-formats/</a></p>
+<p>---</p>
+<h2>Problem 5: No Documentation (No README)</h2>
+<p><strong>What's wrong:</strong> There is no README file anywhere in the project. The only documentation consists of two informal text files (<code>notes.txt</code> and <code>meeting_notes_feb.txt</code>) that contain fragmentary personal notes with no structure, no context, and critical information buried in casual remarks (e.g., "the sensor at site 7 was broken in March" and "she said use 0.5 not 0.3").</p>
+<p><strong>Why it matters:</strong> Without a README, no one — including the researchers themselves after a few months — can understand what the project is about, what the files contain, how the data was collected, what processing was applied, or how to reproduce the results. This violates the "reusable" FAIR principle.</p>
+<p><strong>How to fix it:</strong> Create a README.md (or README.txt) at the root of the project. A good README should include:</p>
+<p>1. <strong>General information</strong>: Project title, principal investigator, contact info, dates of data collection, geographic location, funding sources.
+2. <strong>Data and file overview</strong>: A list of all files with brief descriptions, relationships between files (e.g., "script.py reads raw data and produces processed data").
+3. <strong>Methodological information</strong>: How data was collected (instruments, protocols), any quality control applied, known issues (like the broken sensor at site 7).
+4. <strong>Data-specific information</strong>: For each data file — number of variables, number of rows, variable names with descriptions and units, missing data codes and their meanings.
+5. <strong>Sharing and access information</strong>: License, restrictions, how to cite.</p>
+<p><strong>Resources:</strong>
+- Cornell README template: <a href="https://cornell.app.box.com/v/ReadmeTemplate">https://cornell.app.box.com/v/ReadmeTemplate</a>
+- Carpentries Incubator README template (referenced in the workshop): <a href="https://carpentries-incubator.github.io/scientific-metadata/files/AUTHOR_DATASET_ReadmeTemplate.txt">https://carpentries-incubator.github.io/scientific-metadata/files/AUTHOR_DATASET_ReadmeTemplate.txt</a>
+- makeareadme.com: <a href="https://www.makeareadme.com/">https://www.makeareadme.com/</a></p>
+<p>---</p>
+<h2>Problem 6: No Metadata</h2>
+<p><strong>What's wrong:</strong> There is no structured metadata associated with any data file. Column headers in the data are ambiguous (<code>col1</code>, <code>col2</code>, <code>col3</code>, <code>val</code>, <code>temp</code>) with no descriptions or units. There is no information about the instruments used, measurement protocols, or coordinate reference systems.</p>
+<p><strong>Why it matters:</strong> Metadata is what makes data findable and understandable by both humans and machines. Without it, search engines and data catalogues can't index the data, and other researchers can't assess whether the data is relevant or trustworthy for their needs.</p>
+<p><strong>How to fix it:</strong></p>
+<p>1. <strong>Rename columns</strong> to be self-descriptive: <code>col1</code> → <code>soil_moisture_pct</code>, <code>col3</code> → <code>organic_carbon_g_per_kg</code>, <code>temp</code> → <code>air_temperature_degC</code>.
+2. <strong>Standardize missing data codes</strong>: Pick one code (e.g., <code>NA</code> or leave blank) and use it consistently — not a mix of <code>NA</code>, <code>n/a</code>, <code>-999</code>, <code>??</code>, and blank cells.
+3. <strong>Adopt a metadata standard</strong> for your discipline. Use directories like the Digital Curation Centre, RDA Metadata Standards, or FAIRsharing to find the right one.
+4. <strong>Use controlled vocabularies</strong> — don't switch between "picture" and "image" or "location" and "site" for the same concept.</p>
+<p><strong>Resources:</strong>
+- Digital Curation Centre metadata standards: <a href="https://www.dcc.ac.uk/guidance/standards/">https://www.dcc.ac.uk/guidance/standards/</a>
+- RDA Metadata Standards Catalog: <a href="https://rdamsc.bath.ac.uk/">https://rdamsc.bath.ac.uk/</a>
+- FAIRsharing: <a href="https://fairsharing.org/">https://fairsharing.org/</a></p>
+<p>---</p>
+<h2>Problem 7: Raw and Processed Data Are Mixed Together</h2>
+<p><strong>What's wrong:</strong> Raw data (<code>soil samples.xlsx</code>, <code>temp&amp;humidity_data_*.xlsx</code>, <code>sensor_output.dat</code>) and processed data (<code>cleaned data.xlsx</code>, <code>results_final.xlsx</code>) are in the same directory with no separation. There is no way to tell which files are original inputs and which are derived outputs.</p>
+<p><strong>Why it matters:</strong> If you can't distinguish raw data from processed data, you risk accidentally modifying or overwriting your originals — which may be irreplaceable. It also makes it impossible for someone else to reproduce your analysis from scratch.</p>
+<p><strong>How to fix it:</strong></p>
+<p>1. <strong>Separate raw and processed data</strong> into different folders (<code>data/raw/</code> and <code>data/processed/</code>).
+2. <strong>Make raw data read-only</strong> (use file permissions: <code>chmod 444 data/raw/*</code> on Linux/Mac).
+3. <strong>Never modify raw data files directly.</strong> Always read them in your script and write outputs to a different location.
+4. <strong>Document the processing chain</strong>: which script transforms which input into which output.</p>
+<p>---</p>
+<h2>Problem 8: Data Quality Issues Inside the Files</h2>
+<p><strong>What's wrong:</strong> Looking at <code>soil_samples_preview.csv</code>, the data has multiple internal problems:</p>
+<table border="1"><tr><th>Issue</th><th>Example</th></tr><tr><td>Merged-cell-style header rows</td><td>Row 1: "Alpine Soil Survey - Spring Campaign" spanning columns — this breaks CSV parsing</td></tr><tr><td>Metadata in data rows</td><td>Row 2: empty except for a note about site 7 — not a data row</td></tr><tr><td>Ambiguous column names</td><td><code>col1</code>, <code>col2</code>, <code>col3</code> — meaningless without documentation</td></tr><tr><td>No units anywhere</td><td>Is <code>temp</code> in Celsius or Fahrenheit? Is <code>col1</code> a percentage or a ratio?</td></tr><tr><td>Inconsistent missing data codes</td><td>Blank cells, <code>NA</code>, <code>n/a</code>, <code>-999</code>, <code>??</code> — five different representations of "missing" in one dataset</td></tr><tr><td>Undocumented codes</td><td><code>-999</code> appears to mean "sensor broken" but is never defined</td></tr><tr><td>Free-text in data columns</td><td><code>notes</code> column contains unstructured comments ("weird value", "check this")</td></tr></table>
+<p><strong>Why it matters:</strong> These issues cause scripts to break, statistics to be wrong (e.g., <code>-999</code> would distort a mean if not excluded), and other researchers to misinterpret the data.</p>
+<p><strong>How to fix it:</strong></p>
+<p>1. <strong>Remove non-data rows</strong> from the data file. Put titles and notes in the README instead.
+2. <strong>Use descriptive column headers</strong> with units: <code>soil_moisture_pct</code>, <code>air_temperature_degC</code>.
+3. <strong>Standardize missing data</strong> to a single code (blank or <code>NA</code>) and document what it means in the README.
+4. <strong>Move notes to documentation</strong> — the README or a separate data dictionary, not embedded in data cells.
+5. <strong>Follow tidy data principles</strong>: each variable in a column, each observation in a row, each value in a cell.</p>
+<p><strong>Resources:</strong>
+- Broman &amp; Woo (2018), "Data Organization in Spreadsheets" (The American Statistician): <a href="https://doi.org/10.1080/00031305.2017.1375989">https://doi.org/10.1080/00031305.2017.1375989</a>
+- Tidy Data (Hadley Wickham): <a href="https://vita.had.co.nz/papers/tidy-data.html">https://vita.had.co.nz/papers/tidy-data.html</a></p>
+<p>---</p>
+<h2>Problem 9: Code Has No Comments and Is Not Reproducible</h2>
+<p><strong>What's wrong:</strong> <code>script.py</code> has no comments explaining what it does, uses hardcoded filenames with spaces and special characters, references ambiguous column names (<code>col1</code>, <code>col3</code>, <code>val</code>), has a leftover <code>TODO</code> and commented-out debug code, and produces no log or record of what it did. There are multiple versions of the script (<code>script.py</code>, <code>script_old.py</code>, <code>analysis v3 (Marias edits).py</code>) with no clear indication of which is current or what changed.</p>
+<p><strong>Why it matters:</strong> Uncommented, unversioned code is a black box. No one — including you in six months — will know what it does, why it makes certain choices (like the 0.5 threshold), or which version produced the published results.</p>
+<p><strong>How to fix it:</strong></p>
+<p>1. <strong>Add clear comments</strong> explaining the purpose of each section, the meaning of parameters, and the rationale for decisions.
+2. <strong>Use meaningful variable names</strong>: <code>soil_chemistry_df</code> not <code>df</code>, <code>temperature_df</code> not <code>df2</code>.
+3. <strong>Use relative file paths</strong> or configuration files instead of hardcoded filenames.
+4. <strong>Put code under Git version control</strong> and delete the ad-hoc copies (<code>script_old.py</code>, etc.).
+5. <strong>Include a requirements file</strong> (<code>requirements.txt</code> or <code>environment.yml</code>) so others can recreate your environment.
+6. <strong>Consider using Renku</strong> for integrated data and code management.</p>
+<p><strong>Resources:</strong>
+- Renku: <a href="https://renku.readthedocs.io/">https://renku.readthedocs.io/</a>
+- Software Carpentry Python lesson: <a href="https://swcarpentry.github.io/python-novice-inflammation/">https://swcarpentry.github.io/python-novice-inflammation/</a></p>
+<p>---</p>
+<h2>Problem 10: No License</h2>
+<p><strong>What's wrong:</strong> There is no LICENSE file in the project. Without a license, the default legal status in most jurisdictions is "all rights reserved" — meaning no one else can legally use, share, or build upon the data or code, even if the files are publicly accessible.</p>
+<p><strong>Why it matters:</strong> A missing license effectively prevents reuse, which defeats the purpose of sharing data. It violates the "reusable" FAIR principle.</p>
+<p><strong>How to fix it:</strong></p>
+<p>For <strong>data</strong>, use a Creative Commons license:
+- <strong>CC0</strong> (public domain dedication) — most open, recommended when you want maximum reuse. Data must still be cited by scholarly norms even without a legal requirement.
+- <strong>CC BY 4.0</strong> (attribution required) — most funders recommend this. Ensures you get credit.
+- Avoid <strong>CC BY-ND</strong> (no derivatives) — it prevents others from building on your data, which is overly restrictive for research. Some funders explicitly prohibit it.</p>
+<p>For <strong>code</strong>, use an open-source software license:
+- <strong>MIT</strong> — very permissive, widely used, simple to understand.
+- <strong>Apache 2.0</strong> — permissive with patent protection.
+- <strong>GPL</strong> — copyleft; requires derivative works to also be open-source.</p>
+<p>Place a <code>LICENSE</code> file (for code) or <code>LICENSE</code> + a note in the README (for data) at the root of your project.</p>
+<p><strong>Resources:</strong>
+- Creative Commons license chooser: <a href="https://chooser-beta.creativecommons.org/">https://chooser-beta.creativecommons.org/</a>
+- Choose an open source license: <a href="https://choosealicense.com/">https://choosealicense.com/</a>
+- Open Source Initiative license list: <a href="https://opensource.org/licenses">https://opensource.org/licenses</a></p>
+<p>---</p>
+<h2>Problem 11: No Data Availability Statement</h2>
+<p><strong>What's wrong:</strong> The manuscript drafts in this project presumably describe the analysis, but there is no data availability statement — no information about where the data will be deposited, under what DOI, with what license, or how others can access it.</p>
+<p><strong>Why it matters:</strong> Without a data availability statement, readers of the published paper have no way to find or access the underlying data. Many journals now require these statements.</p>
+<p><strong>How to fix it:</strong> Include a statement in the manuscript, for example:</p>
+<p>&gt; "The data supporting this study's findings are openly available in EnviDat at <a href="https://doi.org/10.xxxx/xxxxx.">https://doi.org/10.xxxx/xxxxx.</a> The dataset includes soil chemistry measurements and temperature/humidity sensor readings from alpine sites in Switzerland (2026) and is available under a CC BY 4.0 license."</p>
+<p>This should specify: the repository name, the DOI, what the dataset contains, and the license.</p>
+<p><strong>Resources:</strong>
+- Springer Nature data availability statement examples: <a href="https://www.springernature.com/gp/authors/research-data-policy/data-availability-statements">https://www.springernature.com/gp/authors/research-data-policy/data-availability-statements</a>
+- re3data (find a repository): <a href="https://www.re3data.org/">https://www.re3data.org/</a></p>
+<p>---</p>
+<h2>Problem 12: No Persistent Identifier (DOI)</h2>
+<p><strong>What's wrong:</strong> None of the data has been deposited in a repository, so none of it has a DOI or any other persistent identifier. The data exists only on local machines.</p>
+<p><strong>Why it matters:</strong> Without a persistent identifier, there is no stable, citable reference to the data. Links can break, filenames can change, but a DOI is permanent. This violates the "findable" FAIR principle.</p>
+<p><strong>How to fix it:</strong> Deposit the data in a repository that assigns DOIs. Options relevant to this context include:</p>
+<ul><li><strong>EnviDat</strong> — the environmental data repository for WSL</li><li><strong>Zenodo</strong> — a general-purpose repository hosted by CERN (free, accepts any research output)</li><li><strong>ERIC</strong> — for ETH domain research</li></ul>
+<p>Use re3data.org to find discipline-specific repositories if these don't fit.</p>
+<p><strong>Resources:</strong>
+- EnviDat: <a href="https://www.envidat.ch/">https://www.envidat.ch/</a>
+- Zenodo: <a href="https://zenodo.org/">https://zenodo.org/</a>
+- re3data: <a href="https://www.re3data.org/">https://www.re3data.org/</a></p>
+<p>---</p>
+<h2>Problem 13: No Backup Strategy</h2>
+<p><strong>What's wrong:</strong> The data appears to exist in a single location with no backup strategy. There are browser-download duplicates (<code>data_new(1).xlsx</code>, <code>Figure 1 (1).png</code>) suggesting files are being moved around via email or downloads rather than through a systematic storage approach.</p>
+<p><strong>Why it matters:</strong> A single hardware failure, theft, or accidental deletion could destroy all the data. Research data is often irreplaceable — especially observational data that can't be recollected.</p>
+<p><strong>How to fix it:</strong> Apply the <strong>3-2-1 backup rule</strong>:
+- <strong>3</strong> copies of the data
+- On <strong>2</strong> different storage media
+- With <strong>1</strong> copy off-site</p>
+<p>For example: one copy on your workstation, one on your institute's network drive (backed up by IT), and one in a cloud service or repository.</p>
+<p>---</p>
+<h2>Summary: What the Fixed Project Looks Like</h2>
+<pre><code>20260301_AlpineSoilSurvey/
+├── README.md                                          ← Project documentation
+├── LICENSE                                            ← CC BY 4.0 for data
+├── CHANGELOG.md                                       ← Version history
+├── protocol/
+│   ├── 20260201_AlpineSoil_DMP_v1.0.pdf
+│   └── references/
+├── data/
+│   ├── raw/                                           ← Read-only originals
+│   │   ├── 20260315_AlpineSoil_SoilChemistry_v1.0.csv
+│   │   ├── 20260315_AlpineSoil_TempHumidity_v1.0.csv
+│   │   └── 20260315_AlpineSoil_SensorOutput_v1.0.csv
+│   └── processed/
+│       ├── 20260410_AlpineSoil_MergedCleaned_v1.0.csv
+│       └── 20260420_AlpineSoil_SiteMeans_v1.0.csv
+├── code/                                              ← Under Git version control
+│   ├── 20260410_AlpineSoil_DataCleaning_v1.0.py
+│   ├── 20260415_AlpineSoil_Analysis_v1.0.py
+│   ├── requirements.txt
+│   └── .git/
+├── results/
+│   └── figures/
+│       ├── 20260420_AlpineSoil_FigScatterRatio_v1.0.png
+│       └── 20260420_AlpineSoil_FigTempTimeSeries_v1.0.png
+└── reports/
+    └── manuscripts/
+        └── 20260501_AlpineSoil_Manuscript_v2.1.docx</code></pre>
+<p>Clean structure. Consistent naming. Open formats. Versioned. Documented. Licensed. Backed up. FAIR.</p>
+<footer style="margin-top:3rem;padding-top:1rem;border-top:1px solid #ccc;font-size:0.75em;color:#666;">
+  Generated by the RDM Scavenger Hunt — Lib4RI Basics of Research Data Management workshop.
+</footer>
+</body>
+</html>

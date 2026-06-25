@@ -1,0 +1,247 @@
+{
+  "problems": [
+    {
+      "id": "no-folder-structure",
+      "triggers": [
+        {
+          "type": "desktop"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "file-naming",
+      "triggers": [
+        {
+          "type": "file",
+          "path": "Figure 1.png"
+        },
+        {
+          "type": "file",
+          "path": "Soil Samples COPY.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "cleaned data.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "data_new.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "manuscript draft.docx"
+        },
+        {
+          "type": "file",
+          "path": "meeting_notes_feb.txt"
+        },
+        {
+          "type": "file",
+          "path": "notes.txt"
+        },
+        {
+          "type": "file",
+          "path": "soil samples.xlsx"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "versioning",
+      "triggers": [
+        {
+          "type": "file",
+          "path": "manuscript_draft_v2_JK comments.docx"
+        },
+        {
+          "type": "file",
+          "path": "script_old.py"
+        },
+        {
+          "type": "file",
+          "path": "temp&humidity_data_FINAL.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "temp&humidity_data_FINAL_v2.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "temp&humidity_data_REALLY FINAL.xlsx"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "file-formats",
+      "triggers": [
+        {
+          "type": "file",
+          "path": "analysis_results_USE THIS ONE.docx"
+        },
+        {
+          "type": "file",
+          "path": "fig1_updated.jpg"
+        },
+        {
+          "type": "file",
+          "path": "microscopy_sample_12.jpg"
+        },
+        {
+          "type": "file",
+          "path": "sensor_output.dat"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "no-readme",
+      "triggers": [
+        {
+          "type": "project-absence",
+          "name": "README"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "no-metadata",
+      "triggers": [
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 2,
+          "col": 1
+        },
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 2,
+          "col": 2
+        },
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 2,
+          "col": 3
+        },
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 2,
+          "col": 5
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "raw-processed-mixed",
+      "triggers": [
+        {
+          "type": "file",
+          "path": "results_final.xlsx"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "data-quality",
+      "triggers": [
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 0,
+          "col": 0
+        },
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 6,
+          "col": 4
+        },
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 9,
+          "col": 4
+        },
+        {
+          "type": "cell",
+          "path": "soil_samples_preview.csv",
+          "row": 11,
+          "col": 4
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "code-quality",
+      "triggers": [
+        {
+          "type": "file",
+          "path": "analysis v3 (Marias edits).py"
+        },
+        {
+          "type": "file",
+          "path": "script.py"
+        },
+        {
+          "type": "line",
+          "path": "script.py",
+          "line": 7
+        },
+        {
+          "type": "line",
+          "path": "script.py",
+          "line": 8
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "no-license",
+      "triggers": [
+        {
+          "type": "project-absence",
+          "name": "LICENSE"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "no-data-availability",
+      "triggers": [
+        {
+          "type": "file",
+          "path": "MANUSCRIPT FINAL SUBMISSION.docx"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "no-doi",
+      "triggers": [
+        {
+          "type": "project-absence",
+          "name": "DOI"
+        }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "no-backup",
+      "triggers": [
+        {
+          "type": "file",
+          "path": "Figure 1 (1).png"
+        },
+        {
+          "type": "file",
+          "path": "data_new(1).xlsx"
+        }
+      ],
+      "matchRule": "any"
+    }
+  ]
+}
