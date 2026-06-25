@@ -116,7 +116,7 @@ export function Desktop() {
     >
       {/* Centered background logo — center ninth of the desktop */}
       <img
-        src="/LDW_DIGITAL_LIB4RI.png"
+        src="/assets/LDW_DIGITAL_LIB4RI.png"
         className="desktop__bg-logo"
         alt=""
         draggable={false}
