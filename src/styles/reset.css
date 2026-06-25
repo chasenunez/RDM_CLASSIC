@@ -2,6 +2,21 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  draggable: false;
+}
+
+/* Re-enable text selection inside viewer content only */
+.text-viewer__line-text,
+.table-viewer td,
+.table-viewer th,
+.binary-viewer,
+.dialog__markdown,
+.dialog__body p {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 html, body, #root {

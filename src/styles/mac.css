@@ -641,8 +641,8 @@
 }
 
 .file-icon__image {
-  width: 32px;
-  height: 32px;
+  width: 72px;
+  height: 72px;
   image-rendering: pixelated;
   pointer-events: none;
 }

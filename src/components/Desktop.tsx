@@ -96,22 +96,34 @@ export function Desktop() {
         id: 'trash',
         title: 'Trash',
         viewerType: 'trash',
-        x: 160,
+        x: 460,
         y: 60,
-        width: 260,
-        height: 180,
+        width: 360,
+        height: 280,
       },
     });
   }, [dispatch]);
 
-  const showWelcome = useCallback(() => {
-    dispatch({ type: 'SHOW_WELCOME' });
+  const openProjectFolder = useCallback(() => {
+    dispatch({
+      type: 'OPEN_WINDOW',
+      window: {
+        id: 'project-folder',
+        title: 'sample_project',
+        viewerType: 'folder',
+        x: 420,
+        y: 30,
+        width: 800,
+        height: 500,
+      },
+    });
   }, [dispatch]);
 
   return (
     <div
       className="desktop"
       onContextMenu={onDesktopContextMenu}
+      onDragStart={e => e.preventDefault()}
       aria-label="Desktop"
     >
       {/* Centered background logo — center ninth of the desktop */}
@@ -128,11 +140,11 @@ export function Desktop() {
       <div
         className="desktop-icon"
         style={{ right: 16, top: 8 }}
-        onDoubleClick={showWelcome}
+        onDoubleClick={openProjectFolder}
         role="button"
-        aria-label="Read Me First (double-click to open)"
+        aria-label="sample_project (double-click to open)"
         tabIndex={0}
-        onKeyDown={e => { if (e.key === 'Enter') showWelcome(); }}
+        onKeyDown={e => { if (e.key === 'Enter') openProjectFolder(); }}
       >
         <img
           className="desktop-icon__image"
