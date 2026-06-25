@@ -33,7 +33,7 @@ const DEFAULT_STATE: PersistedState = {
     // Project folder window — open by default, positioned slightly right of center
     {
       id: 'project-folder',
-      title: 'sample_project',
+      title: 'Side Project 237 B',
       viewerType: 'folder',
       x: 535,
       y: 80,

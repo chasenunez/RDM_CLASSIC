@@ -109,7 +109,7 @@ export function Desktop() {
       type: 'OPEN_WINDOW',
       window: {
         id: 'project-folder',
-        title: 'sample_project',
+        title: 'Side Project 237 B',
         viewerType: 'folder',
         x: 420,
         y: 30,
@@ -152,7 +152,7 @@ export function Desktop() {
           alt=""
           draggable={false}
         />
-        <span className="desktop-icon__label">Read Me First</span>
+        <span className="desktop-icon__label">Side Project 237 B</span>
       </div>
 
       {/* Trash — bottom-right desktop icon */}

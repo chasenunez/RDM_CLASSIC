@@ -46,7 +46,7 @@
   },
   {
     "path": "sample_project/analysis_results_USE THIS ONE.docx",
-    "name": "analysis_results_USE THIS ONE.docx",
+    "name": "analysis results USE THIS ONE.docx",
     "type": "file",
     "size": 36989,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -64,7 +64,7 @@
   },
   {
     "path": "sample_project/data_new(1).xlsx",
-    "name": "data_new(1).xlsx",
+    "name": "data new(1).xlsx",
     "type": "file",
     "size": 5291,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -82,7 +82,7 @@
   },
   {
     "path": "sample_project/fig1_updated.jpg",
-    "name": "fig1_updated.jpg",
+    "name": "fig1 updated.jpg",
     "type": "file",
     "size": 18313,
     "mimeGuess": "image/jpeg",
@@ -100,7 +100,7 @@
   },
   {
     "path": "sample_project/manuscript_draft_v2_JK comments.docx",
-    "name": "manuscript_draft_v2_JK comments.docx",
+    "name": "manuscript draft v2 JK comments.docx",
     "type": "file",
     "size": 37007,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -109,7 +109,7 @@
   },
   {
     "path": "sample_project/meeting_notes_feb.txt",
-    "name": "meeting_notes_feb.txt",
+    "name": "meeting notes feb.txt",
     "type": "file",
     "size": 160,
     "mimeGuess": "text/plain",
@@ -118,7 +118,7 @@
   },
   {
     "path": "sample_project/microscopy_sample_12.jpg",
-    "name": "microscopy_sample_12.jpg",
+    "name": "microscopy sample 12.jpg",
     "type": "file",
     "size": 22275,
     "mimeGuess": "image/jpeg",
@@ -136,7 +136,7 @@
   },
   {
     "path": "sample_project/results_final.xlsx",
-    "name": "results_final.xlsx",
+    "name": "results final.xlsx",
     "type": "file",
     "size": 5010,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -154,7 +154,7 @@
   },
   {
     "path": "sample_project/script_old.py",
-    "name": "script_old.py",
+    "name": "script old.py",
     "type": "file",
     "size": 143,
     "mimeGuess": "text/x-python",
@@ -163,7 +163,7 @@
   },
   {
     "path": "sample_project/sensor_output.dat",
-    "name": "sensor_output.dat",
+    "name": "sensor output.dat",
     "type": "file",
     "size": 360,
     "mimeGuess": "application/octet-stream",
@@ -181,7 +181,7 @@
   },
   {
     "path": "sample_project/soil_samples_preview.csv",
-    "name": "soil_samples_preview.csv",
+    "name": "soil samples preview.csv",
     "type": "file",
     "size": 402,
     "mimeGuess": "text/csv",
@@ -190,7 +190,7 @@
   },
   {
     "path": "sample_project/temp&humidity_data_FINAL.xlsx",
-    "name": "temp&humidity_data_FINAL.xlsx",
+    "name": "temp & humidity data FINAL.xlsx",
     "type": "file",
     "size": 6450,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -199,7 +199,7 @@
   },
   {
     "path": "sample_project/temp&humidity_data_FINAL_v2.xlsx",
-    "name": "temp&humidity_data_FINAL_v2.xlsx",
+    "name": "temp & humidity data FINAL v2.xlsx",
     "type": "file",
     "size": 6448,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -208,7 +208,7 @@
   },
   {
     "path": "sample_project/temp&humidity_data_REALLY FINAL.xlsx",
-    "name": "temp&humidity_data_REALLY FINAL.xlsx",
+    "name": "temp & humidity data REALLY FINAL.xlsx",
     "type": "file",
     "size": 6625,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
