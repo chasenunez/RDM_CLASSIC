@@ -1,0 +1,164 @@
+{
+  "icons": [
+    {
+      "name": "About Mac - color",
+      "file": "About Mac - color.svg"
+    },
+    {
+      "name": "About Mac",
+      "file": "About Mac.svg"
+    },
+    {
+      "name": "Alert",
+      "file": "Alert.svg"
+    },
+    {
+      "name": "AppleShare",
+      "file": "AppleShare.svg"
+    },
+    {
+      "name": "Chooser",
+      "file": "Chooser.svg"
+    },
+    {
+      "name": "Classic Mac",
+      "file": "Classic Mac.svg"
+    },
+    {
+      "name": "Command",
+      "file": "Command.svg"
+    },
+    {
+      "name": "Dogcow",
+      "file": "Dogcow.svg"
+    },
+    {
+      "name": "Draw file",
+      "file": "Draw file.svg"
+    },
+    {
+      "name": "Finger",
+      "file": "Finger.svg"
+    },
+    {
+      "name": "Floppy",
+      "file": "Floppy.svg"
+    },
+    {
+      "name": "Font suitcase",
+      "file": "Font suitcase.svg"
+    },
+    {
+      "name": "Hand",
+      "file": "Hand.svg"
+    },
+    {
+      "name": "Happy Mac",
+      "file": "Happy Mac.svg"
+    },
+    {
+      "name": "Info",
+      "file": "Info.svg"
+    },
+    {
+      "name": "Lasso",
+      "file": "Lasso.svg"
+    },
+    {
+      "name": "Lemmings",
+      "file": "Lemmings.svg"
+    },
+    {
+      "name": "MacDraw",
+      "file": "MacDraw.svg"
+    },
+    {
+      "name": "MacPaint",
+      "file": "MacPaint.svg"
+    },
+    {
+      "name": "Paint Bucket",
+      "file": "Paint Bucket.svg"
+    },
+    {
+      "name": "Paint brush",
+      "file": "Paint brush.svg"
+    },
+    {
+      "name": "Paint file",
+      "file": "Paint file.svg"
+    },
+    {
+      "name": "Pencil",
+      "file": "Pencil.svg"
+    },
+    {
+      "name": "ResEdit",
+      "file": "ResEdit.svg"
+    },
+    {
+      "name": "Sad Mac",
+      "file": "Sad Mac.svg"
+    },
+    {
+      "name": "Shadowgate",
+      "file": "Shadowgate.svg"
+    },
+    {
+      "name": "SimpleText",
+      "file": "SimpleText.svg"
+    },
+    {
+      "name": "Sound",
+      "file": "Sound.svg"
+    },
+    {
+      "name": "Spaceward Ho",
+      "file": "Spaceward Ho.svg"
+    },
+    {
+      "name": "Spray Can",
+      "file": "Spray Can.svg"
+    },
+    {
+      "name": "Stop",
+      "file": "Stop.svg"
+    },
+    {
+      "name": "StyleWriter",
+      "file": "StyleWriter.svg"
+    },
+    {
+      "name": "THINK Pascal",
+      "file": "THINK Pascal.svg"
+    },
+    {
+      "name": "Text file",
+      "file": "Text file.svg"
+    },
+    {
+      "name": "Trash - full",
+      "file": "Trash - full.svg"
+    },
+    {
+      "name": "Trash fire",
+      "file": "Trash fire.svg"
+    },
+    {
+      "name": "Trash",
+      "file": "Trash.svg"
+    },
+    {
+      "name": "Warning",
+      "file": "Warning.svg"
+    },
+    {
+      "name": "Watch",
+      "file": "Watch.svg"
+    },
+    {
+      "name": "bomb",
+      "file": "bomb.svg"
+    }
+  ]
+}

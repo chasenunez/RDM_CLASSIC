@@ -1,0 +1,20 @@
+/*
+ * Primary: Press Start 2P by CodeMan38 — OFL 1.1 license
+ * Loaded from Google Fonts CDN in index.html.
+ * For offline/self-hosted production builds:
+ *   1. Download the woff2 from https://fonts.gstatic.com/s/pressstart2p/...
+ *   2. Place it at public/fonts/PressStart2P.woff2
+ *   3. Add the @font-face rule below and remove the CDN <link> from index.html
+ *
+ * @font-face {
+ *   font-family: 'Press Start 2P';
+ *   src: url('/fonts/PressStart2P.woff2') format('woff2');
+ *   font-weight: normal;
+ *   font-style: normal;
+ * }
+ */
+
+:root {
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-mono: 'Courier New', Courier, monospace;
+}
