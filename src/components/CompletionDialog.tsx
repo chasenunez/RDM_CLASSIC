@@ -33,7 +33,7 @@ export function CompletionDialog({ onClose }: CompletionDialogProps) {
       onKeyDown={e => { if (e.key === 'Enter') onClose(); }}
     >
       <div className="dialog" style={{ maxWidth: 480 }}>
-        <span className="dialog__icon">🎉</span>
+        <span className="dialog__icon"></span>
         <h2 className="dialog__title" id="completion-title">
           Congratulations! All {total} problems found!
         </h2>

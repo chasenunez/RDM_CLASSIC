@@ -35,7 +35,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 72px;
+  width: 100px;
   padding: 6px 4px;
   cursor: default;
   border-radius: 2px;
@@ -48,15 +48,15 @@
 }
 
 .desktop-icon__image {
-  width: 32px;
-  height: 32px;
+  width: 80px;
+  height: 80px;
   image-rendering: pixelated;
   pointer-events: none;
 }
 
 .desktop-icon__label {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   color: #000000;
   background: rgba(255, 255, 255, 0.82);
   text-align: center;
@@ -80,7 +80,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 20px;
+  height: 30px;
   background: #ffffff;
   border-bottom: 1px solid #000000;
   display: flex;
@@ -378,8 +378,8 @@
 .dialog__hero-img {
   display: block;
   margin: 0 auto 16px;
-  max-width: 240px;
-  max-height: 140px;
+  max-width: 440px;
+  max-height: 340px;
   object-fit: contain;
 }
 
@@ -557,7 +557,7 @@
   position: absolute;
   top: 16px;
   left: 16px;
-  width: 200px;
+  width: 300px;
   background: #ffffcc;
   border: 1px solid #888888;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
