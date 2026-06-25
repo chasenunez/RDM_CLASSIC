@@ -140,7 +140,7 @@
       "triggers": [
         {
           "type": "file",
-          "path": "results_final.xlsx"
+          "path": "raw_data.xlsx"
         }
       ],
       "matchRule": "any"
