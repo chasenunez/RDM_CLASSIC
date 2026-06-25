@@ -10,21 +10,52 @@ import { ImageViewer } from './viewers/ImageViewer';
 import { BinaryViewer } from './viewers/BinaryViewer';
 import type { WindowState } from '../types';
 
+function TrashView() {
+  const { showContextMenu } = useGame();
+
+  const onContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    showContextMenu({ x: e.clientX, y: e.clientY, target: { kind: 'file', path: 'raw_data.xlsx' } });
+  }, [showContextMenu]);
+
+  return (
+    <div className="folder-view" style={{ height: '100%' }}>
+      <div
+        className="file-icon"
+        onContextMenu={onContextMenu}
+        role="button"
+        aria-label="File: raw_data.xlsx"
+        tabIndex={0}
+      >
+        <img
+          className="file-icon__image"
+          src="/icons/Spreadsheet file.svg"
+          alt=""
+          draggable={false}
+          onError={e => { (e.currentTarget as HTMLImageElement).src = '/icons/Text file.svg'; }}
+        />
+        <span className="file-icon__label">raw_data.xlsx</span>
+      </div>
+    </div>
+  );
+}
+
 function ViewerForWindow({ win }: { win: WindowState }) {
-  if (!win.filePath) return null;
+  if (!win.filePath && win.viewerType !== 'trash') return null;
   switch (win.viewerType) {
-    case 'text':   return <TextViewer filePath={win.filePath} />;
-    case 'csv':    return <CsvViewer filePath={win.filePath} />;
-    case 'xlsx':   return <XlsxViewer filePath={win.filePath} />;
-    case 'image':  return <ImageViewer filePath={win.filePath} />;
-    case 'binary': return <BinaryViewer filePath={win.filePath} />;
+    case 'text':   return <TextViewer filePath={win.filePath!} />;
+    case 'csv':    return <CsvViewer filePath={win.filePath!} />;
+    case 'xlsx':   return <XlsxViewer filePath={win.filePath!} />;
+    case 'image':  return <ImageViewer filePath={win.filePath!} />;
+    case 'binary': return <BinaryViewer filePath={win.filePath!} />;
+    case 'trash':  return <TrashView />;
     default:       return null;
   }
 }
 
 function FolderView() {
   const { fileTree } = useGame();
-  // Only direct children of sample_project/ (no sub-directories, only files)
   const direct = fileTree.filter(e => {
     const parts = e.path.replace('sample_project/', '').split('/');
     return parts.length === 1 && e.type === 'file';
@@ -47,7 +78,6 @@ export function Desktop() {
 
   const onDesktopContextMenu = useCallback(
     (e: React.MouseEvent) => {
-      // Don't fire if a child (window, icon) already handled it
       if (e.target !== e.currentTarget) return;
       e.preventDefault();
       showContextMenu({
@@ -59,13 +89,78 @@ export function Desktop() {
     [showContextMenu],
   );
 
+  const openTrash = useCallback(() => {
+    dispatch({
+      type: 'OPEN_WINDOW',
+      window: {
+        id: 'trash',
+        title: 'Trash',
+        viewerType: 'trash',
+        x: 160,
+        y: 60,
+        width: 260,
+        height: 180,
+      },
+    });
+  }, [dispatch]);
+
+  const showWelcome = useCallback(() => {
+    dispatch({ type: 'SHOW_WELCOME' });
+  }, [dispatch]);
+
   return (
     <div
       className="desktop"
       onContextMenu={onDesktopContextMenu}
       aria-label="Desktop"
     >
+      {/* Centered background logo — center ninth of the desktop */}
+      <img
+        src="/LDW_DIGITAL_LIB4RI.png"
+        className="desktop__bg-logo"
+        alt=""
+        draggable={false}
+      />
+
       <StickyNote />
+
+      {/* Floppy disk — top-right desktop icon */}
+      <div
+        className="desktop-icon"
+        style={{ right: 16, top: 8 }}
+        onDoubleClick={showWelcome}
+        role="button"
+        aria-label="Read Me First (double-click to open)"
+        tabIndex={0}
+        onKeyDown={e => { if (e.key === 'Enter') showWelcome(); }}
+      >
+        <img
+          className="desktop-icon__image"
+          src="/icons/Floppy.png"
+          alt=""
+          draggable={false}
+        />
+        <span className="desktop-icon__label">Read Me First</span>
+      </div>
+
+      {/* Trash — bottom-right desktop icon */}
+      <div
+        className="desktop-icon"
+        style={{ right: 16, bottom: 8 }}
+        onDoubleClick={openTrash}
+        role="button"
+        aria-label="Trash (double-click to open)"
+        tabIndex={0}
+        onKeyDown={e => { if (e.key === 'Enter') openTrash(); }}
+      >
+        <img
+          className="desktop-icon__image"
+          src="/icons/Trash.png"
+          alt=""
+          draggable={false}
+        />
+        <span className="desktop-icon__label">Trash</span>
+      </div>
 
       {openWindows.map(win => {
         const focused = win.zIndex === maxZ;
@@ -83,11 +178,9 @@ export function Desktop() {
             onClose={() => dispatch({ type: 'CLOSE_WINDOW', id: win.id })}
           >
             {win.viewerType === 'folder' ? (
-              // The folder view: right-clicking empty space in it = desktop target
               <div
                 style={{ height: '100%' }}
                 onContextMenu={e => {
-                  // Only catch clicks on the empty background, not file icons
                   if ((e.target as HTMLElement).closest('.file-icon')) return;
                   e.preventDefault();
                   showContextMenu({

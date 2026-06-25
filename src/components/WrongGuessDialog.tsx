@@ -25,7 +25,10 @@ export function WrongGuessDialog() {
       onKeyDown={e => { if (e.key === 'Escape' || e.key === 'Enter') dismiss(); }}
     >
       <div className="dialog" style={{ maxWidth: 360 }}>
-        <span className="dialog__icon">{isAlreadyFound ? '🔁' : '💥'}</span>
+        {isAlreadyFound
+          ? <span className="dialog__icon">🔁</span>
+          : <img src="/icons/Alert.png" className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />
+        }
         <h2 className="dialog__title" id="wrong-title">
           {isAlreadyFound ? 'Already found!' : 'No RDM problem here.'}
         </h2>

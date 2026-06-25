@@ -83,7 +83,7 @@ export interface ContextMenuState {
 
 // ── Window types ──────────────────────────────────────────────────────────
 
-export type ViewerType = 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary';
+export type ViewerType = 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'trash';
 
 export interface WindowState {
   id: string;

@@ -51,6 +51,7 @@ type Action =
   | { type: 'FIND_PROBLEM'; id: string }
   | { type: 'WRONG_GUESS' }
   | { type: 'DISMISS_WELCOME' }
+  | { type: 'SHOW_WELCOME' }
   | { type: 'OPEN_WINDOW'; window: Omit<WindowState, 'zIndex'> }
   | { type: 'CLOSE_WINDOW'; id: string }
   | { type: 'FOCUS_WINDOW'; id: string }
@@ -73,6 +74,9 @@ function reducer(state: PersistedState, action: Action): PersistedState {
 
     case 'DISMISS_WELCOME':
       return { ...state, hasSeenWelcome: true };
+
+    case 'SHOW_WELCOME':
+      return { ...state, hasSeenWelcome: false };
 
     case 'OPEN_WINDOW': {
       // If a window for this file is already open, just bring it to front
