@@ -4,6 +4,8 @@ A browser-based educational game teaching Research Data Management (RDM) best pr
 
 Designed as a hands-on companion to the Lib4RI **Basics of Research Data Management** workshop.
 
+![overview_graphics](assets/rdm_chase_overview.png)
+
 ---
 
 ## How it works
