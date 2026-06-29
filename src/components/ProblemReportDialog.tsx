@@ -2,23 +2,26 @@ import { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
 import { useGame } from '../GameContext';
 
-type Tab = 'what' | 'why' | 'fix';
+type Tab = 'what' | 'why';
 
 export function ProblemReportDialog() {
-  const { activeProblem, dismissProblemDialog } = useGame();
+  const { activeProblem, activeParentId, dismissProblemDialog, handleFixProblem } = useGame();
   const [tab, setTab] = useState<Tab>('what');
-  const okRef = useRef<HTMLButtonElement>(null);
+  const fixRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (activeProblem) {
       setTab('what');
-      okRef.current?.focus();
+      fixRef.current?.focus();
     }
   }, [activeProblem]);
 
   if (!activeProblem) return null;
 
   const renderMd = (src: string) => ({ __html: marked.parse(src) as string });
+
+  // The problem ID for the fix action is the parent if this is a sub-problem
+  const fixId = activeParentId ?? activeProblem.id;
 
   return (
     <div
@@ -31,12 +34,16 @@ export function ProblemReportDialog() {
       <div className="dialog" style={{ maxWidth: 620 }}>
         <span className="dialog__icon">✅</span>
         <h2 className="dialog__title" id="problem-title">
-          Found: {activeProblem.fullTitle}
+          Found: {activeProblem.name}
         </h2>
+        {activeParentId && (
+          <p style={{ fontFamily: 'var(--font-pixel)', fontSize: '7px', color: '#666', marginBottom: 8 }}>
+            Boss Battle: Data Quality issue {activeParentId ? '— find all 8 to complete!' : ''}
+          </p>
+        )}
 
-        {/* Tab bar */}
         <div className="problem-tabs" role="tablist">
-          {([['what', "What's wrong"], ['why', 'Why it matters'], ['fix', 'How to fix it']] as [Tab, string][]).map(
+          {([['what', "What's wrong"], ['why', 'Why it matters']] as [Tab, string][]).map(
             ([key, label]) => (
               <button
                 key={key}
@@ -51,7 +58,6 @@ export function ProblemReportDialog() {
           )}
         </div>
 
-        {/* Tab content */}
         <div className="problem-tab-content" role="tabpanel">
           <div
             className="dialog__markdown"
@@ -59,8 +65,7 @@ export function ProblemReportDialog() {
           />
         </div>
 
-        {/* Resources */}
-        {activeProblem.resources.length > 0 && (
+        {'resources' in activeProblem && activeProblem.resources.length > 0 && (
           <div className="dialog__resources">
             <div className="dialog__resources-title">Resources</div>
             {activeProblem.resources.map(r => (
@@ -79,11 +84,20 @@ export function ProblemReportDialog() {
 
         <div className="dialog__buttons">
           <button
-            ref={okRef}
-            className="mac-button mac-button--default"
+            className="mac-button"
             onClick={dismissProblemDialog}
           >
-            Got it!
+            Not now
+          </button>
+          <button
+            ref={fixRef}
+            className="mac-button mac-button--default"
+            onClick={() => {
+              dismissProblemDialog();
+              handleFixProblem(fixId);
+            }}
+          >
+            Let&apos;s fix it!
           </button>
         </div>
       </div>

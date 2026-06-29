@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useState, useEffect, useCallback } from 'react';
 import type {
   Problem,
+  SubProblem,
   FileEntry,
   Mapping,
   PersistedState,
@@ -13,24 +14,38 @@ import problemsData from './data/problems.json';
 import fileTreeData from './data/file-tree.json';
 import mappingData from './data/mapping.json';
 import { loadState, saveState } from './lib/persistence';
-import { matchTrigger } from './lib/matchTrigger';
+import { matchTrigger, matchSelectedProblem, getParentId } from './lib/matchTrigger';
 import { playChime, playBonk, playFanfare } from './lib/sounds';
 
-// ── Typed data from generated JSON ───────────────────────────────────────
+// ── Typed data ────────────────────────────────────────────────────────────────
 
 const problems = problemsData as Problem[];
 const fileTree = fileTreeData as FileEntry[];
 const mapping = mappingData as Mapping;
 
-// ── Default state ─────────────────────────────────────────────────────────
+// Flat list of all sub-problems keyed by id
+const subProblemMap = new Map<string, SubProblem & { parentId: string }>();
+for (const p of problems) {
+  for (const sp of p.subProblems ?? []) {
+    subProblemMap.set(sp.id, { ...sp, parentId: p.id });
+  }
+}
+
+function getSubProblemIds(parentId: string): string[] {
+  return [...subProblemMap.values()]
+    .filter(sp => sp.parentId === parentId)
+    .map(sp => sp.id);
+}
+
+// ── Default state ─────────────────────────────────────────────────────────────
 
 const DEFAULT_STATE: PersistedState = {
   foundProblems: [],
+  fixedProblems: [],
   wrongGuesses: 0,
   hasSeenWelcome: false,
   isMuted: false,
   openWindows: [
-    // Project folder window — open by default, positioned slightly right of center
     {
       id: 'project-folder',
       title: 'Side Project 237 B',
@@ -45,10 +60,11 @@ const DEFAULT_STATE: PersistedState = {
   nextZIndex: 2,
 };
 
-// ── Reducer ───────────────────────────────────────────────────────────────
+// ── Reducer ───────────────────────────────────────────────────────────────────
 
 type Action =
   | { type: 'FIND_PROBLEM'; id: string }
+  | { type: 'FIX_PROBLEM'; id: string }
   | { type: 'WRONG_GUESS' }
   | { type: 'DISMISS_WELCOME' }
   | { type: 'SHOW_WELCOME' }
@@ -62,12 +78,12 @@ type Action =
 function reducer(state: PersistedState, action: Action): PersistedState {
   switch (action.type) {
     case 'FIND_PROBLEM':
-      return {
-        ...state,
-        foundProblems: state.foundProblems.includes(action.id)
-          ? state.foundProblems
-          : [...state.foundProblems, action.id],
-      };
+      if (state.foundProblems.includes(action.id)) return state;
+      return { ...state, foundProblems: [...state.foundProblems, action.id] };
+
+    case 'FIX_PROBLEM':
+      if (state.fixedProblems.includes(action.id)) return state;
+      return { ...state, fixedProblems: [...state.fixedProblems, action.id] };
 
     case 'WRONG_GUESS':
       return { ...state, wrongGuesses: state.wrongGuesses + 1 };
@@ -79,7 +95,6 @@ function reducer(state: PersistedState, action: Action): PersistedState {
       return { ...state, hasSeenWelcome: false };
 
     case 'OPEN_WINDOW': {
-      // If a window for this file is already open, just bring it to front
       const exists = state.openWindows.find(w => w.id === action.window.id);
       if (exists) {
         return {
@@ -101,10 +116,7 @@ function reducer(state: PersistedState, action: Action): PersistedState {
     }
 
     case 'CLOSE_WINDOW':
-      return {
-        ...state,
-        openWindows: state.openWindows.filter(w => w.id !== action.id),
-      };
+      return { ...state, openWindows: state.openWindows.filter(w => w.id !== action.id) };
 
     case 'FOCUS_WINDOW':
       return {
@@ -134,33 +146,36 @@ function reducer(state: PersistedState, action: Action): PersistedState {
   }
 }
 
-// ── Context type ──────────────────────────────────────────────────────────
+// ── Context type ──────────────────────────────────────────────────────────────
 
 interface GameContextType {
-  // Persisted state
   gameState: PersistedState;
   dispatch: React.Dispatch<Action>;
 
-  // Transient UI state (not persisted)
   contextMenu: ContextMenuState | null;
-  activeProblem: Problem | null;
+  activeProblem: Problem | SubProblem | null;
+  activeParentId: string | null;  // parent ID when activeProblem is a sub-problem
   showWrong: boolean;
-  alreadyFoundName: string | null; // non-null → show already-found dialog
+  wrongKind: 'no_problem' | 'wrong_problem';
+  alreadyFoundName: string | null;
+  pendingTarget: ContextTarget | null;  // set when problem selection dialog is open
 
-  // Static data
   problems: Problem[];
   fileTree: FileEntry[];
   mapping: Mapping;
 
-  // Actions
   openFile: (entry: FileEntry) => void;
   showContextMenu: (menu: ContextMenuState) => void;
   hideContextMenu: () => void;
-  handleReportProblem: (target: ContextTarget) => void;
-  handleReportAbsence: (name: string) => void;
+  openProblemSelection: (target: ContextTarget) => void;
+  handleProblemSelection: (selectedProblemId: string) => void;
+  cancelProblemSelection: () => void;
+  handleFixProblem: (problemId: string) => void;
   dismissProblemDialog: () => void;
   dismissWrongDialog: () => void;
   dismissAlreadyFound: () => void;
+  getSubProgress: (parentId: string) => { found: number; total: number };
+  isMainProblemSolved: (id: string) => boolean;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -171,21 +186,22 @@ export function useGame(): GameContextType {
   return ctx;
 }
 
-// ── Provider ──────────────────────────────────────────────────────────────
+// ── Provider ──────────────────────────────────────────────────────────────────
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
   const [gameState, dispatch] = useReducer(reducer, loadState() ?? DEFAULT_STATE);
 
-  // Persist to localStorage whenever gameState changes
   useEffect(() => {
     saveState(gameState);
   }, [gameState]);
 
-  // Transient UI state
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
-  const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
+  const [activeProblem, setActiveProblem] = useState<Problem | SubProblem | null>(null);
+  const [activeParentId, setActiveParentId] = useState<string | null>(null);
   const [showWrong, setShowWrong] = useState(false);
+  const [wrongKind, setWrongKind] = useState<'no_problem' | 'wrong_problem'>('no_problem');
   const [alreadyFoundName, setAlreadyFoundName] = useState<string | null>(null);
+  const [pendingTarget, setPendingTarget] = useState<ContextTarget | null>(null);
 
   const showContextMenu = useCallback((menu: ContextMenuState) => {
     setContextMenu(menu);
@@ -199,7 +215,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     (entry: FileEntry) => {
       const viewerType: ViewerType = entry.viewerType as ViewerType;
       const windowId = `file:${entry.name}`;
-      // Stagger new windows slightly so they don't exactly overlap
       const offset = (gameState.openWindows.length % 5) * 20;
       dispatch({
         type: 'OPEN_WINDOW',
@@ -210,74 +225,182 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           filePath: entry.name,
           x: 240 + offset,
           y: 50 + offset,
-          width: viewerType === 'image' ? 400 : 520,
-          height: viewerType === 'image' ? 360 : 340,
+          width: viewerType === 'image' ? 400 : 540,
+          height: viewerType === 'image' ? 360 : 360,
         },
       });
     },
     [gameState.openWindows.length],
   );
 
-  // Core game logic: given a right-click target, try to match to a problem
-  const handleReportProblem = useCallback(
-    (target: ContextTarget) => {
-      setContextMenu(null);
-      const matchedId = matchTrigger(target, mapping);
+  // Open problem selection dialog
+  const openProblemSelection = useCallback((target: ContextTarget) => {
+    setContextMenu(null);
+    setPendingTarget(target);
+  }, []);
 
-      if (!matchedId) {
+  // Called when user picks a problem from the selection dialog
+  const handleProblemSelection = useCallback(
+    (selectedProblemId: string) => {
+      if (!pendingTarget) return;
+      setPendingTarget(null);
+
+      const result = matchSelectedProblem(selectedProblemId, pendingTarget, mapping);
+
+      if (result === 'no_problem') {
         dispatch({ type: 'WRONG_GUESS' });
+        setWrongKind('no_problem');
         setShowWrong(true);
         if (!gameState.isMuted) playBonk();
         return;
       }
 
-      if (gameState.foundProblems.includes(matchedId)) {
-        const p = problems.find(p => p.id === matchedId);
-        setAlreadyFoundName(p?.name ?? matchedId);
+      if (result === 'wrong_problem') {
+        dispatch({ type: 'WRONG_GUESS' });
+        setWrongKind('wrong_problem');
+        setShowWrong(true);
+        if (!gameState.isMuted) playBonk();
         return;
       }
 
-      dispatch({ type: 'FIND_PROBLEM', id: matchedId });
-      const found = problems.find(p => p.id === matchedId) ?? null;
-      setActiveProblem(found);
+      // Correct! Find the actual matched ID (may be a sub-problem)
+      const actualMatchedId = matchTrigger(pendingTarget, mapping) ?? selectedProblemId;
+      const parentId = getParentId(actualMatchedId, mapping);
+
+      // Determine the problem object to show
+      let foundProblemObj: Problem | SubProblem | null = null;
+      let parentIdForDialog: string | null = null;
+
+      if (parentId) {
+        // Sub-problem hit
+        const sub = subProblemMap.get(actualMatchedId);
+        if (sub) {
+          foundProblemObj = sub;
+          parentIdForDialog = parentId;
+        }
+      } else {
+        foundProblemObj = problems.find(p => p.id === actualMatchedId) ?? null;
+      }
+
+      // Check if already found
+      if (gameState.foundProblems.includes(actualMatchedId)) {
+        const name = foundProblemObj?.name ?? actualMatchedId;
+        setAlreadyFoundName(name);
+        return;
+      }
+
+      // Mark found
+      dispatch({ type: 'FIND_PROBLEM', id: actualMatchedId });
+
+      // For sub-problems: check if all subs of the parent are now found
+      if (parentId) {
+        const allSubIds = getSubProblemIds(parentId);
+        const alreadyFound = gameState.foundProblems;
+        const nowFound = [...alreadyFound, actualMatchedId];
+        const allDone = allSubIds.every(id => nowFound.includes(id));
+        if (allDone && !alreadyFound.includes(parentId)) {
+          dispatch({ type: 'FIND_PROBLEM', id: parentId });
+        }
+      }
+
+      setActiveProblem(foundProblemObj);
+      setActiveParentId(parentIdForDialog);
+
       if (!gameState.isMuted) {
-        const allFound = gameState.foundProblems.length + 1 >= problems.length;
+        // Calculate total found after this action
+        const prevFoundCount = gameState.foundProblems.length;
+        const mainProblemsCount = problems.length;
+        const allFound = prevFoundCount + 1 >= mainProblemsCount;
         allFound ? playFanfare() : playChime();
       }
     },
-    [gameState.foundProblems, gameState.isMuted, mapping],
+    [pendingTarget, gameState.foundProblems, gameState.isMuted, mapping],
   );
 
-  // Convenience for the "Report missing artifact" submenu
-  const handleReportAbsence = useCallback(
-    (name: string) => {
-      handleReportProblem({ kind: 'absence', name });
+  const cancelProblemSelection = useCallback(() => {
+    setPendingTarget(null);
+  }, []);
+
+  // Open "Let's fix it" window for a problem
+  const handleFixProblem = useCallback(
+    (problemId: string) => {
+      // Mark as fixed
+      dispatch({ type: 'FIX_PROBLEM', id: problemId });
+
+      const prob = problems.find(p => p.id === problemId)
+        ?? [...subProblemMap.values()].find(sp => sp.id === problemId);
+      if (!prob) return;
+
+      // For sub-problems, use the parent's fix content
+      const fixProblemId = subProblemMap.has(problemId)
+        ? (subProblemMap.get(problemId)!.parentId)
+        : problemId;
+
+      const offset = (gameState.openWindows.length % 5) * 20;
+      dispatch({
+        type: 'OPEN_WINDOW',
+        window: {
+          id: `fix:${fixProblemId}`,
+          title: `Let's fix: ${prob.name}`,
+          viewerType: 'fix',
+          problemId: fixProblemId,
+          x: 300 + offset,
+          y: 80 + offset,
+          width: 560,
+          height: 420,
+        },
+      });
     },
-    [handleReportProblem],
+    [gameState.openWindows.length],
   );
 
-  const dismissProblemDialog = useCallback(() => setActiveProblem(null), []);
+  const dismissProblemDialog = useCallback(() => {
+    setActiveProblem(null);
+    setActiveParentId(null);
+  }, []);
+
   const dismissWrongDialog = useCallback(() => setShowWrong(false), []);
   const dismissAlreadyFound = useCallback(() => setAlreadyFoundName(null), []);
+
+  const getSubProgress = useCallback(
+    (parentId: string): { found: number; total: number } => {
+      const allSubIds = getSubProblemIds(parentId);
+      const found = allSubIds.filter(id => gameState.foundProblems.includes(id)).length;
+      return { found, total: allSubIds.length };
+    },
+    [gameState.foundProblems],
+  );
+
+  const isMainProblemSolved = useCallback(
+    (id: string): boolean => gameState.foundProblems.includes(id),
+    [gameState.foundProblems],
+  );
 
   const value: GameContextType = {
     gameState,
     dispatch,
     contextMenu,
     activeProblem,
+    activeParentId,
     showWrong,
+    wrongKind,
     alreadyFoundName,
+    pendingTarget,
     problems,
     fileTree,
     mapping,
     openFile,
     showContextMenu,
     hideContextMenu,
-    handleReportProblem,
-    handleReportAbsence,
+    openProblemSelection,
+    handleProblemSelection,
+    cancelProblemSelection,
+    handleFixProblem,
     dismissProblemDialog,
     dismissWrongDialog,
     dismissAlreadyFound,
+    getSubProgress,
+    isMainProblemSolved,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

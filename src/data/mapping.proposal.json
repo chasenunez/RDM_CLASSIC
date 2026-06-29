@@ -18,11 +18,23 @@
         },
         {
           "type": "file",
-          "path": "Soil Samples COPY.xlsx"
+          "path": "LICENSE"
+        },
+        {
+          "type": "file",
+          "path": "README.md"
+        },
+        {
+          "type": "file",
+          "path": "ZENODO_DOI.md"
         },
         {
           "type": "file",
           "path": "cleaned data.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "data_dictionary.md"
         },
         {
           "type": "file",
@@ -69,6 +81,18 @@
         {
           "type": "file",
           "path": "temp&humidity_data_REALLY FINAL.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "temp_humidity_FINAL.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "temp_humidity_FINAL_v2.xlsx"
+        },
+        {
+          "type": "file",
+          "path": "temp_humidity_REALLY FINAL.xlsx"
         }
       ],
       "matchRule": "any"
