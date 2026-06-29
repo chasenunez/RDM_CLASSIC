@@ -11,6 +11,7 @@
       "id": "file-naming",
       "triggers": [
         { "type": "file", "path": "Figure 1.png" },
+        { "type": "file", "path": "Figure 1 (1).png" },
         { "type": "file", "path": "cleaned data.xlsx" },
         { "type": "file", "path": "data_new.xlsx" },
         { "type": "file", "path": "manuscript draft.docx" },
@@ -168,7 +169,6 @@
     {
       "id": "no-backup",
       "triggers": [
-        { "type": "file", "path": "Figure 1 (1).png" },
         { "type": "file", "path": "data_new(1).xlsx" }
       ],
       "matchRule": "any"
