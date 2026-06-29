@@ -57,6 +57,29 @@ export function playBonk(): void {
   }
 }
 
+/** Sosumi — boss battle triggered */
+export function playSosumi(): void {
+  try {
+    const ac = ctx();
+    const now = ac.currentTime;
+    // Dramatic minor chord: D, F, A struck together with quick piano-like decay
+    [293.66, 349.23, 440.0].forEach(freq => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.connect(gain);
+      gain.connect(ac.destination);
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.28, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+      osc.start(now);
+      osc.stop(now + 0.7);
+    });
+  } catch {
+    // silent fallback
+  }
+}
+
 /** Victory fanfare — all problems found */
 export function playFanfare(): void {
   try {

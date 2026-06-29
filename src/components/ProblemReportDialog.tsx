@@ -5,7 +5,8 @@ import { useGame } from '../GameContext';
 type Tab = 'what' | 'why';
 
 export function ProblemReportDialog() {
-  const { activeProblem, activeParentId, dismissProblemDialog, handleFixProblem } = useGame();
+  const { activeProblem, activeParentId, dismissProblemDialog, handleFixProblem, isBossBattleActive } = useGame();
+  const hideFix = isBossBattleActive || activeParentId === 'data-quality';
   const [tab, setTab] = useState<Tab>('what');
   const fixRef = useRef<HTMLButtonElement>(null);
 
@@ -32,7 +33,7 @@ export function ProblemReportDialog() {
       onKeyDown={e => { if (e.key === 'Escape') dismissProblemDialog(); }}
     >
       <div className="dialog" style={{ maxWidth: 620 }}>
-        <span className="dialog__icon">✅</span>
+        <img src="/icons/Happy Mac.svg" className="dialog__icon-img" alt="[OK]" />
         <h2 className="dialog__title" id="problem-title">
           Found: {activeProblem.name}
         </h2>
@@ -87,18 +88,20 @@ export function ProblemReportDialog() {
             className="mac-button"
             onClick={dismissProblemDialog}
           >
-            Not now
+            {hideFix ? 'OK' : 'Not now'}
           </button>
-          <button
-            ref={fixRef}
-            className="mac-button mac-button--default"
-            onClick={() => {
-              dismissProblemDialog();
-              handleFixProblem(fixId);
-            }}
-          >
-            Let&apos;s fix it!
-          </button>
+          {!hideFix && (
+            <button
+              ref={fixRef}
+              className="mac-button mac-button--default"
+              onClick={() => {
+                dismissProblemDialog();
+                handleFixProblem(fixId);
+              }}
+            >
+              Let&apos;s fix it!
+            </button>
+          )}
         </div>
       </div>
     </div>

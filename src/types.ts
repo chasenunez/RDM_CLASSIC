@@ -32,7 +32,7 @@ export interface FileEntry {
   size: number;
   mimeGuess: string;
   icon: string;          // URL path, e.g. "/icons/Text file.svg"
-  viewerType: 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'markdown' | 'fix';
+  viewerType: 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'markdown' | 'fix' | 'subfolder';
   virtual?: boolean;     // true = added by fix logic, not in original file tree
 }
 
@@ -95,7 +95,7 @@ export interface ContextMenuState {
 
 // ── Window types ──────────────────────────────────────────────────────────────
 
-export type ViewerType = 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'trash' | 'markdown' | 'fix' | 'archive';
+export type ViewerType = 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'trash' | 'markdown' | 'fix' | 'archive' | 'subfolder';
 
 export interface WindowState {
   id: string;

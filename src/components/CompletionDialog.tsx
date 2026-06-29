@@ -2,16 +2,16 @@ import { useEffect, useRef } from 'react';
 import { useGame } from '../GameContext';
 
 interface CompletionDialogProps {
-  onClose: () => void;
+  onLookAtWork: () => void;
 }
 
-export function CompletionDialog({ onClose }: CompletionDialogProps) {
+export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
   const { gameState, problems } = useGame();
   const { wrongGuesses } = gameState;
-  const okRef = useRef<HTMLButtonElement>(null);
+  const lookRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    okRef.current?.focus();
+    lookRef.current?.focus();
   }, []);
 
   const total = problems.length;
@@ -30,7 +30,7 @@ export function CompletionDialog({ onClose }: CompletionDialogProps) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="completion-title"
-      onKeyDown={e => { if (e.key === 'Enter') onClose(); }}
+      onKeyDown={e => { if (e.key === 'Enter') onLookAtWork(); }}
     >
       <div className="dialog" style={{ maxWidth: 480 }}>
         <span className="dialog__icon"></span>
@@ -61,14 +61,14 @@ export function CompletionDialog({ onClose }: CompletionDialogProps) {
             className="mac-button"
             style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
           >
-            ⬇ Download RDM Guide
+            [v] Download RDM Guide
           </a>
           <button
-            ref={okRef}
+            ref={lookRef}
             className="mac-button mac-button--default"
-            onClick={onClose}
+            onClick={onLookAtWork}
           >
-            Play Again
+            Look at my work
           </button>
         </div>
       </div>

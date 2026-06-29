@@ -4,6 +4,7 @@ export interface FixAction {
   remove: string[];      // file names to hide from folder view
   archive: string[];     // file names to move to archive folder (must be subset of remove)
   add: FileEntry[];      // new file entries to display
+  organize?: Record<string, string[]>;  // subfolder name → file names to move into it
 }
 
 const TEXT: Omit<FileEntry, 'path' | 'name' | 'size'> = {
@@ -39,70 +40,35 @@ const XLSX_FILE: Omit<FileEntry, 'path' | 'name' | 'size'> = {
 };
 
 export const FIX_ACTIONS: Record<string, FixAction> = {
-  'no-folder-structure': {
-    remove: [],
-    archive: [],
-    add: [
-      { ...FOLDER, path: '_fix/data', name: 'data/', size: 0 },
-      { ...FOLDER, path: '_fix/code', name: 'code/', size: 0 },
-      { ...FOLDER, path: '_fix/results', name: 'results/', size: 0 },
-      { ...FOLDER, path: '_fix/reports', name: 'reports/', size: 0 },
-    ],
-  },
-
   'file-naming': {
     remove: [
-      'soil samples.xlsx', 'cleaned data.xlsx', 'data_new.xlsx',
-      'manuscript draft.docx', 'notes.txt', 'meeting_notes_feb.txt',
-      'Figure 1.png',
+      'manuscript draft.docx',
+      'manuscript_draft_v2_JK comments.docx',
     ],
     archive: [
-      'soil samples.xlsx', 'cleaned data.xlsx', 'data_new.xlsx',
-      'manuscript draft.docx', 'notes.txt', 'meeting_notes_feb.txt',
-      'Figure 1.png',
+      'manuscript draft.docx',
+      'manuscript_draft_v2_JK comments.docx',
     ],
     add: [
-      { ...XLSX_FILE, path: '_fix/20260315_AlpineSoil_Chem_v1.xlsx', name: '20260315_AlpineSoil_Chem_v1.xlsx', size: 6200 },
-      { ...MD, path: '_fix/20260501_AlpineSoil_Manuscript_v0.1.md', name: '20260501_AlpineSoil_Manuscript_v0.1.md', size: 3400 },
-      { ...TEXT, path: '_fix/20260315_lab_notes.txt', name: '20260315_lab_notes.txt', size: 160 },
+      { ...MD, path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.1.docx', name: '20260501_AlpineSoil_Manuscript_v0.1.docx', size: 996 },
+      { ...MD, path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.2.docx', name: '20260501_AlpineSoil_Manuscript_v0.2.docx', size: 1512 },
     ],
   },
 
   'versioning': {
-    remove: [
-      'manuscript_draft_v2_JK comments.docx',
-      'script_old.py',
-      'analysis v3 (Marias edits).py',
-      'temp_humidity_FINAL.xlsx',
-      'temp_humidity_FINAL_v2.xlsx',
-      'temp_humidity_REALLY FINAL.xlsx',
-    ],
-    archive: [
-      'manuscript_draft_v2_JK comments.docx',
-      'script_old.py',
-      'analysis v3 (Marias edits).py',
-    ],
+    remove: [],
+    archive: [],
     add: [
       { ...FOLDER, path: '_fix/.git', name: '.git/', size: 0 },
     ],
   },
 
   'file-formats': {
-    remove: [
-      'sensor_output.dat',
-      'microscopy_sample_12.jpg',
-      'fig1_updated.jpg',
-      'analysis_results_USE THIS ONE.docx',
-    ],
-    archive: [
-      'sensor_output.dat',
-      'microscopy_sample_12.jpg',
-      'fig1_updated.jpg',
-      'analysis_results_USE THIS ONE.docx',
-    ],
+    remove: ['fig1_updated.jpg', 'microscopy_sample_12.jpg'],
+    archive: ['fig1_updated.jpg', 'microscopy_sample_12.jpg'],
     add: [
-      { ...TEXT, path: '_fix/sensor_output.csv', name: 'sensor_output.csv', size: 360, mimeGuess: 'text/csv', viewerType: 'csv', icon: '/icons/Text file.svg' },
-      { ...MD, path: '_fix/analysis_results.md', name: 'analysis_results.md', size: 3100 },
+      { ...TEXT, path: 'sample_project/fig1_updated.png', name: 'fig1_updated.png', size: 18313, mimeGuess: 'image/png', viewerType: 'image', icon: '/icons/Paint file.svg' },
+      { ...TEXT, path: 'sample_project/microscopy_sample_12.png', name: 'microscopy_sample_12.png', size: 22275, mimeGuess: 'image/png', viewerType: 'image', icon: '/icons/Paint file.svg' },
     ],
   },
 
@@ -114,20 +80,11 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     ],
   },
 
-  'no-metadata': {
+  'no-backup': {
     remove: [],
     archive: [],
     add: [
-      { ...MD, path: 'sample_project/data_dictionary.md', name: 'data_dictionary.md', size: 1800 },
-    ],
-  },
-
-  'raw-processed-mixed': {
-    remove: [],
-    archive: [],
-    add: [
-      { ...FOLDER, path: '_fix/data/raw', name: 'data/raw/', size: 0 },
-      { ...FOLDER, path: '_fix/data/processed', name: 'data/processed/', size: 0 },
+      { ...XLSX_FILE, path: 'sample_project/raw_data.xlsx', name: 'raw_data.xlsx', size: 18542 },
     ],
   },
 
@@ -140,11 +97,11 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
   },
 
   'code-quality': {
-    remove: ['script_old.py', 'analysis v3 (Marias edits).py', 'script.py'],
-    archive: ['script_old.py', 'analysis v3 (Marias edits).py', 'script.py'],
+    remove: ['script.py'],
+    archive: ['script.py'],
     add: [
       {
-        path: '_fix/20260410_AlpineSoil_Analysis_v1.0.py',
+        path: 'sample_project/20260410_AlpineSoil_Analysis_v1.0.py',
         name: '20260410_AlpineSoil_Analysis_v1.0.py',
         type: 'file',
         size: 800,
@@ -160,30 +117,26 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     remove: [],
     archive: [],
     add: [
-      { ...TEXT, path: 'sample_project/LICENSE', name: 'LICENSE', size: 1100 },
+      { ...MD, path: 'sample_project/LICENSE.md', name: 'LICENSE.md', size: 1100 },
     ],
   },
 
-  'no-data-availability': {
-    remove: ['MANUSCRIPT FINAL SUBMISSION.docx'],
-    archive: ['MANUSCRIPT FINAL SUBMISSION.docx'],
-    add: [
-      { ...MD, path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.1.md', name: '20260501_AlpineSoil_Manuscript_v0.1.md', size: 3400 },
-    ],
-  },
-
-  'no-doi': {
+  'file-structure': {
     remove: [],
     archive: [],
     add: [
-      { ...MD, path: 'sample_project/ZENODO_DOI.md', name: 'ZENODO_DOI.md', size: 900 },
+      { ...FOLDER, path: '_fix/data', name: 'data/', size: 0 },
+      { ...FOLDER, path: '_fix/manuscripts', name: 'manuscripts/', size: 0 },
+      { ...FOLDER, path: '_fix/code', name: 'code/', size: 0 },
     ],
-  },
-
-  'no-backup': {
-    remove: ['Figure 1 (1).png', 'data_new(1).xlsx'],
-    archive: [],
-    add: [],
+    organize: {
+      'data': ['raw_data.xlsx', 'fig1_updated.png', 'microscopy_sample_12.png', '20260315_AlpineSoil_Chem_v1.xlsx'],
+      'manuscripts': [
+        '20260501_AlpineSoil_Manuscript_v0.1.docx',
+        '20260501_AlpineSoil_Manuscript_v0.2.docx',
+      ],
+      'code': ['20260410_AlpineSoil_Analysis_v1.0.py'],
+    },
   },
 };
 
@@ -209,8 +162,26 @@ export function computeDisplayFiles(
     return true;
   });
 
-  const filtered = baseTree.filter(f => !toRemove.has(f.name));
-  return [...filtered, ...uniqueAdd];
+  let result: FileEntry[] = [
+    ...baseTree.filter(f => !toRemove.has(f.name)),
+    ...uniqueAdd,
+  ];
+
+  // If file-structure is fixed, reassign files into subfolder paths so they
+  // disappear from the root view and appear inside the subfolder windows.
+  if (fixedProblems.includes('file-structure')) {
+    const organizeMap = FIX_ACTIONS['file-structure']?.organize ?? {};
+    const nameToFolder: Record<string, string> = {};
+    for (const [folder, names] of Object.entries(organizeMap)) {
+      for (const name of names) nameToFolder[name] = folder;
+    }
+    result = result.map(f => {
+      const folder = nameToFolder[f.name];
+      return folder ? { ...f, path: `_sub/${folder}/${f.name}` } : f;
+    });
+  }
+
+  return result;
 }
 
 export function computeArchiveFiles(

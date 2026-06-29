@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useState, useEffect, useCallback, useRef } from 'react';
 import type {
   Problem,
   SubProblem,
@@ -15,7 +15,8 @@ import fileTreeData from './data/file-tree.json';
 import mappingData from './data/mapping.json';
 import { loadState, saveState } from './lib/persistence';
 import { matchTrigger, matchSelectedProblem, getParentId } from './lib/matchTrigger';
-import { playChime, playBonk, playFanfare } from './lib/sounds';
+import { playChime, playBonk, playFanfare, playSosumi } from './lib/sounds';
+import { centeredAt } from './lib/layout';
 
 // ── Typed data ────────────────────────────────────────────────────────────────
 
@@ -37,28 +38,37 @@ function getSubProblemIds(parentId: string): string[] {
     .map(sp => sp.id);
 }
 
+// ── Boss battle constants ─────────────────────────────────────────────────────
+
+export const BOSS_FILE = 'soil samples.xlsx';
+export const BOSS_PARENT_ID = 'data-quality';
+export const BOSS_SUB_IDS = mapping.problems
+  .filter(p => p.parentId === BOSS_PARENT_ID)
+  .map(p => p.id);
+
 // ── Default state ─────────────────────────────────────────────────────────────
 
-const DEFAULT_STATE: PersistedState = {
-  foundProblems: [],
-  fixedProblems: [],
-  wrongGuesses: 0,
-  hasSeenWelcome: false,
-  isMuted: false,
-  openWindows: [
-    {
-      id: 'project-folder',
-      title: 'Side Project 237 B',
-      viewerType: 'folder',
-      x: 535,
-      y: 80,
-      width: 800,
-      height: 600,
-      zIndex: 1,
-    },
-  ],
-  nextZIndex: 2,
-};
+function getDefaultState(): PersistedState {
+  return {
+    foundProblems: [],
+    fixedProblems: [],
+    wrongGuesses: 0,
+    hasSeenWelcome: false,
+    isMuted: false,
+    openWindows: [
+      {
+        id: 'project-folder',
+        title: 'Side Project 237 B',
+        viewerType: 'folder',
+        ...centeredAt(800, 600),
+        width: 800,
+        height: 600,
+        zIndex: 1,
+      },
+    ],
+    nextZIndex: 2,
+  };
+}
 
 // ── Reducer ───────────────────────────────────────────────────────────────────
 
@@ -139,7 +149,7 @@ function reducer(state: PersistedState, action: Action): PersistedState {
       return { ...state, isMuted: !state.isMuted };
 
     case 'RESET':
-      return { ...DEFAULT_STATE, hasSeenWelcome: false };
+      return { ...getDefaultState(), hasSeenWelcome: false };
 
     default:
       return state;
@@ -154,15 +164,27 @@ interface GameContextType {
 
   contextMenu: ContextMenuState | null;
   activeProblem: Problem | SubProblem | null;
-  activeParentId: string | null;  // parent ID when activeProblem is a sub-problem
+  activeParentId: string | null;
   showWrong: boolean;
   wrongKind: 'no_problem' | 'wrong_problem';
   alreadyFoundName: string | null;
-  pendingTarget: ContextTarget | null;  // set when problem selection dialog is open
+  pendingTarget: ContextTarget | null;
 
   problems: Problem[];
   fileTree: FileEntry[];
   mapping: Mapping;
+
+  // Boss battle
+  isBossBattleActive: boolean;
+  bossIntroShowing: boolean;
+  bossCompletionShowing: boolean;
+  bossFileFixed: boolean;
+  bossFoundCount: number;
+  bossTotalErrors: number;
+  dismissBossIntro: () => void;
+  dismissBossComplete: () => void;
+  resetBossState: () => void;
+  reportBossError: (target: ContextTarget) => void;
 
   openFile: (entry: FileEntry) => void;
   showContextMenu: (menu: ContextMenuState) => void;
@@ -189,7 +211,7 @@ export function useGame(): GameContextType {
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [gameState, dispatch] = useReducer(reducer, loadState() ?? DEFAULT_STATE);
+  const [gameState, dispatch] = useReducer(reducer, undefined, () => loadState() ?? getDefaultState());
 
   useEffect(() => {
     saveState(gameState);
@@ -203,6 +225,77 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [alreadyFoundName, setAlreadyFoundName] = useState<string | null>(null);
   const [pendingTarget, setPendingTarget] = useState<ContextTarget | null>(null);
 
+  // ── Boss battle state ──────────────────────────────────────────────────────
+  const [bossIntroShowing, setBossIntroShowing] = useState(false);
+  const [bossCompletionShowing, setBossCompletionShowing] = useState(false);
+  const [bossFileFixed, setBossFileFixed] = useState(false);
+
+  const bossFoundCount = BOSS_SUB_IDS.filter(id => gameState.foundProblems.includes(id)).length;
+  const bossComplete = bossFoundCount === BOSS_SUB_IDS.length;
+  const bossWindowOpen = gameState.openWindows.some(w => w.filePath === BOSS_FILE);
+  const isBossBattleActive = bossWindowOpen && !bossIntroShowing && !bossFileFixed;
+
+  // Detect the moment boss becomes complete and show completion popup
+  const prevBossComplete = useRef(false);
+  useEffect(() => {
+    if (bossComplete && !prevBossComplete.current && bossWindowOpen && !bossFileFixed) {
+      setBossCompletionShowing(true);
+    }
+    prevBossComplete.current = bossComplete;
+  }, [bossComplete, bossWindowOpen, bossFileFixed]);
+
+  const dismissBossIntro = useCallback(() => setBossIntroShowing(false), []);
+  const dismissBossComplete = useCallback(() => {
+    setBossCompletionShowing(false);
+    setBossFileFixed(true);
+  }, []);
+  const resetBossState = useCallback(() => {
+    setBossIntroShowing(false);
+    setBossCompletionShowing(false);
+    setBossFileFixed(false);
+    prevBossComplete.current = false;
+  }, []);
+
+  // Direct boss error report — skips the problem selection dialog
+  const reportBossError = useCallback(
+    (target: ContextTarget) => {
+      setContextMenu(null);
+      const matchedId = matchTrigger(target, mapping);
+
+      if (!matchedId || !BOSS_SUB_IDS.includes(matchedId)) {
+        dispatch({ type: 'WRONG_GUESS' });
+        setWrongKind('no_problem');
+        setShowWrong(true);
+        if (!gameState.isMuted) playBonk();
+        return;
+      }
+
+      if (gameState.foundProblems.includes(matchedId)) {
+        const sub = subProblemMap.get(matchedId);
+        setAlreadyFoundName(sub?.name ?? matchedId);
+        return;
+      }
+
+      dispatch({ type: 'FIND_PROBLEM', id: matchedId });
+
+      // Check if all boss subs are now found → mark parent found too
+      const nowFound = [...gameState.foundProblems, matchedId];
+      const allDone = BOSS_SUB_IDS.every(id => nowFound.includes(id));
+      if (allDone && !gameState.foundProblems.includes(BOSS_PARENT_ID)) {
+        dispatch({ type: 'FIND_PROBLEM', id: BOSS_PARENT_ID });
+      }
+
+      const sub = subProblemMap.get(matchedId);
+      setActiveProblem(sub ?? null);
+      setActiveParentId(BOSS_PARENT_ID);
+
+      if (!gameState.isMuted) playChime();
+    },
+    [gameState.foundProblems, gameState.isMuted, mapping],
+  );
+
+  // ──────────────────────────────────────────────────────────────────────────
+
   const showContextMenu = useCallback((menu: ContextMenuState) => {
     setContextMenu(menu);
   }, []);
@@ -215,7 +308,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     (entry: FileEntry) => {
       const viewerType: ViewerType = entry.viewerType as ViewerType;
       const windowId = `file:${entry.name}`;
-      const offset = (gameState.openWindows.length % 5) * 20;
+      const cascade = (gameState.openWindows.length % 5) * 20;
+      const w = viewerType === 'image' ? 400 : 540;
+      const h = 360;
       dispatch({
         type: 'OPEN_WINDOW',
         window: {
@@ -223,14 +318,22 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           title: entry.name,
           viewerType,
           filePath: entry.name,
-          x: 240 + offset,
-          y: 50 + offset,
-          width: viewerType === 'image' ? 400 : 540,
-          height: viewerType === 'image' ? 360 : 360,
+          ...centeredAt(w, h, cascade),
+          width: w,
+          height: h,
         },
       });
+
+      // Trigger boss battle intro when opening the boss file for the first time
+      if (entry.name === BOSS_FILE && !bossFileFixed) {
+        const alreadyOpen = gameState.openWindows.some(w => w.id === windowId);
+        if (!alreadyOpen) {
+          if (!gameState.isMuted) playSosumi();
+          setBossIntroShowing(true);
+        }
+      }
     },
-    [gameState.openWindows.length],
+    [gameState.openWindows, gameState.isMuted, bossFileFixed],
   );
 
   // Open problem selection dialog
@@ -336,7 +439,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         ? (subProblemMap.get(problemId)!.parentId)
         : problemId;
 
-      const offset = (gameState.openWindows.length % 5) * 20;
+      const cascade = (gameState.openWindows.length % 5) * 20;
       dispatch({
         type: 'OPEN_WINDOW',
         window: {
@@ -344,8 +447,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           title: `Let's fix: ${prob.name}`,
           viewerType: 'fix',
           problemId: fixProblemId,
-          x: 300 + offset,
-          y: 80 + offset,
+          ...centeredAt(560, 420, cascade),
           width: 560,
           height: 420,
         },
@@ -389,6 +491,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     problems,
     fileTree,
     mapping,
+    isBossBattleActive,
+    bossIntroShowing,
+    bossCompletionShowing,
+    bossFileFixed,
+    bossFoundCount,
+    bossTotalErrors: BOSS_SUB_IDS.length,
+    dismissBossIntro,
+    dismissBossComplete,
+    resetBossState,
+    reportBossError,
     openFile,
     showContextMenu,
     hideContextMenu,

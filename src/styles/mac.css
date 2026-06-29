@@ -323,7 +323,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 700;
+  z-index: 1100;
 }
 
 /* ── Dialog box ──────────────────────────────────────────────────────────── */
@@ -354,6 +354,14 @@
   font-size: 29px;
   margin-bottom: 12px;
   display: block;
+}
+
+.dialog__icon-img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  display: block;
+  margin-bottom: 12px;
 }
 
 /* Title bar for windowed dialogs (e.g. WelcomeDialog) */
@@ -1162,6 +1170,79 @@
 
 .fix-viewer__content {
   max-height: none;
+}
+
+/* ── Boss Battle intro overlay ───────────────────────────────────────────── */
+
+.boss-intro-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #d4ecd5;
+  background-image: repeating-conic-gradient(#ACDBAF 0deg 90deg, #ffffff 90deg 180deg);
+  background-size: 2px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.boss-intro__image {
+  max-width: 80vw;
+  max-height: 70vh;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.boss-intro__subtitle {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  color: #000000;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.boss-intro__click-hint {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  color: #444444;
+  margin-top: 12px;
+  animation: boss-blink 1s step-start infinite;
+}
+
+@keyframes boss-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ── Boss error counter (upper right of xlsx window) ─────────────────────── */
+
+.boss-error-counter {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  background: #000000;
+  color: #ffffff;
+  padding: 3px 8px;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ── XLSX fixed banner ───────────────────────────────────────────────────── */
+
+.xlsx-fixed-banner {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  background: #e8f5e9;
+  border: 1px solid #4caf50;
+  color: #1b5e20;
+  padding: 4px 8px;
+  flex-shrink: 0;
 }
 
 /* ── XLSX boss battle styles ──────────────────────────────────────────────── */

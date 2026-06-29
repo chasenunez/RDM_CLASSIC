@@ -18,7 +18,7 @@ export function FixViewer({ problemId }: FixViewerProps) {
   return (
     <div className="fix-viewer">
       <div className="fix-viewer__header">
-        <span className="fix-viewer__checkmark">✅</span>
+        <img src="/icons/Happy Mac.svg" className="dialog__icon-img" alt="[OK]" style={{ width: 24, height: 24 }} />
         <h3 className="fix-viewer__title">How to fix: {problem.name}</h3>
       </div>
       <div
