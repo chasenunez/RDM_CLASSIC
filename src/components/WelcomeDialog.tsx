@@ -30,7 +30,7 @@ export function WelcomeDialog() {
           <div className="dialog__body">
             <p style={{ marginBottom: '10px', lineHeight: 2 }}>
               You have just inherited a colleague&apos;s research project.
-              It is a mess. Your mission: find all 13 research data management
+              It's a mess. Your mission: find all 13 research data management
               violations hiding in the project files.
             </p>
             <p style={{ marginBottom: '10px', lineHeight: 2 }}>
@@ -46,7 +46,7 @@ export function WelcomeDialog() {
                 Right-click individual lines or cells inside the viewer.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
-                For issues that are <em>missing</em> from the project (no README, no license…),
+                For issues that are <em>missing</em> from the project,
                 right-click the desktop background or empty space in the folder, then choose
                 <em> Report missing artifact</em>.
               </li>
