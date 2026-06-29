@@ -1,23 +1,10 @@
 {
   "problems": [
     {
-      "id": "no-folder-structure",
-      "triggers": [
-        { "type": "desktop" }
-      ],
-      "matchRule": "any"
-    },
-    {
       "id": "file-naming",
       "triggers": [
-        { "type": "file", "path": "Figure 1.png" },
-        { "type": "file", "path": "Figure 1 (1).png" },
-        { "type": "file", "path": "cleaned data.xlsx" },
-        { "type": "file", "path": "data_new.xlsx" },
         { "type": "file", "path": "manuscript draft.docx" },
-        { "type": "file", "path": "meeting_notes_feb.txt" },
-        { "type": "file", "path": "notes.txt" },
-        { "type": "file", "path": "soil samples.xlsx" }
+        { "type": "file", "path": "manuscript_draft_v2_JK comments.docx" }
       ],
       "matchRule": "any"
     },
@@ -31,10 +18,8 @@
     {
       "id": "file-formats",
       "triggers": [
-        { "type": "file", "path": "analysis_results_USE THIS ONE.docx" },
         { "type": "file", "path": "fig1_updated.jpg" },
-        { "type": "file", "path": "microscopy_sample_12.jpg" },
-        { "type": "file", "path": "sensor_output.dat" }
+        { "type": "file", "path": "microscopy_sample_12.jpg" }
       ],
       "matchRule": "any"
     },
@@ -46,17 +31,9 @@
       "matchRule": "any"
     },
     {
-      "id": "no-metadata",
+      "id": "no-backup",
       "triggers": [
-        { "type": "project-absence", "name": "data dictionary" }
-      ],
-      "matchRule": "any"
-    },
-    {
-      "id": "raw-processed-mixed",
-      "triggers": [
-        { "type": "file", "path": "results_final.xlsx" },
-        { "type": "file", "path": "cleaned data.xlsx" }
+        { "type": "file", "path": "raw_data.xlsx" }
       ],
       "matchRule": "any"
     },
@@ -138,38 +115,24 @@
     {
       "id": "code-quality",
       "triggers": [
-        { "type": "file", "path": "analysis v3 (Marias edits).py" },
-        { "type": "file", "path": "script.py" },
+        { "type": "line", "path": "script.py", "line": 1 },
+        { "type": "line", "path": "script.py", "line": 2 },
+        { "type": "line", "path": "script.py", "line": 3 },
+        { "type": "line", "path": "script.py", "line": 4 },
+        { "type": "line", "path": "script.py", "line": 5 },
+        { "type": "line", "path": "script.py", "line": 6 },
         { "type": "line", "path": "script.py", "line": 7 },
-        { "type": "line", "path": "script.py", "line": 8 }
+        { "type": "line", "path": "script.py", "line": 8 },
+        { "type": "line", "path": "script.py", "line": 9 },
+        { "type": "line", "path": "script.py", "line": 10 },
+        { "type": "line", "path": "script.py", "line": 11 }
       ],
       "matchRule": "any"
     },
     {
       "id": "no-license",
       "triggers": [
-        { "type": "project-absence", "name": "LICENSE" }
-      ],
-      "matchRule": "any"
-    },
-    {
-      "id": "no-data-availability",
-      "triggers": [
-        { "type": "file", "path": "MANUSCRIPT FINAL SUBMISSION.docx" }
-      ],
-      "matchRule": "any"
-    },
-    {
-      "id": "no-doi",
-      "triggers": [
-        { "type": "file", "path": "MANUSCRIPT FINAL SUBMISSION.docx" }
-      ],
-      "matchRule": "any"
-    },
-    {
-      "id": "no-backup",
-      "triggers": [
-        { "type": "file", "path": "data_new(1).xlsx" }
+        { "type": "project-absence", "name": "LICENSE.md" }
       ],
       "matchRule": "any"
     }

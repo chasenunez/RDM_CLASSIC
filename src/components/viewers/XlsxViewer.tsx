@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { useGame } from '../../GameContext';
+import { useGame, BOSS_FILE } from '../../GameContext';
 
 interface XlsxViewerProps {
   filePath: string;
@@ -11,7 +11,6 @@ interface SheetData {
   rows: string[][];
 }
 
-const BOSS_FILE = 'soil samples.xlsx';
 const MISSING_VALUES = new Set(['-999', 'NA', 'n/a', '??']);
 
 function cellClass(filePath: string, rowIdx: number, cell: string): string {
@@ -19,14 +18,20 @@ function cellClass(filePath: string, rowIdx: number, cell: string): string {
   if (rowIdx === 0) return 'xlsx-meta-title';
   if (rowIdx === 1) return 'xlsx-meta-note';
   if (rowIdx === 2) return ''; // header row — styled via th
-  // Data rows: highlight bad missing values
   if (MISSING_VALUES.has(cell.trim())) return 'xlsx-bad-value';
   if (cell.trim() === '' && rowIdx > 2) return 'xlsx-blank-value';
   return '';
 }
 
 export function XlsxViewer({ filePath }: XlsxViewerProps) {
-  const { showContextMenu } = useGame();
+  const {
+    showContextMenu,
+    isBossBattleActive,
+    bossFoundCount,
+    bossTotalErrors,
+    bossFileFixed,
+  } = useGame();
+
   const [sheets, setSheets] = useState<SheetData[]>([]);
   const [activeSheet, setActiveSheet] = useState(0);
   const [error, setError] = useState('');
@@ -53,11 +58,34 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
   if (!sheets.length) return <div className="loading-msg">Loading…</div>;
 
   const current = sheets[activeSheet];
-  const maxCols = Math.max(...current.rows.map(r => r.length));
   const isBoss = filePath === BOSS_FILE;
+  const errorsRemaining = bossTotalErrors - bossFoundCount;
+
+  // Fixed mode: skip meta rows and clean up bad values
+  const displayRows = isBoss && bossFileFixed
+    ? current.rows.slice(2).map(row =>
+        row.map(cell => {
+          const v = String(cell ?? '').trim();
+          if (MISSING_VALUES.has(v) || v === '') return '';
+          return cell;
+        })
+      )
+    : current.rows;
+
+  const maxCols = Math.max(...displayRows.map(r => r.length));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
+
+      {/* Error counter — upper right, only during active boss battle */}
+      {isBoss && !bossFileFixed && (
+        <div className="boss-error-counter">
+          {errorsRemaining > 0
+            ? `${errorsRemaining} error${errorsRemaining !== 1 ? 's' : ''} remaining`
+            : 'All errors found!'}
+        </div>
+      )}
+
       {sheets.length > 1 && (
         <div className="sheet-tabs">
           {sheets.map((s, i) => (
@@ -74,34 +102,46 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
         </div>
       )}
 
-      {isBoss && (
+      {isBoss && !bossFileFixed && (
         <div className="xlsx-boss-hint">
-          👾 Boss Battle — find all 8 data quality issues! Right-click suspicious cells.
+          <img src="/icons/Sad Mac.svg" alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
+          Boss Battle — find all {bossTotalErrors} data quality issues! Right-click suspicious cells.
+        </div>
+      )}
+
+      {isBoss && bossFileFixed && (
+        <div className="xlsx-fixed-banner">
+          <img src="/icons/Happy Mac.svg" alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
+          Fixed! All data quality issues have been corrected.
         </div>
       )}
 
       <div className="table-viewer" style={{ flex: 1 }}>
         <table>
           <tbody>
-            {current.rows.map((row, rowIdx) => {
-              // For boss battle: rows 0 and 1 are meta rows (not real data)
-              const isMetaRow = isBoss && (rowIdx === 0 || rowIdx === 1);
-              // Row 2 in boss file is the actual header; row 0 in normal files is header
-              const isHeaderRow = isBoss ? rowIdx === 2 : rowIdx === 0;
+            {displayRows.map((row, rowIdx) => {
+              // In fixed mode, row 0 is the header (was row 2 in original)
+              const isHeaderRow = bossFileFixed ? rowIdx === 0 : (isBoss ? rowIdx === 2 : rowIdx === 0);
+              const isMetaRow = !bossFileFixed && isBoss && (rowIdx === 0 || rowIdx === 1);
 
               return (
                 <tr key={rowIdx} className={isMetaRow ? 'meta-row' : ''}>
-                  <td className="row-num">{rowIdx}</td>
+                  {!bossFileFixed && <td className="row-num">{rowIdx}</td>}
                   {Array.from({ length: maxCols }, (_, colIdx) => {
                     const cell = String(row[colIdx] ?? '');
                     const Tag = isHeaderRow ? 'th' : 'td';
-                    const extraClass = cellClass(filePath, rowIdx, cell);
+                    const extraClass = bossFileFixed ? '' : cellClass(filePath, rowIdx, cell);
+
+                    // Only show context menu for boss cells during active battle,
+                    // or for any cell when boss is not active
+                    const canRightClick = !isBoss || isBossBattleActive;
 
                     return (
                       <Tag
                         key={colIdx}
                         className={extraClass || undefined}
                         onContextMenu={e => {
+                          if (!canRightClick) return;
                           e.preventDefault();
                           showContextMenu({
                             x: e.clientX,
@@ -109,7 +149,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
                             target: { kind: 'cell', path: filePath, row: rowIdx, col: colIdx },
                           });
                         }}
-                        title={`Row ${rowIdx}, Col ${colIdx} — right-click to report`}
+                        title={canRightClick ? `Row ${rowIdx}, Col ${colIdx} — right-click to report` : undefined}
                       >
                         {cell}
                       </Tag>

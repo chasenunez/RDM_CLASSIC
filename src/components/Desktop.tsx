@@ -11,16 +11,26 @@ import { BinaryViewer } from './viewers/BinaryViewer';
 import { MarkdownViewer } from './viewers/MarkdownViewer';
 import { FixViewer } from './viewers/FixViewer';
 import type { WindowState, FileEntry } from '../types';
-import { computeDisplayFiles, computeArchiveFiles } from '../lib/fixActions';
+import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS } from '../lib/fixActions';
+import { centeredAt } from '../lib/layout';
 
 function TrashView() {
-  const { showContextMenu } = useGame();
+  const { showContextMenu, gameState } = useGame();
+  const isFixed = gameState.fixedProblems.includes('no-backup');
 
   const onContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     showContextMenu({ x: e.clientX, y: e.clientY, target: { kind: 'file', path: 'raw_data.xlsx' } });
   }, [showContextMenu]);
+
+  if (isFixed) {
+    return (
+      <div className="folder-view" style={{ height: '100%' }}>
+        <div className="loading-msg">Trash is empty.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="folder-view" style={{ height: '100%' }}>
@@ -57,11 +67,27 @@ function ArchiveView({ files }: { files: FileEntry[] }) {
   );
 }
 
+function SubfolderView({ folderName }: { folderName: string }) {
+  const { gameState, fileTree } = useGame();
+  const files = computeDisplayFiles(fileTree, gameState.fixedProblems)
+    .filter(e => e.type === 'file' && e.path.startsWith(`_sub/${folderName}/`));
+
+  return (
+    <div className="folder-view" style={{ height: '100%' }}>
+      {files.length === 0 && <div className="loading-msg">Empty folder.</div>}
+      {files.map(entry => (
+        <FileIcon key={entry.path} entry={entry} />
+      ))}
+    </div>
+  );
+}
+
 function ViewerForWindow({ win }: { win: WindowState }) {
   const { gameState, fileTree } = useGame();
   const archiveFiles = computeArchiveFiles(fileTree, gameState.fixedProblems);
 
   if (win.viewerType === 'archive') return <ArchiveView files={archiveFiles} />;
+  if (win.viewerType === 'subfolder') return <SubfolderView folderName={win.filePath!} />;
   if (!win.filePath && win.viewerType !== 'trash' && win.viewerType !== 'fix') return null;
 
   switch (win.viewerType) {
@@ -90,8 +116,22 @@ function FolderView() {
         id: 'archive',
         title: 'archive/',
         viewerType: 'archive',
-        x: 480,
-        y: 100,
+        ...centeredAt(600, 400),
+        width: 600,
+        height: 400,
+      },
+    });
+  }, [dispatch]);
+
+  const openSubfolder = useCallback((folderName: string) => {
+    dispatch({
+      type: 'OPEN_WINDOW',
+      window: {
+        id: `subfolder:${folderName}`,
+        title: `${folderName}/`,
+        viewerType: 'subfolder',
+        filePath: folderName,
+        ...centeredAt(600, 400),
         width: 600,
         height: 400,
       },
@@ -105,25 +145,35 @@ function FolderView() {
 
   const folders = displayFiles.filter(e => e.type === 'folder');
 
+  // Subfolder names that contain organized files (double-click opens them)
+  const organizeMap = FIX_ACTIONS['file-structure']?.organize ?? {};
+  const openableFolders = new Set(Object.keys(organizeMap));
+
   return (
     <div className="folder-view">
-      {folders.map(entry => (
-        <div
-          key={entry.path}
-          className="file-icon"
-          role="button"
-          tabIndex={0}
-          aria-label={`Folder: ${entry.name}`}
-        >
-          <img
-            className="file-icon__image"
-            src={entry.icon}
-            alt=""
-            draggable={false}
-          />
-          <span className="file-icon__label">{entry.name}</span>
-        </div>
-      ))}
+      {folders.map(entry => {
+        const folderKey = entry.name.replace(/\/$/, '');
+        const isOpenable = openableFolders.has(folderKey);
+        return (
+          <div
+            key={entry.path}
+            className="file-icon"
+            role="button"
+            tabIndex={0}
+            aria-label={`Folder: ${entry.name}${isOpenable ? ' (double-click to open)' : ''}`}
+            onDoubleClick={isOpenable ? () => openSubfolder(folderKey) : undefined}
+            onKeyDown={isOpenable ? e => { if (e.key === 'Enter') openSubfolder(folderKey); } : undefined}
+          >
+            <img
+              className="file-icon__image"
+              src={entry.icon}
+              alt=""
+              draggable={false}
+            />
+            <span className="file-icon__label">{entry.name}</span>
+          </div>
+        );
+      })}
 
       {direct.map(entry => (
         <FileIcon key={entry.path} entry={entry} />
@@ -177,8 +227,7 @@ export function Desktop() {
         id: 'trash',
         title: 'Trash',
         viewerType: 'trash',
-        x: 460,
-        y: 60,
+        ...centeredAt(360, 280),
         width: 360,
         height: 280,
       },
@@ -192,8 +241,7 @@ export function Desktop() {
         id: 'project-folder',
         title: 'Side Project 237 B',
         viewerType: 'folder',
-        x: 420,
-        y: 30,
+        ...centeredAt(800, 500),
         width: 800,
         height: 500,
       },

@@ -8,7 +8,7 @@ interface TextViewerProps {
 // Lines that have a game trigger assigned — highlight them subtly so players
 // notice they can right-click. Populated from the known trigger lines in mapping.
 const TRIGGER_LINES: Record<string, number[]> = {
-  'script.py': [7, 8],
+  'script.py': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
 };
 
 export function TextViewer({ filePath }: TextViewerProps) {

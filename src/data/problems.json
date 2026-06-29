@@ -1,29 +1,11 @@
 [
   {
-    "id": "no-folder-structure",
-    "name": "Folder structure",
-    "fullTitle": "No Folder Structure",
-    "what": "All 24 files — raw data, processed data, code, figures, manuscripts, and personal notes — are dumped in a single directory. There is no separation between data stages, no distinction between inputs and outputs, and no logical grouping.",
-    "why": "Without structure, it's impossible to tell at a glance what stage a file belongs to, whether it's an input or output, or what depends on what. This gets worse as projects grow. A new team member would have no idea where to start.",
-    "fix": "Adopt a consistent folder hierarchy that separates concerns. For example:\n\n```\n20260301_AlpineSoilSurvey/\n├── protocol/\n│   ├── DMP/\n│   └── references/\n├── data/\n│   ├── raw/\n│   └── processed/\n├── code/\n├── results/\n│   └── figures/\n├── reports/\n│   └── manuscripts/\n├── README.md\n└── LICENSE\n```\n\nKey principles: separate raw from processed data, keep code in its own folder, isolate outputs (figures, results) from inputs, and put documentation (README, LICENSE) at the root.",
-    "resources": [
-      {
-        "title": "The Turing Way — Research Data Management",
-        "url": "https://the-turing-way.netlify.app/reproducible-research/rdm"
-      },
-      {
-        "title": "CESSDA Data Management Guide",
-        "url": "https://dmeg.cessda.eu/"
-      }
-    ]
-  },
-  {
     "id": "file-naming",
     "name": "File naming",
     "fullTitle": "Bad File Naming",
-    "what": "Nearly every file in the project violates good naming practices:\n\n| File | Problems |\n|------|----------|\n| `soil samples.xlsx` | Spaces in filename |\n| `Soil Samples COPY.xlsx` | Spaces, no date, unclear purpose (\"COPY\" of what?) |\n| `data_new.xlsx` / `data_new(1).xlsx` | Meaningless names, browser-download duplicate |\n| `temp&humidity_data_FINAL.xlsx` | Ampersand (&) is a special character, \"FINAL\" is not a version |\n| `temp&humidity_data_FINAL_v2.xlsx` | \"FINAL\" yet there's a v2 — contradictory |\n| `temp&humidity_data_REALLY FINAL.xlsx` | Spaces, caps, \"REALLY FINAL\" is not versioning |\n| `cleaned data.xlsx` | Spaces, no date, no indication of what was cleaned or how |\n| `analysis_results_USE THIS ONE.docx` | Spaces, caps, instructions in the filename |\n| `analysis v3 (Marias edits).py` | Spaces, parentheses, person's name instead of a version |\n| `script.py` / `script_old.py` | Completely generic, \"old\" is relative and meaningless |\n| `Figure 1.png` / `Figure 1 (1).png` / `fig1_updated.jpg` | Inconsistent naming for the same figure, browser duplicate |\n| `notes.txt` / `meeting_notes_feb.txt` | No date (which February?), no project name |",
-    "why": "Bad file names make it impossible to sort, search, or identify files without opening them. They cause errors in scripts (spaces and special characters break command-line tools), create confusion about which version is current, and are meaningless to anyone outside the project.",
-    "fix": "Adopt the convention from the workshop: `Date_ProjectName_DocumentType_Version.extension`\n\nThe same files renamed properly:\n\n| Original | Fixed |\n|----------|-------|\n| `soil samples.xlsx` | `20260315_AlpineSoil_RawChemistry_v1.0.csv` |\n| `temp&humidity_data_REALLY FINAL.xlsx` | `20260401_AlpineSoil_TempHumidity_v1.2.csv` |\n| `cleaned data.xlsx` | `20260410_AlpineSoil_ProcessedMerged_v1.0.csv` |\n| `script.py` | `20260410_AlpineSoil_DataCleaning_v1.0.py` |\n| `analysis v3 (Marias edits).py` | `20260415_AlpineSoil_Analysis_v1.3.py` |\n| `Figure 1.png` | `20260420_AlpineSoil_FigScatterRatioBysite_v1.0.png` |\n| `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v0.1.docx` |\n\nRules: no spaces (use underscores or hyphens), no special characters, date in YYYYMMDD format, descriptive but short project name, document type, semantic version number.",
+    "what": "The manuscript files violate good naming practices:\n\n| File | Problems |\n|------|----------|\n| `manuscript draft.docx` | Spaces in filename, no date, no version number |\n| `manuscript_draft_v2_JK comments.docx` | Person's name embedded instead of a version number |",
+    "why": "Bad file names make it impossible to sort, search, or identify files without opening them. They cause errors in scripts (spaces break command-line tools), create confusion about which version is current, and are meaningless to anyone outside the project.",
+    "fix": "Adopt the convention: `Date_ProjectName_DocumentType_Version.extension`\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v0.1.docx` |\n| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v0.2.docx` |\n\nRules: no spaces (use underscores), no special characters, date in YYYYMMDD format, descriptive project name, document type, semantic version number.",
     "resources": [
       {
         "title": "Bulk Rename Utility (Windows)",
@@ -43,9 +25,9 @@
     "id": "versioning",
     "name": "Versioning",
     "fullTitle": "No Versioning System",
-    "what": "The project uses ad-hoc \"versioning\" through filename suffixes like `FINAL`, `FINAL_v2`, `REALLY FINAL`, `old`, `COPY`, `USE THIS ONE`, and `(Marias edits)`. There is no version control for code, and no systematic data versioning. There is no way to know what changed between versions, when, or why.",
+    "what": "The project uses ad-hoc \"versioning\" through filename suffixes like `v2`, `JK comments`. There is no version control for code or data. There is no way to know what changed between versions, when, or why.",
     "why": "Without proper versioning, you can't trace the history of changes, you can't undo mistakes, you can't tell which version of the code produced which results, and you risk accidentally working on or sharing the wrong version.",
-    "fix": "For **code**: Use Git. Initialize a repository, commit changes with descriptive messages, and use branches for experimental work. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.\n\nFor **data**: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and maintain a changelog — either in the README or a separate CHANGELOG file — that records what changed in each version. For large datasets, consider tools like DVC (Data Version Control), Git LFS, or LakeFS.\n\nFor **documents**: Use tracked changes in Word, or better yet, write in plain text (Markdown/LaTeX) under version control.",
+    "fix": "For **code**: Use Git. Initialize a repository, commit changes with descriptive messages, and use branches for experimental work. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.\n\nFor **data**: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and maintain a changelog — either in the README or a separate CHANGELOG file — that records what changed in each version.",
     "resources": [
       {
         "title": "Git",
@@ -54,18 +36,6 @@
       {
         "title": "Git GUIs",
         "url": "https://git-scm.com/downloads/guis"
-      },
-      {
-        "title": "DVC (Data Version Control)",
-        "url": "https://dvc.org/"
-      },
-      {
-        "title": "Git LFS",
-        "url": "https://git-lfs.com/"
-      },
-      {
-        "title": "LakeFS",
-        "url": "https://docs.lakefs.io/"
       },
       {
         "title": "Software Carpentry Git lesson",
@@ -77,9 +47,9 @@
     "id": "file-formats",
     "name": "File formats",
     "fullTitle": "Proprietary and Inappropriate File Formats",
-    "what": "The project uses several problematic formats:\n\n| File | Format Problem |\n|------|---------------|\n| All data in `.xlsx` | Proprietary (Microsoft Excel). Not guaranteed to be readable by all tools or in 10 years. Can silently corrupt data (e.g., gene names auto-formatted as dates). |\n| `analysis_results_USE THIS ONE.docx` | Data stored in a Word document — not machine-readable. |\n| `sensor_output.dat` | Proprietary instrument format with unknown calibration. |\n| `microscopy_sample_12.jpg` | JPEG is lossy — every save degrades quality. Microscopy images should be in a lossless format. |\n| `fig1_updated.jpg` | Same issue — figures for publication should be in lossless formats. |",
-    "why": "Proprietary formats can't always be opened without specific (often paid) software. Lossy formats permanently destroy information. Both violate the \"interoperable\" FAIR principle.",
-    "fix": "| Data type | Current format | Recommended format |\n|-----------|---------------|-------------------|\n| Tabular data | .xlsx | .csv (with UTF-8 encoding) |\n| Text/reports | .docx | .pdf/A or plain text (.md, .txt) |\n| Microscopy images | .jpg | .tiff (uncompressed) or .png |\n| Figures for publication | .jpg | .png or .tiff |\n| Sensor data | .dat (proprietary) | .csv with header metadata |\n| Code | .py (this one is fine) | .py (keep as-is — Python is open) |\n\nKeep the proprietary original if you need it for your workflow, but always save an additional copy in an open format for archiving and sharing.",
+    "what": "The project uses JPEG images for figures and microscopy:\n\n| File | Format Problem |\n|------|---------------|\n| `fig1_updated.jpg` | JPEG is lossy — every save degrades quality. Figures for publication should be in lossless formats. |\n| `microscopy_sample_12.jpg` | JPEG is lossy — microscopy images should be in a lossless format to preserve fine detail. |",
+    "why": "Lossy formats permanently destroy information with every save. This violates the \"interoperable\" FAIR principle and can compromise the scientific integrity of images used in publications.",
+    "fix": "| Data type | Current format | Recommended format |\n|-----------|---------------|-------------------|\n| Microscopy images | .jpg | .tiff (uncompressed) |\n| Figures for publication | .jpg | .png or .tiff |\n\nKeep the original if needed for your workflow, but always save an additional copy in a lossless format for archiving and sharing.",
     "resources": [
       {
         "title": "Library of Congress Recommended Formats",
@@ -95,17 +65,13 @@
     "id": "no-readme",
     "name": "README / documentation",
     "fullTitle": "No Documentation (No README)",
-    "what": "There is no README file anywhere in the project. The only documentation consists of two informal text files (`notes.txt` and `meeting_notes_feb.txt`) that contain fragmentary personal notes with no structure, no context, and critical information buried in casual remarks (e.g., \"the sensor at site 7 was broken in March\" and \"she said use 0.5 not 0.3\").",
-    "why": "Without a README, no one — including the researchers themselves after a few months — can understand what the project is about, what the files contain, how the data was collected, what processing was applied, or how to reproduce the results. This violates the \"reusable\" FAIR principle.",
-    "fix": "Create a README.md (or README.txt) at the root of the project. A good README should include:\n\n1. **General information**: Project title, principal investigator, contact info, dates of data collection, geographic location, funding sources.\n2. **Data and file overview**: A list of all files with brief descriptions, relationships between files (e.g., \"script.py reads raw data and produces processed data\").\n3. **Methodological information**: How data was collected (instruments, protocols), any quality control applied, known issues (like the broken sensor at site 7).\n4. **Data-specific information**: For each data file — number of variables, number of rows, variable names with descriptions and units, missing data codes and their meanings.\n5. **Sharing and access information**: License, restrictions, how to cite.",
+    "what": "There is no README file anywhere in the project. Without it, there is no way to understand what the project is about, what the files contain, how the data was collected, what processing was applied, or how to reproduce the results.",
+    "why": "Without a README, no one — including the researchers themselves after a few months — can understand or reuse the project. This violates the \"reusable\" FAIR principle.",
+    "fix": "Create a README.md at the root of the project. A good README should include:\n\n1. **General information**: Project title, principal investigator, contact info, dates of data collection, geographic location, funding sources.\n2. **Data and file overview**: A list of all files with brief descriptions, relationships between files.\n3. **Methodological information**: How data was collected (instruments, protocols), any quality control applied, known issues.\n4. **Data-specific information**: Variable names with descriptions and units, missing data codes.\n5. **Sharing and access information**: License, restrictions, how to cite.",
     "resources": [
       {
         "title": "Cornell README template",
         "url": "https://cornell.app.box.com/v/ReadmeTemplate"
-      },
-      {
-        "title": "Carpentries Incubator README template (referenced in the workshop)",
-        "url": "https://carpentries-incubator.github.io/scientific-metadata/files/AUTHOR_DATASET_ReadmeTemplate.txt"
       },
       {
         "title": "makeareadme.com",
@@ -114,43 +80,30 @@
     ]
   },
   {
-    "id": "no-metadata",
-    "name": "Metadata",
-    "fullTitle": "No Metadata",
-    "what": "There is no structured metadata associated with any data file. Column headers in the data are ambiguous (`col1`, `col2`, `col3`, `val`, `temp`) with no descriptions or units. There is no information about the instruments used, measurement protocols, or coordinate reference systems.",
-    "why": "Metadata is what makes data findable and understandable by both humans and machines. Without it, search engines and data catalogues can't index the data, and other researchers can't assess whether the data is relevant or trustworthy for their needs.",
-    "fix": "1. **Rename columns** to be self-descriptive: `col1` → `soil_moisture_pct`, `col3` → `organic_carbon_g_per_kg`, `temp` → `air_temperature_degC`.\n2. **Standardize missing data codes**: Pick one code (e.g., `NA` or leave blank) and use it consistently — not a mix of `NA`, `n/a`, `-999`, `??`, and blank cells.\n3. **Adopt a metadata standard** for your discipline. Use directories like the Digital Curation Centre, RDA Metadata Standards, or FAIRsharing to find the right one.\n4. **Use controlled vocabularies** — don't switch between \"picture\" and \"image\" or \"location\" and \"site\" for the same concept.",
+    "id": "no-backup",
+    "name": "Data provenance",
+    "fullTitle": "Raw Data Not Preserved",
+    "what": "`raw_data.xlsx` — the original, unprocessed data file — was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.",
+    "why": "Raw data is the ground truth of your research. If something goes wrong downstream — a processing error, a bug in your script, a question from a reviewer — you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.",
+    "fix": "Follow these raw-data rules:\n\n1. **Never delete raw data.** Archive it in a read-only location.\n2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.\n3. **Store raw data in at least two places** (e.g., your local drive AND your institute's storage or a repository).\n4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.\n\nA clean project layout separates concerns:\n```\ndata/\n  raw/          ← original files, never touched\n  processed/    ← output of your scripts\n```",
     "resources": [
       {
-        "title": "Digital Curation Centre metadata standards",
-        "url": "https://www.dcc.ac.uk/guidance/standards/"
+        "title": "UKRN Primer: Research Data Management",
+        "url": "https://www.ukrn.org/primers/"
       },
       {
-        "title": "RDA Metadata Standards Catalog",
-        "url": "https://rdamsc.bath.ac.uk/"
-      },
-      {
-        "title": "FAIRsharing",
-        "url": "https://fairsharing.org/"
+        "title": "DataONE Best Practice: Preserve information rich data",
+        "url": "https://dataoneorg.github.io/Education/bestpractices/preserve-information-keep"
       }
     ]
-  },
-  {
-    "id": "raw-processed-mixed",
-    "name": "Raw vs. processed data",
-    "fullTitle": "Raw and Processed Data Are Mixed Together",
-    "what": "Raw data (`soil samples.xlsx`, `temp&humidity_data_*.xlsx`, `sensor_output.dat`) and processed data (`cleaned data.xlsx`, `results_final.xlsx`) are in the same directory with no separation. There is no way to tell which files are original inputs and which are derived outputs.",
-    "why": "If you can't distinguish raw data from processed data, you risk accidentally modifying or overwriting your originals — which may be irreplaceable. It also makes it impossible for someone else to reproduce your analysis from scratch.",
-    "fix": "1. **Separate raw and processed data** into different folders (`data/raw/` and `data/processed/`).\n2. **Make raw data read-only** (use file permissions: `chmod 444 data/raw/*` on Linux/Mac).\n3. **Never modify raw data files directly.** Always read them in your script and write outputs to a different location.\n4. **Document the processing chain**: which script transforms which input into which output.",
-    "resources": []
   },
   {
     "id": "data-quality",
     "name": "Data quality (inside files)",
     "fullTitle": "Data Quality Issues Inside the Files",
-    "what": "Looking at `soil_samples_preview.csv`, the data has multiple internal problems:\n\n| Issue | Example |\n|-------|---------|\n| Merged-cell-style header rows | Row 1: \"Alpine Soil Survey - Spring Campaign\" spanning columns — this breaks CSV parsing |\n| Metadata in data rows | Row 2: empty except for a note about site 7 — not a data row |\n| Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |\n| No units anywhere | Is `temp` in Celsius or Fahrenheit? Is `col1` a percentage or a ratio? |\n| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of \"missing\" in one dataset |\n| Undocumented codes | `-999` appears to mean \"sensor broken\" but is never defined |\n| Free-text in data columns | `notes` column contains unstructured comments (\"weird value\", \"check this\") |",
+    "what": "Looking at `soil samples.xlsx`, the data has multiple internal problems:\n\n| Issue | Example |\n|-------|---------|\n| Floating title row | Row 0: survey title embedded in data — breaks automated parsing |\n| Embedded note | Row 1: free-text note in a data cell |\n| Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |\n| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of \"missing\" |",
     "why": "These issues cause scripts to break, statistics to be wrong (e.g., `-999` would distort a mean if not excluded), and other researchers to misinterpret the data.",
-    "fix": "1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.\n2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.\n3. **Standardize missing data** to a single code (blank or `NA`) and document what it means in the README.\n4. **Move notes to documentation** — the README or a separate data dictionary, not embedded in data cells.\n5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.",
+    "fix": "1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.\n2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.\n3. **Standardize missing data** to a single code (blank or `NA`) and document what it means in the README.\n4. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.",
     "resources": [
       {
         "title": "Broman & Woo (2018), \"Data Organization in Spreadsheets\" (The American Statistician)",
@@ -167,7 +120,7 @@
         "name": "Floating title row",
         "what": "Row 0 of `soil samples.xlsx` contains **\"Alpine Soil Survey - Spring Campaign\"** — a survey title embedded inside the data file. This creates a floating header that breaks automated parsing.",
         "why": "Scripts expect the first row to be column headers or data. The extra title row shifts all row indices, causing errors in analysis pipelines and breaking tools that auto-detect headers.",
-        "fix": "Remove the title row from the spreadsheet. Store the survey description in a separate README or data dictionary.\n\n```\n# Before\nRow 0: Alpine Soil Survey - Spring Campaign  ← doesn't belong here\nRow 1: (embedded note)\nRow 2: id, col1, col2 ...  ← actual header\n\n# After\nRow 0: id, col1, col2 ...  ← header is first row\n```",
+        "fix": "Remove the title row from the spreadsheet. Store the survey description in a separate README or data dictionary.\n\n```\n# Before\nRow 0: Alpine Soil Survey - Spring Campaign  <- doesn't belong here\nRow 1: (embedded note)\nRow 2: id, col1, col2 ...  <- actual header\n\n# After\nRow 0: id, col1, col2 ...  <- header is first row\n```",
         "resources": [
           {
             "title": "Tidy Data (Hadley Wickham)",
@@ -180,7 +133,7 @@
         "name": "Embedded note in data",
         "what": "Row 1, column F of `soil samples.xlsx` contains the note *\"site 7 sensor broken in March\"* — a free-text note embedded inside the spreadsheet grid.",
         "why": "Notes embedded in cells are invisible to data-loading scripts and are silently dropped when the file is converted or shared. They also prevent the file from being parsed as a clean rectangular table.",
-        "fix": "Remove the note from the cell. Record it in a dedicated **notes** column in the data, or better yet, in the data dictionary or a separate events log.\n\n```\n# Option A: notes column in the data\nid | ... | notes\n7  | ... | sensor broken March 2026\n\n# Option B: separate events log\nevents.txt: 2026-03 site 7 — sensor malfunction\n```",
+        "fix": "Remove the note from the cell. Record it in a dedicated **notes** column in the data, or better yet, in the data dictionary or a separate events log.",
         "resources": [
           {
             "title": "DataONE Best Practices",
@@ -193,7 +146,7 @@
         "name": "Ambiguous column names",
         "what": "Column headers **col1, col2, col3** are meaningless placeholders. **temp** has no units. Without knowing what these columns measure, the data cannot be interpreted.",
         "why": "Ambiguous names force every future user to hunt for external context. Analysis errors become more likely, and even the original researcher will forget the meaning within months.",
-        "fix": "Rename columns to meaningful names **with units** where applicable:\n\n| Old name | New name |\n|---|---|\n| col1 | soil_moisture_pct |\n| col2 | organic_carbon_g_per_kg |\n| col3 | bulk_density_g_per_cm3 |\n| temp | temperature_C |\n\nDocument all column names and units in a data dictionary.",
+        "fix": "Rename columns to meaningful names **with units** where applicable:\n\n| Old name | New name |\n|---|---|\n| col1 | soil_moisture_pct |\n| col2 | organic_carbon_g_per_kg |\n| col3 | bulk_density_g_per_cm3 |\n| temp | temperature_C |",
         "resources": [
           {
             "title": "Data Organization in Spreadsheets (Broman & Woo)",
@@ -219,7 +172,7 @@
         "name": "Missing value: 'n/a' string",
         "what": "Cell (row 6, pH column) of `soil samples.xlsx` contains **\"n/a\"** — a second, differently-cased spelling of the not-available indicator used elsewhere as **'NA'**.",
         "why": "Case-sensitive languages (Python, R) treat 'NA' and 'n/a' as different values. Mixed spellings mean some missing values appear as valid strings, distorting summary statistics.",
-        "fix": "Standardise all missing values to a single code. Replace every variant ('n/a', 'NA', '-999', '??', blank) with the chosen standard — for example, `NA`.\n\nDocument the convention:\n```\nMissing values: NA (all variables)\n```",
+        "fix": "Standardise all missing values to a single code. Replace every variant ('n/a', 'NA', '-999', '??', blank) with the chosen standard — for example, `NA`.",
         "resources": [
           {
             "title": "Tidy Data",
@@ -244,7 +197,7 @@
         "id": "dq-missing-999",
         "name": "Missing value: -999 sentinel",
         "what": "Row 9, pH and temp columns of `soil samples.xlsx` contain **-999** — a numeric sentinel used as a missing-value code. Sentinels that look like plausible numbers are especially dangerous.",
-        "why": "Statistical functions silently include -999 in averages, min/max, and correlations. A mean pH incorporating -999 is nonsensical, and the error is invisible. This pattern has caused published retractions.",
+        "why": "Statistical functions silently include -999 in averages, min/max, and correlations. A mean pH incorporating -999 is nonsensical, and the error is invisible.",
         "fix": "Replace -999 (and any other numeric sentinels) with an explicit missing-value code such as `NA`. **Never encode missing data as an extreme number.** Document the convention in the data dictionary.",
         "resources": [
           {
@@ -257,7 +210,7 @@
         "id": "dq-missing-qq",
         "name": "Missing value: '??' string",
         "what": "Row 11, pH column of `soil samples.xlsx` contains **\"??\"** — an informal placeholder that does not appear in any documentation.",
-        "why": "Informal codes like '??' are easy to forget and hard to search for programmatically. They get confused with valid data and cause parse errors in strictly-typed formats (e.g. Parquet, databases).",
+        "why": "Informal codes like '??' are easy to forget and hard to search for programmatically. They get confused with valid data and cause parse errors in strictly-typed formats.",
         "fix": "Replace '??' with the standardised missing-value code (e.g. `NA`). Document the decision in the data dictionary so future users know there is exactly one missing-value code.",
         "resources": [
           {
@@ -271,15 +224,11 @@
   {
     "id": "code-quality",
     "name": "Code quality",
-    "fullTitle": "Code Has No Comments and Is Not Reproducible",
-    "what": "`script.py` has no comments explaining what it does, uses hardcoded filenames with spaces and special characters, references ambiguous column names (`col1`, `col3`, `val`), has a leftover `TODO` and commented-out debug code, and produces no log or record of what it did. There are multiple versions of the script (`script.py`, `script_old.py`, `analysis v3 (Marias edits).py`) with no clear indication of which is current or what changed.",
-    "why": "Uncommented, unversioned code is a black box. No one — including you in six months — will know what it does, why it makes certain choices (like the 0.5 threshold), or which version produced the published results.",
-    "fix": "1. **Add clear comments** explaining the purpose of each section, the meaning of parameters, and the rationale for decisions.\n2. **Use meaningful variable names**: `soil_chemistry_df` not `df`, `temperature_df` not `df2`.\n3. **Use relative file paths** or configuration files instead of hardcoded filenames.\n4. **Put code under Git version control** and delete the ad-hoc copies (`script_old.py`, etc.).\n5. **Include a requirements file** (`requirements.txt` or `environment.yml`) so others can recreate your environment.\n6. **Consider using Renku** for integrated data and code management.",
+    "fullTitle": "Code Has No Comments",
+    "what": "`script.py` has no comments explaining what the code does. It uses hardcoded filenames, references ambiguous column names (`col1`, `col3`, `val`), and produces no log or record of what it did.",
+    "why": "Uncommented code is a black box. No one — including you in six months — will know what it does, why it makes certain choices, or which version produced the published results.",
+    "fix": "1. **Add clear comments** explaining the purpose of each section, the meaning of parameters, and the rationale for decisions.\n2. **Use meaningful variable names**: `soil_chemistry_df` not `df`, `temperature_df` not `df2`.\n3. **Use relative file paths** or configuration files instead of hardcoded filenames.\n4. **Include a requirements file** (`requirements.txt` or `environment.yml`) so others can recreate your environment.",
     "resources": [
-      {
-        "title": "Renku",
-        "url": "https://renku.readthedocs.io/"
-      },
       {
         "title": "Software Carpentry Python lesson",
         "url": "https://swcarpentry.github.io/python-novice-inflammation/"
@@ -290,9 +239,9 @@
     "id": "no-license",
     "name": "Licensing",
     "fullTitle": "No License",
-    "what": "There is no LICENSE file in the project. Without a license, the default legal status in most jurisdictions is \"all rights reserved\" — meaning no one else can legally use, share, or build upon the data or code, even if the files are publicly accessible.",
+    "what": "There is no LICENSE file in the project. Without a license, the default legal status in most jurisdictions is \"all rights reserved\" — meaning no one else can legally use, share, or build upon the data or code.",
     "why": "A missing license effectively prevents reuse, which defeats the purpose of sharing data. It violates the \"reusable\" FAIR principle.",
-    "fix": "For **data**, use a Creative Commons license:\n- **CC0** (public domain dedication) — most open, recommended when you want maximum reuse. Data must still be cited by scholarly norms even without a legal requirement.\n- **CC BY 4.0** (attribution required) — most funders recommend this. Ensures you get credit.\n- Avoid **CC BY-ND** (no derivatives) — it prevents others from building on your data, which is overly restrictive for research. Some funders explicitly prohibit it.\n\nFor **code**, use an open-source software license:\n- **MIT** — very permissive, widely used, simple to understand.\n- **Apache 2.0** — permissive with patent protection.\n- **GPL** — copyleft; requires derivative works to also be open-source.\n\nPlace a `LICENSE` file (for code) or `LICENSE` + a note in the README (for data) at the root of your project.",
+    "fix": "For **data**, use a Creative Commons license:\n- **CC0** (public domain dedication) — most open, recommended when you want maximum reuse.\n- **CC BY 4.0** (attribution required) — most funders recommend this.\n\nFor **code**, use an open-source license:\n- **MIT** — very permissive, widely used.\n- **Apache 2.0** — permissive with patent protection.\n\nPlace a `LICENSE.md` file at the root of your project.",
     "resources": [
       {
         "title": "Creative Commons license chooser",
@@ -301,60 +250,7 @@
       {
         "title": "Choose an open source license",
         "url": "https://choosealicense.com/"
-      },
-      {
-        "title": "Open Source Initiative license list",
-        "url": "https://opensource.org/licenses"
       }
     ]
-  },
-  {
-    "id": "no-data-availability",
-    "name": "Data availability statement",
-    "fullTitle": "No Data Availability Statement",
-    "what": "The manuscript drafts in this project presumably describe the analysis, but there is no data availability statement — no information about where the data will be deposited, under what DOI, with what license, or how others can access it.",
-    "why": "Without a data availability statement, readers of the published paper have no way to find or access the underlying data. Many journals now require these statements.",
-    "fix": "Include a statement in the manuscript, for example:\n\n> \"The data supporting this study's findings are openly available in EnviDat at https://doi.org/10.xxxx/xxxxx. The dataset includes soil chemistry measurements and temperature/humidity sensor readings from alpine sites in Switzerland (2026) and is available under a CC BY 4.0 license.\"\n\nThis should specify: the repository name, the DOI, what the dataset contains, and the license.",
-    "resources": [
-      {
-        "title": "Springer Nature data availability statement examples",
-        "url": "https://www.springernature.com/gp/authors/research-data-policy/data-availability-statements"
-      },
-      {
-        "title": "re3data (find a repository)",
-        "url": "https://www.re3data.org/"
-      }
-    ]
-  },
-  {
-    "id": "no-doi",
-    "name": "Persistent identifiers",
-    "fullTitle": "No Persistent Identifier (DOI)",
-    "what": "None of the data has been deposited in a repository, so none of it has a DOI or any other persistent identifier. The data exists only on local machines.",
-    "why": "Without a persistent identifier, there is no stable, citable reference to the data. Links can break, filenames can change, but a DOI is permanent. This violates the \"findable\" FAIR principle.",
-    "fix": "Deposit the data in a repository that assigns DOIs. Options relevant to this context include:\n\n- **EnviDat** — the environmental data repository for WSL\n- **Zenodo** — a general-purpose repository hosted by CERN (free, accepts any research output)\n- **ERIC** — for ETH domain research\n\nUse re3data.org to find discipline-specific repositories if these don't fit.",
-    "resources": [
-      {
-        "title": "EnviDat",
-        "url": "https://www.envidat.ch/"
-      },
-      {
-        "title": "Zenodo",
-        "url": "https://zenodo.org/"
-      },
-      {
-        "title": "re3data",
-        "url": "https://www.re3data.org/"
-      }
-    ]
-  },
-  {
-    "id": "no-backup",
-    "name": "Backup strategy",
-    "fullTitle": "No Backup Strategy",
-    "what": "The data appears to exist in a single location with no backup strategy. There are browser-download duplicates (`data_new(1).xlsx`, `Figure 1 (1).png`) suggesting files are being moved around via email or downloads rather than through a systematic storage approach.",
-    "why": "A single hardware failure, theft, or accidental deletion could destroy all the data. Research data is often irreplaceable — especially observational data that can't be recollected.",
-    "fix": "Apply the **3-2-1 backup rule**:\n- **3** copies of the data\n- On **2** different storage media\n- With **1** copy off-site\n\nFor example: one copy on your workstation, one on your institute's network drive (backed up by IT), and one in a cloud service or repository.",
-    "resources": []
   }
 ]

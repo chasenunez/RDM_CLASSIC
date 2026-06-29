@@ -1,0 +1,40 @@
+# Draft: Alpine Soil Carbon Dynamics
+
+**Status: DRAFT — do not distribute**
+
+---
+
+## Abstract (draft)
+
+We measured soil organic carbon at 10 alpine sites in spring 2026. Preliminary results suggest elevation and temperature are key predictors. Full statistical analysis pending.
+
+---
+
+## Introduction (incomplete)
+
+Alpine soils are important carbon stores. Climate change may alter carbon dynamics... [EXPAND THIS SECTION — add citations from JK's list]
+
+---
+
+## Methods
+
+Sites were sampled in March and April 2026. See methods_notes.txt for sampling protocol details.
+
+Analysis code in script.py — note: still needs validation.
+
+---
+
+## Results (preliminary)
+
+Initial analysis shows SOC ranges from ~11 to ~16 g/kg across sites. Temperature correlation looks strong (r ≈ −0.7).
+
+[ADD FIGURES — Figure 1.png needs to be regenerated in TIFF format]
+
+---
+
+## TODO
+
+- [ ] Add literature review
+- [ ] Finalize statistics
+- [ ] Get co-author comments
+- [ ] Add data availability statement

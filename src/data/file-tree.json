@@ -1,122 +1,5 @@
 [
   {
-    "path": "sample_project/20260501_AlpineSoil_Manuscript_v0.1.md",
-    "name": "20260501_AlpineSoil_Manuscript_v0.1.md",
-    "type": "file",
-    "size": 1617,
-    "mimeGuess": "text/markdown",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/Figure 1 (1).png",
-    "name": "Figure 1 (1).png",
-    "type": "file",
-    "size": 8286,
-    "mimeGuess": "image/png",
-    "icon": "/icons/Paint file.svg",
-    "viewerType": "image"
-  },
-  {
-    "path": "sample_project/Figure 1.png",
-    "name": "Figure 1.png",
-    "type": "file",
-    "size": 8286,
-    "mimeGuess": "image/png",
-    "icon": "/icons/Paint file.svg",
-    "viewerType": "image"
-  },
-  {
-    "path": "sample_project/LICENSE",
-    "name": "LICENSE",
-    "type": "file",
-    "size": 1544,
-    "mimeGuess": "application/octet-stream",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/MANUSCRIPT FINAL SUBMISSION.docx",
-    "name": "MANUSCRIPT FINAL SUBMISSION.docx",
-    "type": "file",
-    "size": 2417,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "markdown"
-  },
-  {
-    "path": "sample_project/README.md",
-    "name": "README.md",
-    "type": "file",
-    "size": 2004,
-    "mimeGuess": "text/markdown",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/ZENODO_DOI.md",
-    "name": "ZENODO_DOI.md",
-    "type": "file",
-    "size": 1256,
-    "mimeGuess": "text/markdown",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/analysis v3 (Marias edits).py",
-    "name": "analysis v3 (Marias edits).py",
-    "type": "file",
-    "size": 449,
-    "mimeGuess": "text/x-python",
-    "icon": "/icons/THINK Pascal.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/analysis_results_USE THIS ONE.docx",
-    "name": "analysis_results_USE THIS ONE.docx",
-    "type": "file",
-    "size": 1047,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "markdown"
-  },
-  {
-    "path": "sample_project/cleaned data.xlsx",
-    "name": "cleaned data.xlsx",
-    "type": "file",
-    "size": 17204,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/data_dictionary.md",
-    "name": "data_dictionary.md",
-    "type": "file",
-    "size": 2208,
-    "mimeGuess": "text/markdown",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/data_new(1).xlsx",
-    "name": "data_new(1).xlsx",
-    "type": "file",
-    "size": 16727,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/data_new.xlsx",
-    "name": "data_new.xlsx",
-    "type": "file",
-    "size": 16727,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
     "path": "sample_project/fig1_updated.jpg",
     "name": "fig1_updated.jpg",
     "type": "file",
@@ -144,15 +27,6 @@
     "viewerType": "markdown"
   },
   {
-    "path": "sample_project/meeting_notes_feb.txt",
-    "name": "meeting_notes_feb.txt",
-    "type": "file",
-    "size": 160,
-    "mimeGuess": "text/plain",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "text"
-  },
-  {
     "path": "sample_project/microscopy_sample_12.jpg",
     "name": "microscopy_sample_12.jpg",
     "type": "file",
@@ -162,109 +36,19 @@
     "viewerType": "image"
   },
   {
-    "path": "sample_project/notes.txt",
-    "name": "notes.txt",
-    "type": "file",
-    "size": 147,
-    "mimeGuess": "text/plain",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/results_final.xlsx",
-    "name": "results_final.xlsx",
-    "type": "file",
-    "size": 16705,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
     "path": "sample_project/script.py",
     "name": "script.py",
     "type": "file",
-    "size": 448,
+    "size": 340,
     "mimeGuess": "text/x-python",
     "icon": "/icons/THINK Pascal.svg",
     "viewerType": "text"
-  },
-  {
-    "path": "sample_project/script_old.py",
-    "name": "script_old.py",
-    "type": "file",
-    "size": 143,
-    "mimeGuess": "text/x-python",
-    "icon": "/icons/THINK Pascal.svg",
-    "viewerType": "text"
-  },
-  {
-    "path": "sample_project/sensor_output.dat",
-    "name": "sensor_output.dat",
-    "type": "file",
-    "size": 360,
-    "mimeGuess": "application/octet-stream",
-    "icon": "/icons/Draw file.svg",
-    "viewerType": "binary"
   },
   {
     "path": "sample_project/soil samples.xlsx",
     "name": "soil samples.xlsx",
     "type": "file",
     "size": 18542,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/temp&humidity_data_FINAL.xlsx",
-    "name": "temp&humidity_data_FINAL.xlsx",
-    "type": "file",
-    "size": 6450,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/temp&humidity_data_FINAL_v2.xlsx",
-    "name": "temp&humidity_data_FINAL_v2.xlsx",
-    "type": "file",
-    "size": 6448,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/temp&humidity_data_REALLY FINAL.xlsx",
-    "name": "temp&humidity_data_REALLY FINAL.xlsx",
-    "type": "file",
-    "size": 6625,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/temp_humidity_FINAL.xlsx",
-    "name": "temp_humidity_FINAL.xlsx",
-    "type": "file",
-    "size": 17333,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/temp_humidity_FINAL_v2.xlsx",
-    "name": "temp_humidity_FINAL_v2.xlsx",
-    "type": "file",
-    "size": 17681,
-    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
-    "viewerType": "xlsx"
-  },
-  {
-    "path": "sample_project/temp_humidity_REALLY FINAL.xlsx",
-    "name": "temp_humidity_REALLY FINAL.xlsx",
-    "type": "file",
-    "size": 18029,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "icon": "/icons/Text file.svg",
     "viewerType": "xlsx"

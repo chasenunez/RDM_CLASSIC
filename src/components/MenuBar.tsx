@@ -86,7 +86,7 @@ export function MenuBar() {
         aria-label="App menu"
       >
         <img
-          src="/icons/Spaceward Ho.png"
+          src="/icons/Stop.svg"
           alt="Menu"
           style={{ width: 16, height: 16, imageRendering: 'pixelated', pointerEvents: 'none' }}
         />
@@ -110,7 +110,7 @@ export function MenuBar() {
                 dispatch({ type: 'TOGGLE_MUTE' });
               }}
             >
-              {gameState.isMuted ? '🔇 Unmute Sounds' : '🔊 Mute Sounds'}
+              {gameState.isMuted ? '[off] Unmute Sounds' : '[on] Mute Sounds'}
             </div>
           </div>
         )}
