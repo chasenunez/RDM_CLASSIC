@@ -5,6 +5,7 @@ import { Desktop } from './components/Desktop';
 import { ContextMenu } from './components/ContextMenu';
 import { WelcomeDialog } from './components/WelcomeDialog';
 import { ProblemReportDialog } from './components/ProblemReportDialog';
+import { ProblemSelectionDialog } from './components/ProblemSelectionDialog';
 import { WrongGuessDialog } from './components/WrongGuessDialog';
 import { CompletionDialog } from './components/CompletionDialog';
 import { Fireworks } from './components/Fireworks';
@@ -14,26 +15,34 @@ import './styles/fonts.css';
 import './styles/mac.css';
 
 function GameUI() {
-  const { gameState, problems } = useGame();
+  const { gameState, problems, dispatch } = useGame();
   const { foundProblems, hasSeenWelcome } = gameState;
 
   const [fireworksDone, setFireworksDone] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
 
-  const allFound = problems.length > 0 && foundProblems.length >= problems.length;
+  // Only count main problems (not sub-problems) toward completion
+  const mainProblemIds = problems.map(p => p.id);
+  const foundMainCount = foundProblems.filter(id => mainProblemIds.includes(id)).length;
+  const allFound = problems.length > 0 && foundMainCount >= problems.length;
+
+  const handlePlayAgain = () => {
+    dispatch({ type: 'RESET' });
+    setShowCompletion(false);
+    setFireworksDone(false);
+  };
 
   return (
     <>
       <MenuBar />
       <Desktop />
       <ContextMenu />
+      <ProblemSelectionDialog />
 
-      {/* Overlays in priority order (highest z first) */}
       {!hasSeenWelcome && <WelcomeDialog />}
       <ProblemReportDialog />
       <WrongGuessDialog />
 
-      {/* Fireworks → completion dialog sequence */}
       {allFound && !fireworksDone && (
         <Fireworks
           onDone={() => {
@@ -43,12 +52,7 @@ function GameUI() {
         />
       )}
       {showCompletion && (
-        <CompletionDialog
-          onClose={() => {
-            // "Play again" resets but keeps the completion visible until reload
-            setShowCompletion(false);
-          }}
-        />
+        <CompletionDialog onClose={handlePlayAgain} />
       )}
     </>
   );

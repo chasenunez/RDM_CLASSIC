@@ -8,7 +8,10 @@ import { CsvViewer } from './viewers/CsvViewer';
 import { XlsxViewer } from './viewers/XlsxViewer';
 import { ImageViewer } from './viewers/ImageViewer';
 import { BinaryViewer } from './viewers/BinaryViewer';
-import type { WindowState } from '../types';
+import { MarkdownViewer } from './viewers/MarkdownViewer';
+import { FixViewer } from './viewers/FixViewer';
+import type { WindowState, FileEntry } from '../types';
+import { computeDisplayFiles, computeArchiveFiles } from '../lib/fixActions';
 
 function TrashView() {
   const { showContextMenu } = useGame();
@@ -41,31 +44,109 @@ function TrashView() {
   );
 }
 
+function ArchiveView({ files }: { files: FileEntry[] }) {
+  return (
+    <div className="folder-view" style={{ height: '100%' }}>
+      {files.length === 0 && (
+        <div className="loading-msg">Archive is empty.</div>
+      )}
+      {files.map(entry => (
+        <FileIcon key={entry.path} entry={entry} />
+      ))}
+    </div>
+  );
+}
+
 function ViewerForWindow({ win }: { win: WindowState }) {
-  if (!win.filePath && win.viewerType !== 'trash') return null;
+  const { gameState, fileTree } = useGame();
+  const archiveFiles = computeArchiveFiles(fileTree, gameState.fixedProblems);
+
+  if (win.viewerType === 'archive') return <ArchiveView files={archiveFiles} />;
+  if (!win.filePath && win.viewerType !== 'trash' && win.viewerType !== 'fix') return null;
+
   switch (win.viewerType) {
-    case 'text':   return <TextViewer filePath={win.filePath!} />;
-    case 'csv':    return <CsvViewer filePath={win.filePath!} />;
-    case 'xlsx':   return <XlsxViewer filePath={win.filePath!} />;
-    case 'image':  return <ImageViewer filePath={win.filePath!} />;
-    case 'binary': return <BinaryViewer filePath={win.filePath!} />;
-    case 'trash':  return <TrashView />;
-    default:       return null;
+    case 'text':     return <TextViewer filePath={win.filePath!} />;
+    case 'csv':      return <CsvViewer filePath={win.filePath!} />;
+    case 'xlsx':     return <XlsxViewer filePath={win.filePath!} />;
+    case 'image':    return <ImageViewer filePath={win.filePath!} />;
+    case 'binary':   return <BinaryViewer filePath={win.filePath!} />;
+    case 'markdown': return <MarkdownViewer filePath={win.filePath!} />;
+    case 'fix':      return <FixViewer problemId={win.problemId!} />;
+    case 'trash':    return <TrashView />;
+    default:         return null;
   }
 }
 
 function FolderView() {
-  const { fileTree } = useGame();
-  const direct = fileTree.filter(e => {
+  const { gameState, fileTree, dispatch } = useGame();
+  const displayFiles = computeDisplayFiles(fileTree, gameState.fixedProblems);
+  const archiveFiles = computeArchiveFiles(fileTree, gameState.fixedProblems);
+  const showArchive = archiveFiles.length > 0;
+
+  const openArchive = useCallback(() => {
+    dispatch({
+      type: 'OPEN_WINDOW',
+      window: {
+        id: 'archive',
+        title: 'archive/',
+        viewerType: 'archive',
+        x: 480,
+        y: 100,
+        width: 600,
+        height: 400,
+      },
+    });
+  }, [dispatch]);
+
+  const direct = displayFiles.filter(e => {
     const parts = e.path.replace('sample_project/', '').split('/');
     return parts.length === 1 && e.type === 'file';
   });
 
+  const folders = displayFiles.filter(e => e.type === 'folder');
+
   return (
     <div className="folder-view">
+      {folders.map(entry => (
+        <div
+          key={entry.path}
+          className="file-icon"
+          role="button"
+          tabIndex={0}
+          aria-label={`Folder: ${entry.name}`}
+        >
+          <img
+            className="file-icon__image"
+            src={entry.icon}
+            alt=""
+            draggable={false}
+          />
+          <span className="file-icon__label">{entry.name}</span>
+        </div>
+      ))}
+
       {direct.map(entry => (
         <FileIcon key={entry.path} entry={entry} />
       ))}
+
+      {showArchive && (
+        <div
+          className="file-icon"
+          role="button"
+          tabIndex={0}
+          aria-label="archive/ (double-click to open)"
+          onDoubleClick={openArchive}
+          onKeyDown={e => { if (e.key === 'Enter') openArchive(); }}
+        >
+          <img
+            className="file-icon__image"
+            src="/icons/Floppy.svg"
+            alt=""
+            draggable={false}
+          />
+          <span className="file-icon__label">archive/</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -126,7 +207,6 @@ export function Desktop() {
       onDragStart={e => e.preventDefault()}
       aria-label="Desktop"
     >
-      {/* Centered background logo — center ninth of the desktop */}
       <img
         src="/assets/LDW_DIGITAL_LIB4RI.png"
         className="desktop__bg-logo"
@@ -136,26 +216,21 @@ export function Desktop() {
 
       <StickyNote />
 
-      {/* Floppy disk — top-right desktop icon */}
+      {/* Floppy disk icon */}
       <div
         className="desktop-icon"
         style={{ right: 16, top: 8 }}
         onDoubleClick={openProjectFolder}
         role="button"
-        aria-label="sample_project (double-click to open)"
+        aria-label="Side Project 237 B (double-click to open)"
         tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter') openProjectFolder(); }}
       >
-        <img
-          className="desktop-icon__image"
-          src="/icons/Floppy.png"
-          alt=""
-          draggable={false}
-        />
-        <span className="desktop-icon__label">Side Project 237 B</span>
+        <img className="desktop-icon__image" src="/icons/Floppy.png" alt="" draggable={false} />
+        <span className="desktop-icon__label">Side Project</span>
       </div>
 
-      {/* Trash — bottom-right desktop icon */}
+      {/* Trash icon */}
       <div
         className="desktop-icon"
         style={{ right: 16, bottom: 8 }}
@@ -165,12 +240,7 @@ export function Desktop() {
         tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter') openTrash(); }}
       >
-        <img
-          className="desktop-icon__image"
-          src="/icons/Trash.png"
-          alt=""
-          draggable={false}
-        />
+        <img className="desktop-icon__image" src="/icons/Trash.png" alt="" draggable={false} />
         <span className="desktop-icon__label">Trash</span>
       </div>
 

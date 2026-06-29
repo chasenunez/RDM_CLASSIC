@@ -1,8 +1,17 @@
-// ── Data types (loaded from generated JSON) ───────────────────────────────
+// ── Data types (loaded from generated JSON) ───────────────────────────────────
 
 export interface Resource {
   title: string;
   url: string;
+}
+
+export interface SubProblem {
+  id: string;
+  name: string;
+  what: string;
+  why: string;
+  fix: string;
+  resources: Resource[];
 }
 
 export interface Problem {
@@ -13,6 +22,7 @@ export interface Problem {
   why: string;           // markdown
   fix: string;           // markdown
   resources: Resource[];
+  subProblems?: SubProblem[];  // boss-battle sub-items
 }
 
 export interface FileEntry {
@@ -22,10 +32,11 @@ export interface FileEntry {
   size: number;
   mimeGuess: string;
   icon: string;          // URL path, e.g. "/icons/Text file.svg"
-  viewerType: 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary';
+  viewerType: 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'markdown' | 'fix';
+  virtual?: boolean;     // true = added by fix logic, not in original file tree
 }
 
-// ── Trigger / mapping types ───────────────────────────────────────────────
+// ── Trigger / mapping types ───────────────────────────────────────────────────
 
 export interface FileTrigger {
   type: 'file';
@@ -47,7 +58,7 @@ export interface LineTrigger {
 
 export interface AbsenceTrigger {
   type: 'project-absence';
-  name: string; // e.g. "README", "LICENSE", "DOI", "Backup plan"
+  name: string; // e.g. "README", "LICENSE", ".git"
 }
 
 export interface DesktopTrigger {
@@ -60,13 +71,14 @@ export interface MappedProblem {
   id: string;
   triggers: Trigger[];
   matchRule: 'any';
+  parentId?: string;  // set for boss-battle sub-problems
 }
 
 export interface Mapping {
   problems: MappedProblem[];
 }
 
-// ── Context menu target ───────────────────────────────────────────────────
+// ── Context menu target ───────────────────────────────────────────────────────
 
 export type ContextTarget =
   | { kind: 'file'; path: string }
@@ -81,15 +93,16 @@ export interface ContextMenuState {
   target: ContextTarget;
 }
 
-// ── Window types ──────────────────────────────────────────────────────────
+// ── Window types ──────────────────────────────────────────────────────────────
 
-export type ViewerType = 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'trash';
+export type ViewerType = 'folder' | 'text' | 'csv' | 'xlsx' | 'image' | 'binary' | 'trash' | 'markdown' | 'fix' | 'archive';
 
 export interface WindowState {
   id: string;
   title: string;
   viewerType: ViewerType;
   filePath?: string;      // relative name within sample_project/, or undefined for folder
+  problemId?: string;     // set for fix windows
   x: number;
   y: number;
   width: number;
@@ -97,10 +110,11 @@ export interface WindowState {
   zIndex: number;
 }
 
-// ── Persisted game state ──────────────────────────────────────────────────
+// ── Persisted game state ──────────────────────────────────────────────────────
 
 export interface PersistedState {
-  foundProblems: string[];   // array of found problem IDs
+  foundProblems: string[];   // main problem IDs + sub-problem IDs
+  fixedProblems: string[];   // problem IDs where "Let's fix it" was clicked
   wrongGuesses: number;
   hasSeenWelcome: boolean;
   isMuted: boolean;
