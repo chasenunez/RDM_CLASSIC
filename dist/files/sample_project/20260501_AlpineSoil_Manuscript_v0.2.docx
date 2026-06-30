@@ -1,0 +1,46 @@
+# Draft v2: Alpine Soil Carbon Dynamics
+## With comments from JK (James Kim)
+
+---
+
+## Abstract
+
+We measured soil organic carbon at 10 alpine sites in spring 2026. Results indicate elevation and temperature as key predictors of SOC.
+
+> **JK comment:** Abstract is good but add the specific range of SOC values found.
+
+---
+
+## Introduction
+
+Alpine soils store 30% of global soil organic carbon despite covering only 3% of land area (Körner 2021). Climate change is projected to increase alpine temperatures by 2–4°C by 2100, with uncertain effects on SOC dynamics.
+
+> **JK comment:** Need more recent citations here. Also add something about the Swiss Alps specifically.
+
+---
+
+## Methods
+
+Field sampling was conducted at 10 sites along an elevational gradient (1800–2600 m). Triplicate cores (0–10 cm) were collected from each site in March–April 2026.
+
+> **JK comment:** What was the sample volume? Need to state this for reproducibility.
+
+---
+
+## Results
+
+SOC concentrations ranged from 11.2 to 16.0 g/kg. Mixed model results: temperature (β = −0.31, p < 0.001) and moisture (β = 0.44, p < 0.001) were significant predictors.
+
+> **JK comment:** Add the R² value here. Also the F-statistic from the ANOVA.
+
+---
+
+## Discussion
+
+> **JK comment:** This section is too short. Need at least 3 paragraphs comparing to literature.
+
+Our results are consistent with slow decomposition at high elevations promoting SOC accumulation. Projected warming may reverse this trend.
+
+---
+
+*Sent to JK on 2026-03-20*

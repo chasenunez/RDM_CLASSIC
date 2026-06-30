@@ -9,5 +9,3 @@ merged = pd.merge(df, df2, on='id')
 merged.to_excel("cleaned data.xlsx", index=False)
 result = merged.groupby('site').mean()
 result.to_excel("results_final.xlsx")
-# TODO: fix this later
-# print(merged[merged['ratio'] > 100])
