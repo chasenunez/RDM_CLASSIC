@@ -1,12 +1,24 @@
 /**
- * build-content.mjs
+ * build-content.mjs  —  LEGACY SCAFFOLD, OPT-IN ONLY
  *
- * Runs before vite build (and manually before dev). Extracts the messy project
- * archive, parses the answer key, copies icons, and generates all data JSON files.
+ * This script generated the FIRST draft of the game's content from an external
+ * source archive. The committed artifacts in this repo (public/files/,
+ * public/icons/, public/downloads/, src/data/*.json) have since been hand-curated
+ * and are now the SOURCE OF TRUTH — this script can no longer reproduce them.
  *
- * Source paths are read from env vars so CI or other users can override:
+ * It is therefore NOT wired into `npm run build` (no prebuild hook). Run it only
+ * deliberately, via `npm run content`, when you want to re-derive a *proposal*
+ * from the external source and compare it against the curated files by hand.
+ *
+ * It is non-destructive: it stages extracted files under scripts/.staging/
+ * (gitignored) and emits *.proposal.json next to the live data files. It never
+ * overwrites public/files/, public/icons/, public/downloads/, or the live
+ * src/data/{file-tree,problems,mapping}.json.
+ *
+ * Source paths are read from env vars (override for CI or other machines):
  *   RDM_SOURCE_REPO   default: ~/PANTHEON/RDM_BASICS
  *   RDM_ICONS_DIR     default: ~/PANTHEON/Classic-Mac-icons
+ * Missing sources are warned-and-skipped, not fatal.
  */
 
 import fs from 'fs';
@@ -41,15 +53,23 @@ const ANSWER_KEY = path.join(
 );
 
 // ── Output paths (relative to project root) ──────────────────────────────────
+//
+// Everything this script writes goes under STAGING (gitignored) or to a
+// *.proposal.json beside the live data file. Nothing here points at a live
+// runtime asset — that is what makes a stray run harmless.
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const PUBLIC_FILES = path.join(PROJECT_ROOT, 'public', 'files');
-const PUBLIC_ICONS = path.join(PROJECT_ROOT, 'public', 'icons');
-const PUBLIC_DOWNLOADS = path.join(PROJECT_ROOT, 'public', 'downloads');
+const STAGING = path.join(PROJECT_ROOT, 'scripts', '.staging');
+
+// Staged copies of what used to be written into public/ — review, never auto-shipped.
+const PUBLIC_FILES = path.join(STAGING, 'files');
+const PUBLIC_ICONS = path.join(STAGING, 'icons');
+const PUBLIC_DOWNLOADS = path.join(STAGING, 'downloads');
 const SRC_DATA = path.join(PROJECT_ROOT, 'src', 'data');
 
-const OUT_FILE_TREE = path.join(SRC_DATA, 'file-tree.json');
-const OUT_PROBLEMS = path.join(SRC_DATA, 'problems.json');
+// Live src/data JSON is never overwritten — we only emit proposals beside it.
+const OUT_FILE_TREE = path.join(SRC_DATA, 'file-tree.proposal.json');
+const OUT_PROBLEMS = path.join(SRC_DATA, 'problems.proposal.json');
 const OUT_MAPPING = path.join(SRC_DATA, 'mapping.json');
 const OUT_MAPPING_PROPOSAL = path.join(SRC_DATA, 'mapping.proposal.json');
 const OUT_ICON_MANIFEST = path.join(PUBLIC_ICONS, 'manifest.json');
@@ -121,6 +141,9 @@ const EXCLUDED_FROM_GAME = new Set([
 
 async function extractTarball() {
   console.log('📦 Extracting tarball…');
+  // Clean the staging area first so stale files from a previous run never
+  // accumulate (this is the bug that used to surface in the live folder view).
+  fs.rmSync(PUBLIC_FILES, { recursive: true, force: true });
   fs.mkdirSync(PUBLIC_FILES, { recursive: true });
 
   // tar preserves original filenames verbatim (spaces, special chars, caps)
@@ -128,7 +151,7 @@ async function extractTarball() {
   await tar.extract({
     file: TARBALL,
     cwd: PUBLIC_FILES,
-    // strip the leading "sample_project/" component so files land at public/files/sample_project/
+    // files land at scripts/.staging/files/sample_project/
   });
 
   console.log('   ✓ Extracted to', PUBLIC_FILES);
@@ -345,12 +368,15 @@ async function postProcessFiles() {
     console.log(`   ✓ wrote markdown → ${filename}`);
   }
 
-  // Re-run create-xlsx.mjs to overwrite extracted xlsx files with boss battle versions
+  // Re-run create-xlsx.mjs to overwrite extracted xlsx files with boss battle
+  // versions. RDM_XLSX_OUT redirects its output into the same staging dir so it
+  // never touches public/files/.
   const { execSync } = await import('child_process');
   try {
     execSync(`node ${path.join(PROJECT_ROOT, 'scripts', 'create-xlsx.mjs')}`, {
       cwd: PROJECT_ROOT,
       stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, RDM_XLSX_OUT: extracted },
     });
     console.log('   ✓ xlsx boss battle files created');
   } catch (e) {
@@ -394,7 +420,7 @@ function buildFileTree() {
   }
   const tree = walkDir(extracted, PUBLIC_FILES);
   fs.writeFileSync(OUT_FILE_TREE, JSON.stringify(tree, null, 2));
-  console.log(`   ✓ ${tree.length} entries written to src/data/file-tree.json`);
+  console.log(`   ✓ ${tree.length} entries written to src/data/file-tree.proposal.json (compare with the live file-tree.json by hand)`);
   return tree;
 }
 
@@ -534,7 +560,7 @@ function parseAnswerKey() {
   }
 
   fs.writeFileSync(OUT_PROBLEMS, JSON.stringify(problems, null, 2));
-  console.log(`   ✓ ${problems.length} problems written to src/data/problems.json`);
+  console.log(`   ✓ ${problems.length} problems written to src/data/problems.proposal.json (compare with the live problems.json by hand)`);
   return problems;
 }
 
@@ -696,18 +722,11 @@ function generateMapping(fileTree) {
     ],
   };
 
-  // Always write the proposal (for reference after hand-editing)
+  // Only ever write the proposal — the live mapping.json is hand-curated and
+  // is the source of truth. Compare by hand and port over anything you want.
   fs.writeFileSync(OUT_MAPPING_PROPOSAL, JSON.stringify(mapping, null, 2));
   log.forEach(l => console.log(l));
-  console.log('   ✓ Proposal written to src/data/mapping.proposal.json');
-
-  // Only create mapping.json if it doesn't exist (protect hand edits)
-  if (!fs.existsSync(OUT_MAPPING)) {
-    fs.writeFileSync(OUT_MAPPING, JSON.stringify(mapping, null, 2));
-    console.log('   ✓ mapping.json created (hand-edit this file to refine triggers)');
-  } else {
-    console.log('   ℹ mapping.json already exists — not overwritten (compare with mapping.proposal.json)');
-  }
+  console.log('   ✓ Proposal written to src/data/mapping.proposal.json (live mapping.json left untouched)');
 }
 
 // ── Step 5: Copy icons + build manifest ───────────────────────────────────────
@@ -825,30 +844,43 @@ ${body}
 </html>`;
 
   fs.writeFileSync(OUT_GUIDE_HTML, html);
-  console.log('   ✓ Guide written to public/downloads/RDM_Guide.html');
+  console.log(`   ✓ Guide staged at ${OUT_GUIDE_HTML}`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('\n🔧 RDM Scavenger Hunt — build-content\n');
+  console.log('\n🔧 RDM Scavenger Hunt — build-content (proposal generator)\n');
 
-  // Validate source files
-  for (const [label, p] of [['Tarball', TARBALL], ['Answer key', ANSWER_KEY], ['Icons dir', RDM_ICONS_DIR]]) {
-    if (!fs.existsSync(p)) {
-      throw new Error(`${label} not found at: ${p}\nSet env vars RDM_SOURCE_REPO / RDM_ICONS_DIR to override.`);
-    }
+  fs.mkdirSync(STAGING, { recursive: true });
+
+  // Source files are optional. Warn-and-skip the steps whose inputs are missing
+  // instead of crashing — a fresh clone of RDM_CHASE has none of these and is
+  // still fully playable from its committed artifacts.
+  const haveTarball = fs.existsSync(TARBALL);
+  const haveAnswerKey = fs.existsSync(ANSWER_KEY);
+  const haveIcons = fs.existsSync(RDM_ICONS_DIR);
+
+  if (!haveTarball) console.warn(`⚠ Tarball not found at ${TARBALL} — skipping file extraction + file-tree proposal.`);
+  if (!haveAnswerKey) console.warn(`⚠ Answer key not found at ${ANSWER_KEY} — skipping problems proposal + guide.`);
+  if (!haveIcons) console.warn(`⚠ Icons dir not found at ${RDM_ICONS_DIR} — skipping icon copy.`);
+  if (!haveTarball && !haveAnswerKey && !haveIcons) {
+    console.warn('\nNo external sources available. Nothing to propose. Set RDM_SOURCE_REPO / RDM_ICONS_DIR to override.\n');
+    return;
   }
 
-  await extractTarball();
-  await postProcessFiles();
-  const tree = buildFileTree();
-  parseAnswerKey();
-  generateMapping(tree);
-  copyIcons();
-  generateGuideHtml();
+  let tree = null;
+  if (haveTarball) {
+    await extractTarball();
+    await postProcessFiles();
+    tree = buildFileTree();
+  }
+  if (haveAnswerKey) parseAnswerKey();
+  if (tree) generateMapping(tree);
+  if (haveIcons) copyIcons();
+  if (haveAnswerKey) generateGuideHtml();
 
-  console.log('\n✅ build-content done\n');
+  console.log('\n✅ build-content done — review the *.proposal.json files and scripts/.staging/ output.\n');
 }
 
 main().catch(err => {

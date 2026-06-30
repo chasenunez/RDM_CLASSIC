@@ -46,18 +46,13 @@ cd rdm-scavenger-hunt
 # 2. Install dependencies
 npm install
 
-# 3. Run the content pipeline
-#    This extracts the messy project archive, parses the answer key,
-#    copies icons, and writes the JSON data files the app reads at runtime.
-npm run content
-
-# 4. Start the development server
+# 3. Start the development server
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser. The game loads immediately — no login, no backend.
 
-> **Note:** Steps 3 and 4 are separate because the dev server does not run the content pipeline automatically. You only need to re-run `npm run content` if the source materials change.
+> **The repo is self-contained.** All game content (`public/files/`, `public/icons/`, `public/downloads/`, `src/data/*.json`) is committed. A fresh clone runs and builds with **no external files and no content-generation step**. You do *not* need `npm run content` to play, develop, or deploy — see [Guide for future additions](#guide-for-future-additions) to change the game, and [The legacy content pipeline](#the-legacy-content-pipeline-opt-in) for what `npm run content` is.
 
 ---
 
@@ -67,7 +62,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser. The game lo
 npm run build
 ```
 
-`npm run build` runs the content pipeline first (`prebuild` hook), then Vite bundles everything into `dist/`. The folder is entirely self-contained — copy it to any static host and it works.
+`npm run build` runs Vite directly against the committed artifacts — it does **not** run the content pipeline and does **not** reach outside the repo. Everything is bundled into `dist/`, which is entirely self-contained: copy it to any static host and it works.
 
 ```bash
 # Preview the production build before deploying
@@ -89,33 +84,154 @@ There is no server-side rendering, no API, and no database. Every asset is a fil
 
 ---
 
-## Customising source paths
+## The legacy content pipeline (opt-in)
 
-The content pipeline reads from two locations. Override them with environment variables if your files live elsewhere:
+`scripts/build-content.mjs` (run via `npm run content`) is the **scaffold that produced the first draft** of the game's content from an external source archive. It is **not** part of `npm run build` and is **not** needed to run, develop, or deploy the game. The committed files are the source of truth and have been hand-curated well beyond what the script produces — the script can no longer reproduce them.
+
+It exists only for the maintainer who wants to re-derive a *proposal* from the original source and diff it by hand. It is **non-destructive**: it stages extracted files under `scripts/.staging/` (gitignored) and writes `src/data/{file-tree,problems,mapping}.proposal.json` beside the live files. It never overwrites `public/files/`, `public/icons/`, `public/downloads/`, or the live `src/data/*.json`. Missing source materials are warned-and-skipped, not fatal.
+
+To run it, point it at the source materials (otherwise the relevant steps are skipped):
 
 | Variable | Default | Contents |
 |----------|---------|----------|
-| `RDM_SOURCE_REPO` | `~/PANTHEON/RDM_BASICS` | The tarball of the messy project (`RDM_SCAVENGER_HUNT/sample_messy_project.tar.gz`) and the answer key (`.git/info/RDM_Problems_and_Fixes_Guide.md`) |
-| `RDM_ICONS_DIR` | `~/PANTHEON/Classic-Mac-icons` | SVG and PNG Classic Mac icon set |
+| `RDM_SOURCE_REPO` | `~/PANTHEON/RDM_BASICS` | The messy-project tarball (`RDM_SCAVENGER_HUNT/sample_messy_project.tar.gz`) and the answer key (`.git/info/RDM_Problems_and_Fixes_Guide.md`) |
+| `RDM_ICONS_DIR` | `~/PANTHEON/Classic-Mac-icons` | The Classic Mac SVG icon set |
 
 ```bash
 RDM_SOURCE_REPO=/path/to/RDM_BASICS \
 RDM_ICONS_DIR=/path/to/icons \
 npm run content
+# then compare src/data/*.proposal.json and scripts/.staging/ against the live files by hand
 ```
+
+> **To change the game, edit the committed files directly** — do not run the pipeline and expect it to merge. See the guide below.
 
 ---
 
-## What the content pipeline does
+## Guide for future additions
 
-`scripts/build-content.mjs` runs before every production build and manually via `npm run content`. Each run:
+This is the practical, repo-only workflow for a developer who is **not** involved with the original content pipeline and just wants to add **a new file, in a new location, with new clickable items**. You only touch committed files — no external source, no `npm run content`.
 
-1. **Extracts** `sample_messy_project.tar.gz` into `public/files/`, preserving filenames exactly — spaces, ampersands, parentheses and all. The broken names are evidence in the game.
-2. **Walks** the extracted tree and writes `src/data/file-tree.json` — the list of all 24 files, their MIME guesses, and which icon and viewer to use for each.
-3. **Parses** `RDM_Problems_and_Fixes_Guide.md` and writes `src/data/problems.json` — all 13 problem entries with their `what`, `why`, `fix`, and `resources` fields in Markdown, derived strictly from the answer key.
-4. **Proposes** `src/data/mapping.json` (only on first run — the file is never overwritten once it exists). Also writes `src/data/mapping.proposal.json` on every run so you can compare.
-5. **Copies** all SVGs from the icon directory into `public/icons/` and writes `public/icons/manifest.json`.
-6. **Generates** `public/downloads/RDM_Guide.html` — a standalone HTML rendering of the full answer key offered as a download at the end of the game.
+### The four moving parts
+
+Everything the game shows and reacts to comes from four places:
+
+| Part | Path | Role |
+|------|------|------|
+| **The file on disk** | `public/files/sample_project/…` | The actual bytes a viewer loads (served at `/files/sample_project/…`) |
+| **The file tree** | `src/data/file-tree.json` | Makes the file appear as an icon and picks its viewer. **This is what the desktop renders — if a file isn't here, it isn't shown.** |
+| **The problem** | `src/data/problems.json` | The teaching content (`what` / `why` / `fix` / `resources`) shown when the item is found |
+| **The mapping** | `src/data/mapping.json` | Connects a click target (file / cell / line / absence) to a problem `id` |
+
+A "clickable item" only counts as a finding when a **mapping trigger** matches it **and** the referenced problem `id` exists in `problems.json`. Adding a file without a trigger just creates a harmless decoy; adding a trigger whose file isn't in `file-tree.json` creates an unreachable problem (this was a real bug — `raw_data.xlsx` had a trigger but no tree entry).
+
+### Recipe A — add a new file at the project root with a clickable problem
+
+1. **Drop the file in** `public/files/sample_project/`. Keep the exact name you want shown (spaces and odd characters are fine — they're often the point).
+
+2. **Register it in `src/data/file-tree.json`** so it renders. Add one entry; `path` is relative to `public/files/`, `name` is the bare filename:
+
+   ```jsonc
+   {
+     "path": "sample_project/lab_notebook.txt",
+     "name": "lab_notebook.txt",
+     "type": "file",
+     "size": 1234,                       // byte size; cosmetic, doesn't need to be exact
+     "mimeGuess": "text/plain",
+     "icon": "/icons/Text file.svg",     // any name from public/icons/ (see manifest.json)
+     "viewerType": "text"
+   }
+   ```
+
+   `viewerType` decides how a double-click opens it **and** which trigger types are available:
+
+   | `viewerType` | Use for | Supports triggers |
+   |--------------|---------|-------------------|
+   | `text` | `.txt`, `.py`, `.r`, `.sh` | `file`, `line` |
+   | `markdown` | `.md`, `.docx` (rendered) | `file` |
+   | `csv` | `.csv` | `file`, `cell` |
+   | `xlsx` | `.xlsx` | `file`, `cell` |
+   | `image` | `.jpg`, `.png`, `.tif` | `file` |
+   | `binary` | `.dat` and other opaque blobs | `file` |
+
+3. **Make sure a problem exists** in `src/data/problems.json`. Reuse an existing `id` (e.g. `file-naming`) or add a new object:
+
+   ```jsonc
+   {
+     "id": "my-new-problem",
+     "name": "Short checklist label",
+     "fullTitle": "My New Problem",
+     "what": "Markdown explaining what's wrong.",
+     "why": "Markdown explaining why it matters.",
+     "fix": "Markdown explaining how to fix it.",
+     "resources": [{ "title": "A helpful link", "url": "https://example.org" }]
+   }
+   ```
+
+4. **Wire the click to the problem** in `src/data/mapping.json`. To make the **whole file** clickable, add a `file` trigger; for a specific cell or line, use `cell` / `line`:
+
+   ```jsonc
+   {
+     "id": "my-new-problem",
+     "triggers": [
+       { "type": "file", "path": "lab_notebook.txt" },     // bare filename
+       { "type": "line", "path": "lab_notebook.txt", "line": 4 }  // 1-indexed
+     ],
+     "matchRule": "any"
+   }
+   ```
+
+   - `cell` triggers need `row` (0-indexed from the top of the file) and `col` (0-indexed).
+   - `line` triggers need `line` (1-indexed).
+   - One file can carry several triggers, and a problem can have triggers across several files.
+
+5. **Run `npm run typecheck` and `npm run dev`**, then double-click your file and right-click the item to confirm the correct problem is revealed. No content pipeline, no rebuild of data — the app reads these JSON files directly.
+
+### Recipe B — put the file in a **new location** (a subfolder)
+
+The folder window shows root-level files plus folder icons. Files are placed into a subfolder by **name**, via the organize map — there are two ways to do it:
+
+**B1 — a subfolder that exists from the start.** Add a `folder` entry and give the file a nested `path`. The folder name is matched by the part of `path` after `sample_project/`:
+
+```jsonc
+// in src/data/file-tree.json
+{ "path": "sample_project/archive", "name": "archive/", "type": "folder",
+  "size": 0, "mimeGuess": "inode/directory", "icon": "/icons/Floppy.svg", "viewerType": "folder" },
+{ "path": "sample_project/archive/old_readme.txt", "name": "old_readme.txt", "type": "file",
+  "size": 200, "mimeGuess": "text/plain", "icon": "/icons/Text file.svg", "viewerType": "text" }
+```
+
+Put the real file at `public/files/sample_project/archive/old_readme.txt`. Triggers still use the **bare filename** (`"path": "old_readme.txt"`), not the nested path.
+
+**B2 — a subfolder that appears as a reward after a fix.** This is how the existing game does "organize your files." Subfolders that open on double-click are driven by `FIX_ACTIONS['file-structure'].organize` in `src/lib/fixActions.ts` — a map of `folder name → file names`. When `file-structure` is fixed, those files move into `_sub/<folder>/…` and the folder becomes openable. To add a file to an organized subfolder, add its **name** to the relevant array:
+
+```ts
+organize: {
+  'data':        ['raw_data.xlsx', 'fig1_updated.png', 'my_new_data.csv'],  // ← added
+  'manuscripts': [ … ],
+  'code':        [ … ],
+},
+```
+
+### Optional — make the file change after a fix
+
+`src/lib/fixActions.ts` controls what happens to the folder view when a problem is fixed (the "Let's fix it!" flow). Each problem `id` maps to a `FixAction`:
+
+- `remove` — filenames to hide from the folder view
+- `archive` — filenames to move into the `archive/` window (must be a subset of `remove`)
+- `add` — new `FileEntry` objects to display (these are **virtual** — set `virtual: true`; they're loaded from `public/files/` by path, so the file must exist on disk if it has a viewer)
+- `organize` — only on `file-structure`; the subfolder map from Recipe B2
+
+> ⚠️ A file that lives in `file-tree.json` (a base file) must **not** also appear in a fix's `add` array, or it renders twice after the fix (`computeDisplayFiles` doesn't dedupe base vs. add). Use `add` only for files that don't exist until a fix happens.
+
+### Checklist before you commit
+
+- [ ] File exists under `public/files/sample_project/…`
+- [ ] Entry added to `src/data/file-tree.json` with the right `viewerType`
+- [ ] Problem `id` exists in `src/data/problems.json`
+- [ ] Trigger in `src/data/mapping.json` references the **bare filename** and a real problem `id`
+- [ ] `npm run typecheck` passes and the item is findable in `npm run dev`
+- [ ] You did **not** run `npm run content` expecting it to wire any of this up
 
 ---
 
@@ -157,13 +273,7 @@ npm run content
 
 `matchRule: "any"` means **any one** matching trigger marks the problem as found. This is the only supported value; there is no "all" mode.
 
-To reset `mapping.json` to the latest auto-proposal:
-
-```bash
-rm src/data/mapping.json && npm run content
-```
-
-After hand-editing, compare your file against `src/data/mapping.proposal.json` to see what the auto-detection would have suggested.
+`src/data/mapping.json` is the live source of truth — hand-edit it directly. `npm run content` only ever writes `src/data/mapping.proposal.json` (and never touches the live file), so you can optionally run it to see what the old auto-detection would suggest and copy anything useful across by hand.
 
 ---
 
@@ -197,10 +307,10 @@ rdm-scavenger-hunt/
 │   │       ├── ImageViewer.tsx  # .jpg .png — centred image, right-click for format issues
 │   │       └── BinaryViewer.tsx # .dat .docx — text preview + hex dump
 │   ├── data/
-│   │   ├── problems.json        # GENERATED — do not hand-edit
-│   │   ├── file-tree.json       # GENERATED — do not hand-edit
-│   │   ├── mapping.json         # generated on first run, then HAND-EDIT to refine
-│   │   └── mapping.proposal.json # GENERATED every run — compare against mapping.json
+│   │   ├── problems.json        # SOURCE OF TRUTH — hand-edit (teaching content)
+│   │   ├── file-tree.json       # SOURCE OF TRUTH — hand-edit (what the desktop shows)
+│   │   ├── mapping.json         # SOURCE OF TRUTH — hand-edit (click → problem)
+│   │   └── mapping.proposal.json # reference output of `npm run content` — compare by hand
 │   ├── lib/
 │   │   ├── matchTrigger.ts      # maps a right-click target to a problem ID
 │   │   ├── persistence.ts       # localStorage read/write
@@ -216,7 +326,8 @@ rdm-scavenger-hunt/
 │   ├── App.tsx                  # root component, overlays, completion sequence
 │   └── main.tsx                 # React entry point
 ├── scripts/
-│   └── build-content.mjs        # content pipeline (runs before every build)
+│   ├── build-content.mjs        # LEGACY opt-in proposal generator (not part of build)
+│   └── create-xlsx.mjs          # regenerates the .xlsx sample files
 ├── index.html
 ├── vite.config.ts
 ├── tsconfig.json
@@ -247,20 +358,14 @@ All sounds are generated at runtime using the Web Audio API — a short ascendin
 
 ## Troubleshooting
 
-**`npm run content` fails with "Tarball not found"**
-The script is looking for the source archive at the default path. Set `RDM_SOURCE_REPO` to the correct location:
-```bash
-RDM_SOURCE_REPO=/path/to/your/RDM_BASICS npm run content
-```
+**`npm run dev` shows an empty folder window**
+The game reads `src/data/file-tree.json` directly — if the folder is empty, that file is empty or a referenced file is missing from `public/files/sample_project/`. You do **not** need `npm run content`; check those committed files. (See [Guide for future additions](#guide-for-future-additions).)
 
-**`npm run content` fails with "Icons dir not found"**
-Set `RDM_ICONS_DIR` to point at your clone of the icon repository:
+**`npm run content` warns "Tarball / Icons dir not found"**
+Expected on any machine without the external source repos — the relevant steps are skipped and nothing breaks. `npm run content` is optional and never required to run, develop, or deploy the game. To actually generate proposals, point it at the sources:
 ```bash
-RDM_ICONS_DIR=/path/to/Classic-Mac-icons npm run content
+RDM_SOURCE_REPO=/path/to/RDM_BASICS RDM_ICONS_DIR=/path/to/Classic-Mac-icons npm run content
 ```
-
-**`npm run dev` starts but the game shows an empty folder window**
-The content pipeline has not run yet. Stop the server, run `npm run content`, then restart with `npm run dev`.
 
 **Fonts look wrong or fall back to system monospace**
 The CDN link in `index.html` requires internet access. Either connect to the internet or self-host the font following the steps in the [Font](#font) section above.
@@ -277,9 +382,9 @@ JSON.parse(localStorage.getItem('rdm-scavenger-hunt:v1'))
 
 | Script | What it does |
 |--------|--------------|
-| `npm run content` | Runs the content pipeline (extract, parse, copy, generate JSON) |
 | `npm run dev` | Starts the Vite dev server at http://localhost:5173 |
-| `npm run build` | Runs content pipeline then produces `dist/` for deployment |
+| `npm run build` | Produces `dist/` for deployment, straight from committed artifacts (no content step) |
+| `npm run content` | **Opt-in, maintainer-only.** Re-derives `*.proposal.json` + `scripts/.staging/` from the external source; never overwrites live files. See [the legacy content pipeline](#the-legacy-content-pipeline-opt-in) |
 | `npm run preview` | Serves the production `dist/` locally for final checks |
 | `npm run typecheck` | Runs `tsc --noEmit` without building |
 
