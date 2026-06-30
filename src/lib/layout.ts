@@ -1,4 +1,6 @@
-const MENU_BAR_H = 30;
+// Height of the System 7 menu bar (.menu-bar in mac.css). Shared so window
+// centering and drag-clamping agree.
+export const MENU_BAR_H = 30;
 
 export function centeredAt(width: number, height: number, cascade = 0) {
   const vw = window.innerWidth;

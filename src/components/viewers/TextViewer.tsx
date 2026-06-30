@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useGame } from '../../GameContext';
+import { useFileContent } from '../../lib/useFileContent';
 
 interface TextViewerProps {
   filePath: string; // filename within sample_project
@@ -13,22 +13,12 @@ const TRIGGER_LINES: Record<string, number[]> = {
 
 export function TextViewer({ filePath }: TextViewerProps) {
   const { showContextMenu } = useGame();
-  const [lines, setLines] = useState<string[]>([]);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    fetch(`/files/sample_project/${encodeURIComponent(filePath)}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.text();
-      })
-      .then(text => setLines(text.split('\n')))
-      .catch(e => setError(String(e)));
-  }, [filePath]);
+  const { data: text, error } = useFileContent(filePath, 'text');
 
   if (error) return <div className="loading-msg">Error loading file: {error}</div>;
-  if (!lines.length) return <div className="loading-msg">Loading…</div>;
+  if (text === null) return <div className="loading-msg">Loading…</div>;
 
+  const lines = text.split('\n');
   const triggerLineNums = TRIGGER_LINES[filePath] ?? [];
 
   return (

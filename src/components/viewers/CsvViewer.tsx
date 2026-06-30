@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import Papa from 'papaparse';
 import { useGame } from '../../GameContext';
+import { useFileContent } from '../../lib/useFileContent';
 
 interface CsvViewerProps {
   filePath: string;
@@ -8,21 +9,12 @@ interface CsvViewerProps {
 
 export function CsvViewer({ filePath }: CsvViewerProps) {
   const { showContextMenu } = useGame();
-  const [rows, setRows] = useState<string[][]>([]);
-  const [error, setError] = useState('');
+  const { data: text, error } = useFileContent(filePath, 'text');
 
-  useEffect(() => {
-    fetch(`/files/sample_project/${encodeURIComponent(filePath)}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.text();
-      })
-      .then(text => {
-        const result = Papa.parse<string[]>(text, { skipEmptyLines: false });
-        setRows(result.data);
-      })
-      .catch(e => setError(String(e)));
-  }, [filePath]);
+  const rows = useMemo(
+    () => (text === null ? [] : Papa.parse<string[]>(text, { skipEmptyLines: false }).data),
+    [text],
+  );
 
   if (error) return <div className="loading-msg">Error: {error}</div>;
   if (!rows.length) return <div className="loading-msg">Loading…</div>;

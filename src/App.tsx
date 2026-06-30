@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { GameProvider, useGame } from './GameContext';
 import { MenuBar } from './components/MenuBar';
 import { Desktop } from './components/Desktop';
@@ -8,28 +8,23 @@ import { ProblemReportDialog } from './components/ProblemReportDialog';
 import { ProblemSelectionDialog } from './components/ProblemSelectionDialog';
 import { WrongGuessDialog } from './components/WrongGuessDialog';
 import { CompletionDialog } from './components/CompletionDialog';
-import { Fireworks } from './components/Fireworks';
 import { BossBattleIntro } from './components/BossBattleIntro';
 import { BossBattleComplete } from './components/BossBattleComplete';
 import { FileStructureDialog } from './components/FileStructureDialog';
 import { centeredAt } from './lib/layout';
+import { WINDOWS, LABELS } from './theme';
 
 import './styles/reset.css';
 import './styles/fonts.css';
 import './styles/mac.css';
 
-// Flip to true to re-enable the fireworks sequence before the completion screen
-const FIREWORKS_ENABLED = false;
-
 function GameUI() {
   const { gameState, problems, dispatch } = useGame();
   const { foundProblems, hasSeenWelcome } = gameState;
 
-  const [fireworksDone, setFireworksDone] = useState(false);
   const [showFileStructure, setShowFileStructure] = useState(false);
   const [fileStructureDone, setFileStructureDone] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
-  const winTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Only count main problems (not sub-problems) toward completion
   const mainProblemIds = problems.map(p => p.id);
@@ -51,23 +46,15 @@ function GameUI() {
       type: 'OPEN_WINDOW',
       window: {
         id: 'project-folder',
-        title: 'Side Project 237 B',
+        title: LABELS.projectWindowTitle,
         viewerType: 'folder',
-        ...centeredAt(800, 500),
-        width: 800,
-        height: 500,
+        ...centeredAt(WINDOWS.projectFolder.width, WINDOWS.projectFolder.height),
+        ...WINDOWS.projectFolder,
       },
     });
 
     // Brief pause so the player sees the reorganized folder before the win screen
-    winTimerRef.current = setTimeout(() => {
-      winTimerRef.current = null;
-      if (FIREWORKS_ENABLED) {
-        // fireworks condition below picks this up
-      } else {
-        setShowCompletion(true);
-      }
-    }, 1200);
+    setTimeout(() => setShowCompletion(true), 1200);
   };
 
   const handleLookAtWork = () => {
@@ -93,14 +80,6 @@ function GameUI() {
         <FileStructureDialog onDone={handleFileStructureDone} />
       )}
 
-      {FIREWORKS_ENABLED && fileStructureDone && !fireworksDone && (
-        <Fireworks
-          onDone={() => {
-            setFireworksDone(true);
-            setShowCompletion(true);
-          }}
-        />
-      )}
       {showCompletion && (
         <CompletionDialog onLookAtWork={handleLookAtWork} />
       )}

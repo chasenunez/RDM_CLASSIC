@@ -1,17 +1,26 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    mac.css — Classic Mac OS System 7 chrome
    All measurements are in px; no rem/em so the pixel grid stays sharp.
+
+   AESTHETICS: the brand palette lives in the :root block below — change those
+   variables to re-theme the desktop. Window/asset/label choices live in
+   src/theme.ts; fonts in src/styles/fonts.css. Remaining one-off colours are
+   inline hex in this file (search for "#").
    ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --brand-green: #ACDBAF;       /* dither foreground on the desktop */
+  --brand-green-bg: #d4ecd5;    /* desktop base colour behind the dither */
+}
 
 /* ── Desktop ─────────────────────────────────────────────────────────────── */
 
 .desktop {
   position: fixed;
   inset: 20px 0 0 0; /* leave 20px for menu bar at top */
-  /* Dithered pattern using brand green #ACDBAF */
-  background-color: #d4ecd5;
+  background-color: var(--brand-green-bg);
   background-image:
-    repeating-conic-gradient(#ACDBAF 0deg 90deg, #ffffff 90deg 180deg);
+    repeating-conic-gradient(var(--brand-green) 0deg 90deg, #ffffff 90deg 180deg);
   background-size: 2px 2px;
   overflow: hidden;
 }
@@ -901,15 +910,6 @@
 .binary-viewer__ascii {
   color: #ffaa00;
   letter-spacing: 0.05em;
-}
-
-/* ── Fireworks canvas ────────────────────────────────────────────────────── */
-
-.fireworks-canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 600;
 }
 
 /* ── Scrollbars (Chrome/Edge — classic style) ────────────────────────────── */

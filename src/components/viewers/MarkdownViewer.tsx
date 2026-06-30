@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { marked } from 'marked';
 import { useGame } from '../../GameContext';
+import { useFileContent } from '../../lib/useFileContent';
 
 interface MarkdownViewerProps {
   filePath: string;
@@ -8,18 +9,8 @@ interface MarkdownViewerProps {
 
 export function MarkdownViewer({ filePath }: MarkdownViewerProps) {
   const { showContextMenu } = useGame();
-  const [html, setHtml] = useState('');
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    fetch(`/files/sample_project/${encodeURIComponent(filePath)}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.text();
-      })
-      .then(text => setHtml(marked.parse(text) as string))
-      .catch(e => setError(String(e)));
-  }, [filePath]);
+  const { data: text, error } = useFileContent(filePath, 'text');
+  const html = useMemo(() => (text ? (marked.parse(text) as string) : ''), [text]);
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {

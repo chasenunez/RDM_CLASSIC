@@ -17,6 +17,7 @@ import { loadState, saveState } from './lib/persistence';
 import { matchTrigger, matchSelectedProblem, getParentId } from './lib/matchTrigger';
 import { playChime, playBonk, playFanfare, playSosumi } from './lib/sounds';
 import { centeredAt } from './lib/layout';
+import { WINDOWS, LABELS } from './theme';
 
 // ── Typed data ────────────────────────────────────────────────────────────────
 
@@ -42,9 +43,11 @@ function getSubProblemIds(parentId: string): string[] {
 
 export const BOSS_FILE = 'soil samples.xlsx';
 export const BOSS_PARENT_ID = 'data-quality';
-export const BOSS_SUB_IDS = mapping.problems
-  .filter(p => p.parentId === BOSS_PARENT_ID)
-  .map(p => p.id);
+// Single source of truth for the boss sub-problems: problems.json (via
+// subProblemMap), the same list every other sub-problem code path uses.
+// mapping.json still defines how each sub-problem is *triggered* (the cell
+// clicks), but the *set* of sub-problems is owned by problems.json only.
+export const BOSS_SUB_IDS = getSubProblemIds(BOSS_PARENT_ID);
 
 // ── Default state ─────────────────────────────────────────────────────────────
 
@@ -58,11 +61,10 @@ function getDefaultState(): PersistedState {
     openWindows: [
       {
         id: 'project-folder',
-        title: 'Side Project 237 B',
+        title: LABELS.projectWindowTitle,
         viewerType: 'folder',
-        ...centeredAt(800, 600),
-        width: 800,
-        height: 600,
+        ...centeredAt(WINDOWS.projectFolder.width, WINDOWS.projectFolder.height),
+        ...WINDOWS.projectFolder,
         zIndex: 1,
       },
     ],
@@ -77,13 +79,11 @@ type Action =
   | { type: 'FIX_PROBLEM'; id: string }
   | { type: 'WRONG_GUESS' }
   | { type: 'DISMISS_WELCOME' }
-  | { type: 'SHOW_WELCOME' }
   | { type: 'OPEN_WINDOW'; window: Omit<WindowState, 'zIndex'> }
   | { type: 'CLOSE_WINDOW'; id: string }
   | { type: 'FOCUS_WINDOW'; id: string }
   | { type: 'MOVE_WINDOW'; id: string; x: number; y: number }
-  | { type: 'TOGGLE_MUTE' }
-  | { type: 'RESET' };
+  | { type: 'TOGGLE_MUTE' };
 
 function reducer(state: PersistedState, action: Action): PersistedState {
   switch (action.type) {
@@ -100,9 +100,6 @@ function reducer(state: PersistedState, action: Action): PersistedState {
 
     case 'DISMISS_WELCOME':
       return { ...state, hasSeenWelcome: true };
-
-    case 'SHOW_WELCOME':
-      return { ...state, hasSeenWelcome: false };
 
     case 'OPEN_WINDOW': {
       const exists = state.openWindows.find(w => w.id === action.window.id);
@@ -148,9 +145,6 @@ function reducer(state: PersistedState, action: Action): PersistedState {
     case 'TOGGLE_MUTE':
       return { ...state, isMuted: !state.isMuted };
 
-    case 'RESET':
-      return { ...getDefaultState(), hasSeenWelcome: false };
-
     default:
       return state;
   }
@@ -183,7 +177,6 @@ interface GameContextType {
   bossTotalErrors: number;
   dismissBossIntro: () => void;
   dismissBossComplete: () => void;
-  resetBossState: () => void;
   reportBossError: (target: ContextTarget) => void;
 
   openFile: (entry: FileEntry) => void;
@@ -249,13 +242,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setBossCompletionShowing(false);
     setBossFileFixed(true);
   }, []);
-  const resetBossState = useCallback(() => {
-    setBossIntroShowing(false);
-    setBossCompletionShowing(false);
-    setBossFileFixed(false);
-    prevBossComplete.current = false;
-  }, []);
-
   // Direct boss error report — skips the problem selection dialog
   const reportBossError = useCallback(
     (target: ContextTarget) => {
@@ -309,8 +295,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const viewerType: ViewerType = entry.viewerType as ViewerType;
       const windowId = `file:${entry.name}`;
       const cascade = (gameState.openWindows.length % 5) * 20;
-      const w = viewerType === 'image' ? 400 : 540;
-      const h = 360;
+      const { width: w, height: h } =
+        viewerType === 'image' ? WINDOWS.fileViewerImage : WINDOWS.fileViewer;
       dispatch({
         type: 'OPEN_WINDOW',
         window: {
@@ -396,13 +382,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: 'FIND_PROBLEM', id: actualMatchedId });
 
       // For sub-problems: check if all subs of the parent are now found
+      let parentJustCompleted = false;
       if (parentId) {
         const allSubIds = getSubProblemIds(parentId);
-        const alreadyFound = gameState.foundProblems;
-        const nowFound = [...alreadyFound, actualMatchedId];
+        const nowFound = [...gameState.foundProblems, actualMatchedId];
         const allDone = allSubIds.every(id => nowFound.includes(id));
-        if (allDone && !alreadyFound.includes(parentId)) {
+        if (allDone && !gameState.foundProblems.includes(parentId)) {
           dispatch({ type: 'FIND_PROBLEM', id: parentId });
+          parentJustCompleted = true;
         }
       }
 
@@ -410,11 +397,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       setActiveParentId(parentIdForDialog);
 
       if (!gameState.isMuted) {
-        // Calculate total found after this action
-        const prevFoundCount = gameState.foundProblems.length;
-        const mainProblemsCount = problems.length;
-        const allFound = prevFoundCount + 1 >= mainProblemsCount;
-        allFound ? playFanfare() : playChime();
+        // Fanfare only when the final *main* problem is found. foundProblems
+        // also holds sub-problem ids, so count main ids explicitly.
+        const foundIds = new Set(gameState.foundProblems);
+        foundIds.add(actualMatchedId);
+        if (parentJustCompleted) foundIds.add(parentId!);
+        const allMainFound = problems.every(p => foundIds.has(p.id));
+        allMainFound ? playFanfare() : playChime();
       }
     },
     [pendingTarget, gameState.foundProblems, gameState.isMuted, mapping],
@@ -447,9 +436,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           title: `Let's fix: ${prob.name}`,
           viewerType: 'fix',
           problemId: fixProblemId,
-          ...centeredAt(560, 420, cascade),
-          width: 560,
-          height: 420,
+          ...centeredAt(WINDOWS.fixWindow.width, WINDOWS.fixWindow.height, cascade),
+          ...WINDOWS.fixWindow,
         },
       });
     },
@@ -499,7 +487,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     bossTotalErrors: BOSS_SUB_IDS.length,
     dismissBossIntro,
     dismissBossComplete,
-    resetBossState,
     reportBossError,
     openFile,
     showContextMenu,

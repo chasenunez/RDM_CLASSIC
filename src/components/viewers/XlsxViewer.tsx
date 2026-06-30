@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { useGame, BOSS_FILE } from '../../GameContext';
+import { useFileContent } from '../../lib/useFileContent';
 
 interface XlsxViewerProps {
   filePath: string;
@@ -32,27 +33,17 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
     bossFileFixed,
   } = useGame();
 
-  const [sheets, setSheets] = useState<SheetData[]>([]);
   const [activeSheet, setActiveSheet] = useState(0);
-  const [error, setError] = useState('');
+  const { data: buf, error } = useFileContent(filePath, 'arrayBuffer');
 
-  useEffect(() => {
-    fetch(`/files/sample_project/${encodeURIComponent(filePath)}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.arrayBuffer();
-      })
-      .then(buf => {
-        const wb = XLSX.read(buf, { type: 'array' });
-        const parsed: SheetData[] = wb.SheetNames.map(name => {
-          const ws = wb.Sheets[name];
-          const rows = XLSX.utils.sheet_to_json<string[]>(ws, { header: 1, defval: '' });
-          return { name, rows: rows as string[][] };
-        });
-        setSheets(parsed);
-      })
-      .catch(e => setError(String(e)));
-  }, [filePath]);
+  const sheets = useMemo<SheetData[]>(() => {
+    if (!buf) return [];
+    const wb = XLSX.read(buf, { type: 'array' });
+    return wb.SheetNames.map(name => {
+      const rows = XLSX.utils.sheet_to_json<string[]>(wb.Sheets[name], { header: 1, defval: '' });
+      return { name, rows: rows as string[][] };
+    });
+  }, [buf]);
 
   if (error) return <div className="loading-msg">Error parsing xlsx: {error}</div>;
   if (!sheets.length) return <div className="loading-msg">Loading…</div>;

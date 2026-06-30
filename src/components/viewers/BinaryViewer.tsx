@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useGame } from '../../GameContext';
+import { useFileContent } from '../../lib/useFileContent';
 
 interface BinaryViewerProps {
   filePath: string;
@@ -29,34 +30,20 @@ const PREVIEW_BYTES = 64;
 
 export function BinaryViewer({ filePath }: BinaryViewerProps) {
   const { showContextMenu } = useGame();
-  const [hexRows, setHexRows] = useState<ReturnType<typeof toHexRows>>([]);
-  const [textPreview, setTextPreview] = useState<string[]>([]);
-  const [meta, setMeta] = useState({ size: 0, mime: '' });
-  const [error, setError] = useState('');
+  const { data: buf, error } = useFileContent(filePath, 'arrayBuffer');
 
-  useEffect(() => {
-    fetch(`/files/sample_project/${encodeURIComponent(filePath)}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const size = parseInt(r.headers.get('content-length') ?? '0', 10);
-        const mime = r.headers.get('content-type') ?? 'unknown';
-        setMeta({ size, mime });
-        return r.arrayBuffer();
-      })
-      .then(buf => {
-        const bytes = new Uint8Array(buf);
-        setHexRows(toHexRows(bytes.slice(0, PREVIEW_BYTES)));
-
-        // Try to decode as UTF-8 text for a friendlier preview
-        try {
-          const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
-          setTextPreview(text.split('\n').slice(0, 20));
-        } catch {
-          // Not valid UTF-8 — hex only
-        }
-      })
-      .catch(e => setError(String(e)));
-  }, [filePath]);
+  const { hexRows, textPreview, size } = useMemo(() => {
+    if (!buf) return { hexRows: [], textPreview: [] as string[], size: 0 };
+    const bytes = new Uint8Array(buf);
+    let textPreview: string[] = [];
+    // Try to decode as UTF-8 text for a friendlier preview (.dat files are ASCII)
+    try {
+      textPreview = new TextDecoder('utf-8', { fatal: true }).decode(bytes).split('\n').slice(0, 20);
+    } catch {
+      // Not valid UTF-8 — hex only
+    }
+    return { hexRows: toHexRows(bytes.slice(0, PREVIEW_BYTES)), textPreview, size: bytes.length };
+  }, [buf]);
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
@@ -75,7 +62,7 @@ export function BinaryViewer({ filePath }: BinaryViewerProps) {
   return (
     <div className="binary-viewer" onContextMenu={onContextMenu}>
       <div className="binary-viewer__meta">
-        File: {filePath} | Size: {meta.size} bytes
+        File: {filePath} | Size: {size} bytes
         <br />
         Right-click to report a RDM problem (format issue, proprietary format, etc.)
       </div>

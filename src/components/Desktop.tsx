@@ -13,6 +13,7 @@ import { FixViewer } from './viewers/FixViewer';
 import type { WindowState, FileEntry } from '../types';
 import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS } from '../lib/fixActions';
 import { centeredAt } from '../lib/layout';
+import { WINDOWS, ASSETS, LABELS } from '../theme';
 
 function TrashView() {
   const { showContextMenu, gameState } = useGame();
@@ -116,9 +117,8 @@ function FolderView() {
         id: 'archive',
         title: 'archive/',
         viewerType: 'archive',
-        ...centeredAt(600, 400),
-        width: 600,
-        height: 400,
+        ...centeredAt(WINDOWS.archive.width, WINDOWS.archive.height),
+        ...WINDOWS.archive,
       },
     });
   }, [dispatch]);
@@ -131,9 +131,8 @@ function FolderView() {
         title: `${folderName}/`,
         viewerType: 'subfolder',
         filePath: folderName,
-        ...centeredAt(600, 400),
-        width: 600,
-        height: 400,
+        ...centeredAt(WINDOWS.subfolder.width, WINDOWS.subfolder.height),
+        ...WINDOWS.subfolder,
       },
     });
   }, [dispatch]);
@@ -227,9 +226,8 @@ export function Desktop() {
         id: 'trash',
         title: 'Trash',
         viewerType: 'trash',
-        ...centeredAt(360, 280),
-        width: 360,
-        height: 280,
+        ...centeredAt(WINDOWS.trash.width, WINDOWS.trash.height),
+        ...WINDOWS.trash,
       },
     });
   }, [dispatch]);
@@ -239,11 +237,10 @@ export function Desktop() {
       type: 'OPEN_WINDOW',
       window: {
         id: 'project-folder',
-        title: 'Side Project 237 B',
+        title: LABELS.projectWindowTitle,
         viewerType: 'folder',
-        ...centeredAt(800, 500),
-        width: 800,
-        height: 500,
+        ...centeredAt(WINDOWS.projectFolder.width, WINDOWS.projectFolder.height),
+        ...WINDOWS.projectFolder,
       },
     });
   }, [dispatch]);
@@ -256,7 +253,7 @@ export function Desktop() {
       aria-label="Desktop"
     >
       <img
-        src="/assets/LDW_DIGITAL_LIB4RI.png"
+        src={ASSETS.desktopBackgroundLogo}
         className="desktop__bg-logo"
         alt=""
         draggable={false}
@@ -270,12 +267,12 @@ export function Desktop() {
         style={{ right: 16, top: 8 }}
         onDoubleClick={openProjectFolder}
         role="button"
-        aria-label="Side Project 237 B (double-click to open)"
+        aria-label={`${LABELS.projectWindowTitle} (double-click to open)`}
         tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter') openProjectFolder(); }}
       >
-        <img className="desktop-icon__image" src="/icons/Floppy.png" alt="" draggable={false} />
-        <span className="desktop-icon__label">Side Project</span>
+        <img className="desktop-icon__image" src={ASSETS.projectIcon} alt="" draggable={false} />
+        <span className="desktop-icon__label">{LABELS.projectIconLabel}</span>
       </div>
 
       {/* Trash icon */}
@@ -288,7 +285,7 @@ export function Desktop() {
         tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter') openTrash(); }}
       >
-        <img className="desktop-icon__image" src="/icons/Trash.png" alt="" draggable={false} />
+        <img className="desktop-icon__image" src={ASSETS.trashIcon} alt="" draggable={false} />
         <span className="desktop-icon__label">Trash</span>
       </div>
 

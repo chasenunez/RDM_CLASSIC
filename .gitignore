@@ -1,7 +1,2 @@
 .DS_Store
 src/.DS_Store
-
-# Output of `npm run content` (legacy proposal generator) — never shipped
-scripts/.staging/
-src/data/file-tree.proposal.json
-src/data/problems.proposal.json
