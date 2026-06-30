@@ -9,7 +9,10 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUT = path.join(__dirname, '..', 'public', 'files', 'sample_project');
+// RDM_XLSX_OUT lets build-content.mjs redirect output into its staging dir.
+// Standalone runs still default to the live sample_project folder.
+const OUT = process.env.RDM_XLSX_OUT ?? path.join(__dirname, '..', 'public', 'files', 'sample_project');
+fs.mkdirSync(OUT, { recursive: true });
 
 function writeSheet(filename, data) {
   const wb = XLSX.utils.book_new();

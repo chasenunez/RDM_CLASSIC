@@ -52,5 +52,14 @@
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "icon": "/icons/Text file.svg",
     "viewerType": "xlsx"
+  },
+  {
+    "path": "sample_project/raw_data.xlsx",
+    "name": "raw_data.xlsx",
+    "type": "file",
+    "size": 18542,
+    "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "icon": "/icons/Text file.svg",
+    "viewerType": "xlsx"
   }
 ]

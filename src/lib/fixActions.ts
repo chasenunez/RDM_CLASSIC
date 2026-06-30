@@ -81,11 +81,12 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
   },
 
   'no-backup': {
+    // raw_data.xlsx is a base file (in file-tree.json) so the no-backup trigger
+    // is clickable from the start. Fixing it has no file-view change — the
+    // backup itself is conceptual — so add/remove are empty.
     remove: [],
     archive: [],
-    add: [
-      { ...XLSX_FILE, path: 'sample_project/raw_data.xlsx', name: 'raw_data.xlsx', size: 18542 },
-    ],
+    add: [],
   },
 
   'data-quality': {
