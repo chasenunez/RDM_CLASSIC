@@ -84,12 +84,14 @@ export function ProblemReportDialog() {
         )}
 
         <div className="dialog__buttons">
-          <button
-            className="mac-button"
-            onClick={dismissProblemDialog}
-          >
-            {hideFix ? 'OK' : 'Not now'}
-          </button>
+          {hideFix && (
+            <button
+              className="mac-button"
+              onClick={dismissProblemDialog}
+            >
+              OK
+            </button>
+          )}
           {!hideFix && (
             <button
               ref={fixRef}

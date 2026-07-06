@@ -17,6 +17,7 @@ import { loadState, saveState } from './lib/persistence';
 import { matchTrigger, matchSelectedProblem, getParentId } from './lib/matchTrigger';
 import { playChime, playBonk, playFanfare, playSosumi } from './lib/sounds';
 import { centeredAt } from './lib/layout';
+import { FIX_ACTIONS } from './lib/fixActions';
 import { WINDOWS, LABELS } from './theme';
 
 // ── Typed data ────────────────────────────────────────────────────────────────
@@ -440,8 +441,25 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           ...WINDOWS.fixWindow,
         },
       });
+
+      // Apply the file-system side effects of the fix so the change is visible.
+      // A fix replaces messy files with improved ones (see FIX_ACTIONS), but the
+      // window the user was reading (e.g. script.py) stays open showing the old
+      // content. Close any window for a file this fix removes, then open the
+      // improved replacement so the updated code/text is surfaced on top.
+      const action = FIX_ACTIONS[fixProblemId];
+      if (action) {
+        action.remove.forEach(name => {
+          dispatch({ type: 'CLOSE_WINDOW', id: `file:${name}` });
+        });
+        const VIEWABLE: ViewerType[] = ['text', 'markdown', 'csv', 'xlsx', 'image'];
+        const improved = action.add.find(
+          f => f.type === 'file' && VIEWABLE.includes(f.viewerType as ViewerType),
+        );
+        if (improved) openFile(improved);
+      }
     },
-    [gameState.openWindows.length],
+    [gameState.openWindows.length, openFile],
   );
 
   const dismissProblemDialog = useCallback(() => {

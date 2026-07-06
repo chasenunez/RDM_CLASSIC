@@ -30,29 +30,29 @@ export function WelcomeDialog() {
           <div className="dialog__body">
             <p style={{ marginBottom: '10px', lineHeight: 2 }}>
               You have just inherited a colleague&apos;s research project.
-              It's a mess. Your mission: find all 13 research data management
-              violations hiding in the project files.
+              It's a mess. Your mission: use what you know about good reserach data management practices to find and fix all the
+              problems hiding in the project files.
             </p>
             <p style={{ marginBottom: '10px', lineHeight: 2 }}>
               <strong>How to play:</strong>
             </p>
             <ul style={{ lineHeight: 2.2, paddingLeft: '16px', marginBottom: '10px' }}>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
-                <strong>Right-click</strong> (or long-press on touch) any file icon,
+                When you find a problem, <strong>Right-click</strong> (or long-press on touch) any file icon,
                 then choose <em>Report a RDM problem</em>.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 <strong>Double-click</strong> a file to open it and inspect the contents.
-                Right-click individual lines or cells inside the viewer.
+                Right-click individual lines or cells inside the viewer to report a problem in the file.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
-                For issues that are <em>missing</em> from the project,
-                right-click the desktop background or empty space in the folder, then choose
+                To report items that are <em>missing</em> from the project,
+                right-click on the empty space in the folder, then choose
                 <em> Report missing artifact</em>.
               </li>
               <li style={{ listStyle: 'disc' }}>
-                Each correct find reveals the explanation and marks the checklist.
-                Wrong guesses are counted but never block you.
+                Each correct find reveals the explanation and marks it off on the checklist in the upper left of your screen.
+                Wrong guesses are counted, so be strategic!
               </li>
             </ul>
             <p style={{ lineHeight: 2 }}>
