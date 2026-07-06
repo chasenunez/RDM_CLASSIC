@@ -1,4 +1,5 @@
 import { useGame } from '../GameContext';
+import { asset } from '../lib/asset';
 
 export function BossBattleComplete() {
   const { bossCompletionShowing, dismissBossComplete } = useGame();
@@ -14,7 +15,7 @@ export function BossBattleComplete() {
       onKeyDown={e => { if (e.key === 'Enter') dismissBossComplete(); }}
     >
       <div className="dialog" style={{ maxWidth: 480, textAlign: 'center' }}>
-        <img src="/icons/Happy Mac.svg" className="dialog__icon-img" alt="[WIN]" style={{ width: 160, height: 160, display: 'block', margin: '0 auto 16px' }} />
+        <img src={asset('/icons/Happy Mac.svg')} className="dialog__icon-img" alt="[WIN]" style={{ width: 160, height: 160, display: 'block', margin: '0 auto 16px' }} />
         <h2 className="dialog__title" id="boss-complete-title">
           Great job!
         </h2>

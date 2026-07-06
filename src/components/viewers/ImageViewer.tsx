@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useGame } from '../../GameContext';
+import { asset } from '../../lib/asset';
 
 interface ImageViewerProps {
   filePath: string;
@@ -24,7 +25,7 @@ export function ImageViewer({ filePath }: ImageViewerProps) {
   return (
     <div className="image-viewer" onContextMenu={onContextMenu}>
       <img
-        src={`/files/sample_project/${encodeURIComponent(filePath)}`}
+        src={asset(`/files/sample_project/${encodeURIComponent(filePath)}`)}
         alt={filePath}
         title="Right-click to report a RDM problem"
       />

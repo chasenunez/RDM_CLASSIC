@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { asset } from './asset';
 
-// All game files are served from this base path (Vite serves public/ at root).
+// All game files are served from this base path. `asset()` prefixes the app's
+// base URL so it works when hosted at a sub-path (GitHub Pages) as well as root.
 // Change this if you move the sample project out of public/files/sample_project/.
-const FILES_BASE = '/files/sample_project';
+const FILES_BASE = asset('/files/sample_project');
 
 /**
  * Fetch a file from the sample project. Shared by every viewer so the path

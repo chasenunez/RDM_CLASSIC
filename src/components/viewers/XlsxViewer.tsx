@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { useGame, BOSS_FILE } from '../../GameContext';
 import { useFileContent } from '../../lib/useFileContent';
+import { asset } from '../../lib/asset';
 
 interface XlsxViewerProps {
   filePath: string;
@@ -95,14 +96,14 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
 
       {isBoss && !bossFileFixed && (
         <div className="xlsx-boss-hint">
-          <img src="/icons/Sad Mac.svg" alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
+          <img src={asset('/icons/Sad Mac.svg')} alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
           Boss Battle — find all {bossTotalErrors} data quality issues! Right-click suspicious cells.
         </div>
       )}
 
       {isBoss && bossFileFixed && (
         <div className="xlsx-fixed-banner">
-          <img src="/icons/Happy Mac.svg" alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
+          <img src={asset('/icons/Happy Mac.svg')} alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
           Fixed! All data quality issues have been corrected.
         </div>
       )}

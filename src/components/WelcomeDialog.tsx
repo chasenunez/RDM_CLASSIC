@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGame } from '../GameContext';
+import { asset } from '../lib/asset';
 
 export function WelcomeDialog() {
   const { dispatch } = useGame();
@@ -22,7 +23,7 @@ export function WelcomeDialog() {
 
         <div style={{ padding: '20px 24px', overflowY: 'auto', maxHeight: 'calc(100vh - 120px)' }}>
           <img
-            src="/assets/welcome_graphic.png"
+            src={asset('/assets/welcome_graphic.png')}
             className="dialog__hero-img"
             alt="RDM Classic welcome graphic"
           />

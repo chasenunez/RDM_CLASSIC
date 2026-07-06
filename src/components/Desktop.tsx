@@ -14,6 +14,7 @@ import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
 import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS } from '../lib/fixActions';
 import { centeredAt } from '../lib/layout';
+import { asset } from '../lib/asset';
 import { WINDOWS, ASSETS, LABELS, TRASH_GIFS } from '../theme';
 
 function TrashView() {
@@ -75,10 +76,10 @@ function TrashView() {
       >
         <img
           className="file-icon__image"
-          src="/icons/Spreadsheet file.svg"
+          src={asset('/icons/Spreadsheet file.svg')}
           alt=""
           draggable={false}
-          onError={e => { (e.currentTarget as HTMLImageElement).src = '/icons/Text file.svg'; }}
+          onError={e => { (e.currentTarget as HTMLImageElement).src = asset('/icons/Text file.svg'); }}
         />
         <span className="file-icon__label">raw_alpine_soil_data.xlsx</span>
       </div>
@@ -198,7 +199,7 @@ function FolderView() {
           >
             <img
               className="file-icon__image"
-              src={entry.icon}
+              src={asset(entry.icon)}
               alt=""
               draggable={false}
             />
@@ -222,7 +223,7 @@ function FolderView() {
         >
           <img
             className="file-icon__image"
-            src="/icons/Floppy.svg"
+            src={asset('/icons/Floppy.svg')}
             alt=""
             draggable={false}
           />

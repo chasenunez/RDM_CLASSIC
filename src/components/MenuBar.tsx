@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGame } from '../GameContext';
 import { clearState } from '../lib/persistence';
+import { asset } from '../lib/asset';
 
 const MENU_ITEMS: Record<string, string[]> = {
   File: [
@@ -86,7 +87,7 @@ export function MenuBar() {
         aria-label="App menu"
       >
         <img
-          src="/icons/Stop.svg"
+          src={asset('/icons/Stop.svg')}
           alt="Menu"
           style={{ width: 16, height: 16, imageRendering: 'pixelated', pointerEvents: 'none' }}
         />
