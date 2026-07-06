@@ -21,7 +21,17 @@ export const WINDOWS = {
   trash:           { width: 360, height: 280 },
   subfolder:       { width: 600, height: 400 },
   archive:         { width: 600, height: 400 },
+  gif:             { width: 420, height: 340 },
 } as const;
+
+/**
+ * Easter-egg animated GIFs that live in the Trash. Click one to pop it open
+ * in its own window where it plays. Add/remove entries here to change them.
+ */
+export const TRASH_GIFS = [
+  { id: 'flying-toasters', label: 'FlyingToasters.gif', src: '/assets/FlyingToasters.gif' },
+  { id: 'seal',            label: 'seal.gif',           src: '/assets/seal.gif' },
+] as const;
 
 /** Image paths (served from public/). Swap these to change the logo / icons. */
 export const ASSETS = {

@@ -38,6 +38,12 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
           Congratulations! All {total} problems found!
         </h2>
 
+        <img
+          src="/assets/finale_mac.png"
+          alt=""
+          style={{ display: 'block', margin: '12px auto', maxWidth: '50%', height: 'auto' }}
+        />
+
         <div className="dialog__body">
           <p style={{ fontFamily: 'var(--font-pixel)', fontSize: '7px', lineHeight: 2, marginBottom: '10px' }}>
             {rating}
@@ -61,7 +67,7 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
             className="mac-button"
             style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
           >
-            [v] Download RDM Guide
+            Download RDM Guide
           </a>
           <button
             ref={lookRef}

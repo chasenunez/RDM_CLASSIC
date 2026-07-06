@@ -10,13 +10,14 @@ import { ImageViewer } from './viewers/ImageViewer';
 import { BinaryViewer } from './viewers/BinaryViewer';
 import { MarkdownViewer } from './viewers/MarkdownViewer';
 import { FixViewer } from './viewers/FixViewer';
+import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
 import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS } from '../lib/fixActions';
 import { centeredAt } from '../lib/layout';
-import { WINDOWS, ASSETS, LABELS } from '../theme';
+import { WINDOWS, ASSETS, LABELS, TRASH_GIFS } from '../theme';
 
 function TrashView() {
-  const { showContextMenu, gameState } = useGame();
+  const { showContextMenu, gameState, dispatch } = useGame();
   const isFixed = gameState.fixedProblems.includes('no-backup');
 
   const onContextMenu = useCallback((e: React.MouseEvent) => {
@@ -25,10 +26,40 @@ function TrashView() {
     showContextMenu({ x: e.clientX, y: e.clientY, target: { kind: 'file', path: 'raw_alpine_soil_data.xlsx' } });
   }, [showContextMenu]);
 
+  const openGif = useCallback((gif: { id: string; label: string; src: string }) => {
+    dispatch({
+      type: 'OPEN_WINDOW',
+      window: {
+        id: `gif:${gif.id}`,
+        title: gif.label,
+        viewerType: 'gif',
+        filePath: gif.src,
+        ...centeredAt(WINDOWS.gif.width, WINDOWS.gif.height),
+        ...WINDOWS.gif,
+      },
+    });
+  }, [dispatch]);
+
+  const gifIcons = TRASH_GIFS.map(gif => (
+    <div
+      key={gif.id}
+      className="file-icon"
+      onClick={() => openGif(gif)}
+      onDoubleClick={() => openGif(gif)}
+      role="button"
+      aria-label={`Play ${gif.label}`}
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter') openGif(gif); }}
+    >
+      <img className="file-icon__image" src={gif.src} alt="" draggable={false} />
+      <span className="file-icon__label">{gif.label}</span>
+    </div>
+  ));
+
   if (isFixed) {
     return (
       <div className="folder-view" style={{ height: '100%' }}>
-        <div className="loading-msg">Trash is empty.</div>
+        {gifIcons}
       </div>
     );
   }
@@ -51,6 +82,7 @@ function TrashView() {
         />
         <span className="file-icon__label">raw_alpine_soil_data.xlsx</span>
       </div>
+      {gifIcons}
     </div>
   );
 }
@@ -99,6 +131,7 @@ function ViewerForWindow({ win }: { win: WindowState }) {
     case 'binary':   return <BinaryViewer filePath={win.filePath!} />;
     case 'markdown': return <MarkdownViewer filePath={win.filePath!} />;
     case 'fix':      return <FixViewer problemId={win.problemId!} />;
+    case 'gif':      return <GifViewer src={win.filePath!} />;
     case 'trash':    return <TrashView />;
     default:         return null;
   }
