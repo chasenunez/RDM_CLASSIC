@@ -92,7 +92,7 @@ export function MenuBar() {
         />
         {openMenu === 'apple' && (
           <div className="dropdown" role="menu">
-            <div className="dropdown__item disabled">About RDM Chase</div>
+            <div className="dropdown__item disabled">About RDM Classic</div>
             <div className="dropdown__separator" />
             <div
               className="dropdown__item"

@@ -24,7 +24,7 @@ export function WelcomeDialog() {
           <img
             src="/assets/welcome_graphic.png"
             className="dialog__hero-img"
-            alt="RDM Chase welcome graphic"
+            alt="RDM Classic welcome graphic"
           />
 
           <div className="dialog__body">

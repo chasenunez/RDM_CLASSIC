@@ -83,7 +83,7 @@
     "id": "no-backup",
     "name": "Data provenance",
     "fullTitle": "Raw Data Not Preserved",
-    "what": "`raw_data.xlsx` — the original, unprocessed data file — was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.",
+    "what": "`raw_alpine_soil_data.xlsx` — the original, unprocessed data file — was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.",
     "why": "Raw data is the ground truth of your research. If something goes wrong downstream — a processing error, a bug in your script, a question from a reviewer — you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.",
     "fix": "Follow these raw-data rules:\n\n1. **Never delete raw data.** Archive it in a read-only location.\n2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.\n3. **Store raw data in at least two places** (e.g., your local drive AND your institute's storage or a repository).\n4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.\n\nA clean project layout separates concerns:\n```\ndata/\n  raw/          ← original files, never touched\n  processed/    ← output of your scripts\n```",
     "resources": [

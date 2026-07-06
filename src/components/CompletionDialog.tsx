@@ -32,7 +32,7 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
       aria-labelledby="completion-title"
       onKeyDown={e => { if (e.key === 'Enter') onLookAtWork(); }}
     >
-      <div className="dialog" style={{ maxWidth: 480 }}>
+      <div className="dialog">
         <span className="dialog__icon"></span>
         <h2 className="dialog__title" id="completion-title">
           Congratulations! All {total} problems found!

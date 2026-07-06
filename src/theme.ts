@@ -32,5 +32,6 @@ export const ASSETS = {
 
 export const LABELS = {
   projectWindowTitle: 'Side Project 237 B',
-  projectIconLabel:   'Side Project',
+  // Desktop icon label matches the window title so they read as the same item.
+  projectIconLabel:   'Side Project 237 B',
 } as const;
