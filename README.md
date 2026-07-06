@@ -1,6 +1,7 @@
 # RDM Scavenger Hunt
 
 [Play a beta version here](https://chasenunez.github.io/RDM_CLASSIC/)
+
 [Submit bugs here](https://github.com/chasenunez/RDM_CLASSIC/issues)
 
 A browser-based educational game teaching Research Data Management (RDM) best practices through a faithful recreation of the Classic Mac OS (System 7) desktop. Players inherit a deliberately broken fake research project, explore its files, and right-click anything that looks wrong to report an RDM violation. Each correct find reveals a full explanation drawn from the original workshop answer key.
