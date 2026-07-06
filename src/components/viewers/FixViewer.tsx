@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { useGame } from '../../GameContext';
+import { asset } from '../../lib/asset';
 
 interface FixViewerProps {
   problemId: string;
@@ -18,7 +19,7 @@ export function FixViewer({ problemId }: FixViewerProps) {
   return (
     <div className="fix-viewer">
       <div className="fix-viewer__header">
-        <img src="/icons/Happy Mac.svg" className="dialog__icon-img" alt="[OK]" style={{ width: 24, height: 24 }} />
+        <img src={asset('/icons/Happy Mac.svg')} className="dialog__icon-img" alt="[OK]" style={{ width: 24, height: 24 }} />
         <h3 className="fix-viewer__title">How to fix: {problem.name}</h3>
       </div>
       <div

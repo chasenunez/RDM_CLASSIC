@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGame } from '../GameContext';
+import { asset } from '../lib/asset';
 
 interface CompletionDialogProps {
   onLookAtWork: () => void;
@@ -39,7 +40,7 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
         </h2>
 
         <img
-          src="/assets/finale_mac.png"
+          src={asset('/assets/finale_mac.png')}
           alt=""
           style={{ display: 'block', margin: '12px auto', maxWidth: '50%', height: 'auto' }}
         />
@@ -62,7 +63,7 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
 
         <div className="dialog__buttons">
           <a
-            href="/downloads/RDM_Guide.html"
+            href={asset('/downloads/RDM_Guide.html')}
             download="RDM_Problems_and_Fixes_Guide.html"
             className="mac-button"
             style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}

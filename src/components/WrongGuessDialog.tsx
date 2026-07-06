@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGame } from '../GameContext';
+import { asset } from '../lib/asset';
 
 export function WrongGuessDialog() {
   const { showWrong, wrongKind, alreadyFoundName, dismissWrongDialog, dismissAlreadyFound } = useGame();
@@ -21,15 +22,15 @@ export function WrongGuessDialog() {
   let body: string;
 
   if (isAlreadyFound) {
-    icon = <img src="/icons/Sad Mac.svg" className="dialog__icon-img" alt="[!]" />;
+    icon = <img src={asset('/icons/Sad Mac.svg')} className="dialog__icon-img" alt="[!]" />;
     title = 'Already found!';
     body = `You already found "${alreadyFoundName}". Keep looking for the others!`;
   } else if (wrongKind === 'wrong_problem') {
-    icon = <img src="/icons/Alert.png" className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
+    icon = <img src={asset('/icons/Alert.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'Something IS wrong here…';
     body = 'You\'ve spotted a real RDM problem — but you\'ve labeled it incorrectly. Take another look and try a different category.';
   } else {
-    icon = <img src="/icons/Alert.png" className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
+    icon = <img src={asset('/icons/Alert.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'No RDM problem here.';
     body = 'That target does not reveal an RDM violation. Keep exploring — right-click files, open them and inspect cells or lines.';
   }

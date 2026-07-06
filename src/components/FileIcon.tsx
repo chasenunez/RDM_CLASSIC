@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useGame } from '../GameContext';
 import { useLongPress } from '../lib/longPress';
+import { asset } from '../lib/asset';
 import type { FileEntry, ContextTarget } from '../types';
 
 interface FileIconProps {
@@ -60,12 +61,12 @@ export function FileIcon({ entry }: FileIconProps) {
       ) : (
         <img
           className="file-icon__image"
-          src={entry.icon}
+          src={asset(entry.icon)}
           alt=""
           draggable={false}
           onError={(e) => {
             // Fallback to Text file icon if specific icon missing
-            (e.currentTarget as HTMLImageElement).src = '/icons/Text file.svg';
+            (e.currentTarget as HTMLImageElement).src = asset('/icons/Text file.svg');
           }}
         />
       )}

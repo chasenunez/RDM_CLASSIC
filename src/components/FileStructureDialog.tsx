@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useGame } from '../GameContext';
+import { asset } from '../lib/asset';
 
 interface FileStructureDialogProps {
   onDone: () => void;
@@ -28,7 +29,7 @@ export function FileStructureDialog({ onDone }: FileStructureDialogProps) {
     >
       <div className="dialog" style={{ maxWidth: 500 }}>
         <img
-          src="/icons/Info.svg"
+          src={asset('/icons/Info.svg')}
           className="dialog__icon-img"
           alt=""
           style={{ width: 32, height: 32 }}

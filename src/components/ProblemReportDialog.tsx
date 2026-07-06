@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
 import { useGame } from '../GameContext';
+import { asset } from '../lib/asset';
 
 type Tab = 'what' | 'why';
 
@@ -42,7 +43,7 @@ export function ProblemReportDialog() {
       onKeyDown={e => { if (e.key === 'Escape') dismissProblemDialog(); }}
     >
       <div className="dialog" style={{ maxWidth: 620 }}>
-        <img src="/icons/Happy Mac.svg" className="dialog__icon-img" alt="[OK]" />
+        <img src={asset('/icons/Happy Mac.svg')} className="dialog__icon-img" alt="[OK]" />
         <h2 className="dialog__title" id="problem-title">
           {showFix && fixProblem ? `How to fix: ${fixProblem.name}` : `Found: ${activeProblem.name}`}
         </h2>

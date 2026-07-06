@@ -1,5 +1,6 @@
 import { useGame } from '../GameContext';
 import { BOSS_SUB_IDS } from '../GameContext';
+import { asset } from '../lib/asset';
 
 export function BossBattleIntro() {
   const { bossIntroShowing, dismissBossIntro } = useGame();
@@ -12,7 +13,7 @@ export function BossBattleIntro() {
       aria-label="Boss Battle intro — click to start"
     >
       <img
-        src="/assets/mini_game.png"
+        src={asset('/assets/mini_game.png')}
         alt="Boss Battle: Data Quality"
         className="boss-intro__image"
         draggable={false}

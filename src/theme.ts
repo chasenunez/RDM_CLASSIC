@@ -12,6 +12,8 @@
  *   • File icons in the folder view → the `icon` field in src/data/file-tree.json
  */
 
+import { asset } from './lib/asset';
+
 /** Default width/height for each window type, in px. */
 export const WINDOWS = {
   projectFolder:   { width: 800, height: 600 },
@@ -29,15 +31,15 @@ export const WINDOWS = {
  * in its own window where it plays. Add/remove entries here to change them.
  */
 export const TRASH_GIFS = [
-  { id: 'flying-toasters', label: 'FlyingToasters.gif', src: '/assets/FlyingToasters.gif' },
-  { id: 'seal',            label: 'seal.gif',           src: '/assets/seal.gif' },
+  { id: 'flying-toasters', label: 'FlyingToasters.gif', src: asset('/assets/FlyingToasters.gif') },
+  { id: 'seal',            label: 'seal.gif',           src: asset('/assets/seal.gif') },
 ] as const;
 
 /** Image paths (served from public/). Swap these to change the logo / icons. */
 export const ASSETS = {
-  desktopBackgroundLogo: '/assets/LDW_DIGITAL_LIB4RI.png',
-  projectIcon:           '/icons/Floppy.png',
-  trashIcon:             '/icons/Trash.png',
+  desktopBackgroundLogo: asset('/assets/LDW_DIGITAL_LIB4RI.png'),
+  projectIcon:           asset('/icons/Floppy.png'),
+  trashIcon:             asset('/icons/Trash.png'),
 } as const;
 
 export const LABELS = {
