@@ -81,12 +81,13 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
   },
 
   'no-backup': {
-    // raw_data.xlsx lives in the Trash (see TrashView) until no-backup is fixed,
-    // at which point it moves into the project folder as a recovered file.
+    // raw_alpine_soil_data.xlsx lives in the Trash (see TrashView) until
+    // no-backup is fixed, at which point it moves into the project folder as a
+    // recovered file.
     remove: [],
     archive: [],
     add: [
-      { ...XLSX_FILE, path: 'sample_project/raw_data.xlsx', name: 'raw_data.xlsx', size: 18542 },
+      { ...XLSX_FILE, path: 'sample_project/raw_alpine_soil_data.xlsx', name: 'raw_alpine_soil_data.xlsx', size: 18542 },
     ],
   },
 
@@ -132,7 +133,9 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
       { ...FOLDER, path: '_fix/code', name: 'code/', size: 0 },
     ],
     organize: {
-      'data': ['raw_data.xlsx', 'fig1_updated.png', 'microscopy_sample_12.png', '20260315_AlpineSoil_Chem_v1.xlsx'],
+      // Names are matched *before* the file-formats csv conversion, so list the
+      // .xlsx names here even though they may render as .csv afterwards.
+      'data': ['raw_alpine_soil_data.xlsx', 'soil samples.xlsx', 'fig1_updated.png', 'microscopy_sample_12.png', '20260315_AlpineSoil_Chem_v1.xlsx'],
       'manuscripts': [
         '20260501_AlpineSoil_Manuscript_v0.1.docx',
         '20260501_AlpineSoil_Manuscript_v0.2.docx',
@@ -141,6 +144,12 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     },
   },
 };
+
+// The interactive boss-battle spreadsheet keeps its .xlsx grid + viewer even
+// after the file-formats fix — converting it to CSV would break the minigame
+// (its cell coordinates in mapping.json and the XlsxViewer boss handling both
+// key off the "soil samples.xlsx" name). Every other .xlsx is converted.
+const CSV_CONVERSION_EXEMPT = new Set(['soil samples.xlsx']);
 
 export function computeDisplayFiles(
   baseTree: FileEntry[],
@@ -180,6 +189,24 @@ export function computeDisplayFiles(
     result = result.map(f => {
       const folder = nameToFolder[f.name];
       return folder ? { ...f, path: `_sub/${folder}/${f.name}` } : f;
+    });
+  }
+
+  // After the file-formats fix, proprietary .xlsx data files are re-saved as
+  // open .csv files. Rewrite the display entry (name, path, viewer, mime) so
+  // the file opens in the CSV viewer. Runs after the organize step so a file
+  // already moved into a subfolder keeps its subfolder path.
+  if (fixedProblems.includes('file-formats')) {
+    result = result.map(f => {
+      if (f.type !== 'file' || !f.name.endsWith('.xlsx')) return f;
+      if (CSV_CONVERSION_EXEMPT.has(f.name)) return f;
+      return {
+        ...f,
+        name: f.name.replace(/\.xlsx$/, '.csv'),
+        path: f.path.replace(/\.xlsx$/, '.csv'),
+        viewerType: 'csv',
+        mimeGuess: 'text/csv',
+      };
     });
   }
 

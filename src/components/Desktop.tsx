@@ -22,7 +22,7 @@ function TrashView() {
   const onContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    showContextMenu({ x: e.clientX, y: e.clientY, target: { kind: 'file', path: 'raw_data.xlsx' } });
+    showContextMenu({ x: e.clientX, y: e.clientY, target: { kind: 'file', path: 'raw_alpine_soil_data.xlsx' } });
   }, [showContextMenu]);
 
   if (isFixed) {
@@ -39,7 +39,7 @@ function TrashView() {
         className="file-icon"
         onContextMenu={onContextMenu}
         role="button"
-        aria-label="File: raw_data.xlsx"
+        aria-label="File: raw_alpine_soil_data.xlsx"
         tabIndex={0}
       >
         <img
@@ -49,7 +49,7 @@ function TrashView() {
           draggable={false}
           onError={e => { (e.currentTarget as HTMLImageElement).src = '/icons/Text file.svg'; }}
         />
-        <span className="file-icon__label">raw_data.xlsx</span>
+        <span className="file-icon__label">raw_alpine_soil_data.xlsx</span>
       </div>
     </div>
   );
@@ -252,11 +252,10 @@ export function Desktop() {
       onDragStart={e => e.preventDefault()}
       aria-label="Desktop"
     >
-      <img
-        src={ASSETS.desktopBackgroundLogo}
+      <div
         className="desktop__bg-logo"
-        alt=""
-        draggable={false}
+        style={{ backgroundImage: `url(${ASSETS.desktopBackgroundLogo})` }}
+        aria-hidden="true"
       />
 
       <StickyNote />

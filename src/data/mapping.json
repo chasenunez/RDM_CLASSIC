@@ -33,7 +33,7 @@
     {
       "id": "no-backup",
       "triggers": [
-        { "type": "file", "path": "raw_data.xlsx" }
+        { "type": "file", "path": "raw_alpine_soil_data.xlsx" }
       ],
       "matchRule": "any"
     },

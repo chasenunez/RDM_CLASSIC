@@ -25,14 +25,15 @@
   overflow: hidden;
 }
 
-/* Centered background logo — occupies the middle third (center ninth) */
+/* Tiled background logo — repeats across the whole desktop at the same size
+   the single centered logo used to be (one-third of the desktop width). The
+   image URL is set inline from ASSETS.desktopBackgroundLogo. */
 .desktop__bg-logo {
   position: absolute;
-  left: 33.33%;
-  top: 33.33%;
-  width: 33.33%;
-  height: 33.33%;
-  object-fit: contain;
+  inset: 0;
+  background-repeat: repeat;
+  background-position: top left;
+  background-size: 33.33% auto;
   pointer-events: none;
   z-index: 0;
   opacity: 0.85;
@@ -536,6 +537,7 @@
 .dialog__buttons {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 16px;
 }

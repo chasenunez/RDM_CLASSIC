@@ -442,24 +442,30 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         },
       });
 
-      // Apply the file-system side effects of the fix so the change is visible.
-      // A fix replaces messy files with improved ones (see FIX_ACTIONS), but the
-      // window the user was reading (e.g. script.py) stays open showing the old
-      // content. Close any window for a file this fix removes, then open the
-      // improved replacement so the updated code/text is surfaced on top.
+      // Apply the file-system side effects of the fix. A fix replaces messy
+      // files with improved ones (see FIX_ACTIONS). If the user was reading one
+      // of the replaced files, its window would otherwise linger showing stale
+      // content — so close it and surface the improved replacement in its place.
+      // If the file wasn't open, we leave the desktop alone: don't pop open a
+      // window the user never asked for.
       const action = FIX_ACTIONS[fixProblemId];
       if (action) {
+        const wasOpen = action.remove.some(name =>
+          gameState.openWindows.some(w => w.id === `file:${name}`),
+        );
         action.remove.forEach(name => {
           dispatch({ type: 'CLOSE_WINDOW', id: `file:${name}` });
         });
-        const VIEWABLE: ViewerType[] = ['text', 'markdown', 'csv', 'xlsx', 'image'];
-        const improved = action.add.find(
-          f => f.type === 'file' && VIEWABLE.includes(f.viewerType as ViewerType),
-        );
-        if (improved) openFile(improved);
+        if (wasOpen) {
+          const VIEWABLE: ViewerType[] = ['text', 'markdown', 'csv', 'xlsx', 'image'];
+          const improved = action.add.find(
+            f => f.type === 'file' && VIEWABLE.includes(f.viewerType as ViewerType),
+          );
+          if (improved) openFile(improved);
+        }
       }
     },
-    [gameState.openWindows.length, openFile],
+    [gameState.openWindows, openFile],
   );
 
   const dismissProblemDialog = useCallback(() => {
