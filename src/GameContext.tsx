@@ -429,18 +429,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         ? (subProblemMap.get(problemId)!.parentId)
         : problemId;
 
-      const cascade = (gameState.openWindows.length % 5) * 20;
-      dispatch({
-        type: 'OPEN_WINDOW',
-        window: {
-          id: `fix:${fixProblemId}`,
-          title: `Let's fix: ${prob.name}`,
-          viewerType: 'fix',
-          problemId: fixProblemId,
-          ...centeredAt(WINDOWS.fixWindow.width, WINDOWS.fixWindow.height, cascade),
-          ...WINDOWS.fixWindow,
-        },
-      });
+      // The "How to fix" content is shown in-place inside the problem dialog
+      // (see ProblemReportDialog) — we no longer open a separate fix window.
 
       // Apply the file-system side effects of the fix. A fix replaces messy
       // files with improved ones (see FIX_ACTIONS). If the user was reading one
