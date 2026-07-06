@@ -1,29 +1,56 @@
-# Alpine Soil Study — data processing pipeline
-# Reads raw soil chemistry and humidity data, merges on site ID,
-# computes per-site means, and writes results to Excel.
+# =============================================================================
+# Alpine Soil Study - data processing pipeline
+# Author:  J. Keller  (j.keller@example.edu)
+# Created: 2026-04-10
+#
+# Reads cleaned soil-chemistry and humidity sensor data, merges them on site
+# ID, computes per-site means, and writes the results. All paths are relative
+# to the project root, so the script runs on any machine after `git clone`
+# with no edits.
+# =============================================================================
+
+import logging
+from pathlib import Path
 
 import pandas as pd
-import numpy as np
 
-# Load soil chemistry data; header is on row index 2 (rows 0-1 are title/notes)
-df = pd.read_excel("soil samples.xlsx", header=2)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s  %(message)s")
 
-# Load temperature/humidity sensor export
-df2 = pd.read_excel("temp&humidity_data_FINAL.xlsx")
+# Relative paths only - no hardcoded absolute or user-specific locations
+DATA_DIR = Path("data")
+RESULTS_DIR = Path("results")
+RESULTS_DIR.mkdir(exist_ok=True)
 
+# --- Load inputs -------------------------------------------------------------
+# Cleaned soil chemistry. The header is now the first row (the title/notes rows
+# were removed as part of the data-quality fix), so no header offset is needed.
+soil = pd.read_excel(DATA_DIR / "20260315_AlpineSoil_Chem_v1.xlsx")
+
+# Temperature / humidity sensor export
+sensors = pd.read_excel(DATA_DIR / "temp_humidity_data_v1.xlsx")
+
+# --- Clean & derive ----------------------------------------------------------
 # Drop rows with any missing values before computing derived fields
-df = df.dropna()
+soil = soil.dropna()
 
-# Compute ratio of bulk density (col3) to soil moisture (col1)
-df['ratio'] = df['col3'] / df['col1']
+# Descriptive column names instead of the ambiguous col1 / col3
+soil["bulk_density_to_moisture_ratio"] = (
+    soil["bulk_density_g_cm3"] / soil["soil_moisture_pct"]
+)
 
-# Retain only positive humidity readings (sensor artefact: negative values are noise)
-df2 = df2[df2['val'] > 0]
+# Keep only valid positive humidity readings (negatives are sensor noise)
+sensors = sensors[sensors["humidity_pct"] > 0]
 
-# Merge on shared site identifier
-merged = pd.merge(df, df2, on='id')
-merged.to_excel("cleaned data.xlsx", index=False)
+# --- Merge & summarise -------------------------------------------------------
+merged = pd.merge(soil, sensors, on="site_id")
+merged.to_excel(RESULTS_DIR / "merged_data_v1.xlsx", index=False)
 
-# Summarise by site
-result = merged.groupby('site').mean()
-result.to_excel("results_final.xlsx")
+# Per-site means, written with a descriptive, versioned filename
+site_means = merged.groupby("site_id").mean(numeric_only=True)
+site_means.to_excel(RESULTS_DIR / "site_means_v1.xlsx")
+
+# Record what the run produced so results are traceable
+logging.info(
+    "Processed %d merged rows across %d sites -> %s",
+    len(merged), len(site_means), RESULTS_DIR,
+)
