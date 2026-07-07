@@ -38,7 +38,10 @@ export const TRASH_GIFS = [
 /** Image paths (served from public/). Swap these to change the logo / icons. */
 export const ASSETS = {
   desktopBackgroundLogo: asset('/assets/LDW_DIGITAL_LIB4RI.png'),
-  projectIcon:           asset('/icons/Floppy.png'),
+  // Desktop project icon: "on fire" while problems remain, calms down to a
+  // plain folder once the player has fixed everything.
+  projectIconActive:     asset('/assets/folder_fire.png'),
+  projectIconComplete:   asset('/assets/folder.png'),
   trashIcon:             asset('/icons/Trash.png'),
 } as const;
 

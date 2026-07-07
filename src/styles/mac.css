@@ -60,6 +60,7 @@
 .desktop-icon__image {
   width: 80px;
   height: 80px;
+  object-fit: contain;
   image-rendering: pixelated;
   pointer-events: none;
 }
@@ -662,6 +663,7 @@
 .file-icon__image {
   width: 72px;
   height: 72px;
+  object-fit: contain;
   image-rendering: pixelated;
   pointer-events: none;
 }
