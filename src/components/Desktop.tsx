@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useGame } from '../GameContext';
 import { Window } from './Window';
 import { FileIcon } from './FileIcon';
+import { BreakableLabel } from './BreakableLabel';
 import { StickyNote } from './StickyNote';
 import { TextViewer } from './viewers/TextViewer';
 import { CsvViewer } from './viewers/CsvViewer';
@@ -53,7 +54,7 @@ function TrashView() {
       onKeyDown={e => { if (e.key === 'Enter') openGif(gif); }}
     >
       <img className="file-icon__image" src={gif.src} alt="" draggable={false} />
-      <span className="file-icon__label">{gif.label}</span>
+      <span className="file-icon__label"><BreakableLabel text={gif.label} /></span>
     </div>
   ));
 
@@ -81,7 +82,7 @@ function TrashView() {
           draggable={false}
           onError={e => { (e.currentTarget as HTMLImageElement).src = asset('/icons/Text file.svg'); }}
         />
-        <span className="file-icon__label">raw_alpine_soil_data.xlsx</span>
+        <span className="file-icon__label"><BreakableLabel text="raw_alpine_soil_data.xlsx" /></span>
       </div>
       {gifIcons}
     </div>
@@ -203,7 +204,7 @@ function FolderView() {
               alt=""
               draggable={false}
             />
-            <span className="file-icon__label">{entry.name}</span>
+            <span className="file-icon__label"><BreakableLabel text={entry.name} /></span>
           </div>
         );
       })}

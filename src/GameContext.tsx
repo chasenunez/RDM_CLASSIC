@@ -84,6 +84,7 @@ type Action =
   | { type: 'CLOSE_WINDOW'; id: string }
   | { type: 'FOCUS_WINDOW'; id: string }
   | { type: 'MOVE_WINDOW'; id: string; x: number; y: number }
+  | { type: 'RESIZE_WINDOW'; id: string; x: number; y: number; width: number; height: number }
   | { type: 'TOGGLE_MUTE' };
 
 function reducer(state: PersistedState, action: Action): PersistedState {
@@ -140,6 +141,16 @@ function reducer(state: PersistedState, action: Action): PersistedState {
         ...state,
         openWindows: state.openWindows.map(w =>
           w.id === action.id ? { ...w, x: action.x, y: action.y } : w,
+        ),
+      };
+
+    case 'RESIZE_WINDOW':
+      return {
+        ...state,
+        openWindows: state.openWindows.map(w =>
+          w.id === action.id
+            ? { ...w, x: action.x, y: action.y, width: action.width, height: action.height }
+            : w,
         ),
       };
 
