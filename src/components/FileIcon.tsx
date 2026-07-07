@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useGame } from '../GameContext';
 import { useLongPress } from '../lib/longPress';
 import { asset } from '../lib/asset';
+import { BreakableLabel } from './BreakableLabel';
 import type { FileEntry, ContextTarget } from '../types';
 
 interface FileIconProps {
@@ -70,7 +71,7 @@ export function FileIcon({ entry }: FileIconProps) {
           }}
         />
       )}
-      <span className="file-icon__label">{entry.name}</span>
+      <span className="file-icon__label"><BreakableLabel text={entry.name} /></span>
     </div>
   );
 }

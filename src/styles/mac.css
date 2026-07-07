@@ -58,8 +58,8 @@
 }
 
 .desktop-icon__image {
-  width: 80px;
-  height: 80px;
+  width: 84px;
+  height: 84px;
   object-fit: contain;
   image-rendering: pixelated;
   pointer-events: none;
@@ -257,6 +257,20 @@
   overflow: auto;
   position: relative;
 }
+
+/* Invisible corner hit-targets for resizing, straddling the window border
+   (modern macOS style — no visible grow-box, just a grabbable corner). */
+.window__resize-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  z-index: 10;
+}
+
+.window__resize-handle--nw { top: -5px; left: -5px; }
+.window__resize-handle--ne { top: -5px; right: -5px; }
+.window__resize-handle--sw { bottom: -5px; left: -5px; }
+.window__resize-handle--se { bottom: -5px; right: -5px; }
 
 /* ── Context menu ────────────────────────────────────────────────────────── */
 
@@ -648,7 +662,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 72px;
+  width: 100px;
   padding: 6px 4px;
   cursor: default;
   border-radius: 2px;
@@ -661,8 +675,8 @@
 }
 
 .file-icon__image {
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
   object-fit: contain;
   image-rendering: pixelated;
   pointer-events: none;
@@ -705,16 +719,19 @@
 
 .file-icon__label {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 9px;
   text-align: center;
   margin-top: 4px;
+  /* Break at underscores/spaces (see <wbr> in BreakableLabel) rather than
+     mid-word; overflow-wrap is just a last-resort fallback for a single
+     unbroken run that's still too wide for the label. */
   word-break: normal;
   overflow-wrap: break-word;
   line-height: 1.5;
   color: #000000;
   /* Mac OS style: label has white background with 1px black border when selected */
   padding: 1px 2px;
-  max-width: 70px;
+  max-width: 96px;
 }
 
 .file-icon.selected .file-icon__label {
