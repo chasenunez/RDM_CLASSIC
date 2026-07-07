@@ -1,17 +1,5 @@
-# RDM Scavenger Hunt — All Player-Facing Text, by Topic
-
-This document collects every piece of text a player can read in the game, organized by topic. For each topic you'll find:
-
-1. **In-game problem dialog** — the *What's wrong*, *Why it matters*, and *How to fix* tabs shown when a problem is found (`src/data/problems.json`), plus the linked resources.
-2. **RDM Guide section** — the matching entry from the downloadable *RDM Problems and Fixes Guide* (`public/downloads/RDM_Guide.html`).
-
-Topics 1–8 exist as playable tasks. Topics 9–12 appear only in the downloadable RDM Guide and are included at the end for completeness.
-
----
 
 ## Topic 1 — Bad File Naming
-
-### In-game problem dialog
 
 **What's wrong**
 
@@ -43,54 +31,8 @@ Rules: no spaces (use underscores), no special characters, date in YYYYMMDD form
 - Renamer 6 (Mac): https://renamer.com/
 - Jenny Bryan's naming convention guide: https://speakerdeck.com/jennybc/how-to-name-files
 
-### RDM Guide — Problem 2: Bad File Naming
-
-**What's wrong:** Nearly every file in the project violates good naming practices:
-
-| File | Problems |
-|------|----------|
-| `soil samples.xlsx` | Spaces in filename |
-| `Soil Samples COPY.xlsx` | Spaces, no date, unclear purpose ("COPY" of what?) |
-| `data_new.xlsx` / `data_new(1).xlsx` | Meaningless names, browser-download duplicate |
-| `temp&humidity_data_FINAL.xlsx` | Ampersand (&) is a special character, "FINAL" is not a version |
-| `temp&humidity_data_FINAL_v2.xlsx` | "FINAL" yet there's a v2 — contradictory |
-| `temp&humidity_data_REALLY FINAL.xlsx` | Spaces, caps, "REALLY FINAL" is not versioning |
-| `cleaned data.xlsx` | Spaces, no date, no indication of what was cleaned or how |
-| `analysis_results_USE THIS ONE.docx` | Spaces, caps, instructions in the filename |
-| `analysis v3 (Marias edits).py` | Spaces, parentheses, person's name instead of a version |
-| `script.py` / `script_old.py` | Completely generic, "old" is relative and meaningless |
-| `Figure 1.png` / `Figure 1 (1).png` / `fig1_updated.jpg` | Inconsistent naming for the same figure, browser duplicate |
-| `notes.txt` / `meeting_notes_feb.txt` | No date (which February?), no project name |
-
-**Why it matters:** Bad file names make it impossible to sort, search, or identify files without opening them. They cause errors in scripts (spaces and special characters break command-line tools), create confusion about which version is current, and are meaningless to anyone outside the project.
-
-**How to fix it:** Adopt the convention from the workshop: `Date_ProjectName_DocumentType_Version.extension`
-
-The same files renamed properly:
-
-| Original | Fixed |
-|----------|-------|
-| `soil samples.xlsx` | `20260315_AlpineSoil_RawChemistry_v1.0.csv` |
-| `temp&humidity_data_REALLY FINAL.xlsx` | `20260401_AlpineSoil_TempHumidity_v1.2.csv` |
-| `cleaned data.xlsx` | `20260410_AlpineSoil_ProcessedMerged_v1.0.csv` |
-| `script.py` | `20260410_AlpineSoil_DataCleaning_v1.0.py` |
-| `analysis v3 (Marias edits).py` | `20260415_AlpineSoil_Analysis_v1.3.py` |
-| `Figure 1.png` | `20260420_AlpineSoil_FigScatterRatioBysite_v1.0.png` |
-| `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v0.1.docx` |
-
-Rules: no spaces (use underscores or hyphens), no special characters, date in YYYYMMDD format, descriptive but short project name, document type, semantic version number.
-
-**Resources:**
-- Bulk Rename Utility (Windows): https://www.bulkrenameutility.co.uk/
-- Renamer 6 (Mac): https://renamer.com/
-- Thunar Bulk Rename (Linux): built into the Thunar file manager
-- Jenny Bryan's naming convention guide: https://speakerdeck.com/jennybc/how-to-name-files
-
----
 
 ## Topic 2 — No Versioning System
-
-### In-game problem dialog
 
 **What's wrong**
 
@@ -112,33 +54,9 @@ For **data**: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and m
 - Git GUIs: https://git-scm.com/downloads/guis
 - Software Carpentry Git lesson: https://swcarpentry.github.io/git-novice/
 
-### RDM Guide — Problem 3: No Versioning System
 
-**What's wrong:** The project uses ad-hoc "versioning" through filename suffixes like `FINAL`, `FINAL_v2`, `REALLY FINAL`, `old`, `COPY`, `USE THIS ONE`, and `(Marias edits)`. There is no version control for code, and no systematic data versioning. There is no way to know what changed between versions, when, or why.
-
-**Why it matters:** Without proper versioning, you can't trace the history of changes, you can't undo mistakes, you can't tell which version of the code produced which results, and you risk accidentally working on or sharing the wrong version.
-
-**How to fix it:**
-
-For **code**: Use Git. Initialize a repository, commit changes with descriptive messages, and use branches for experimental work. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.
-
-For **data**: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and maintain a changelog — either in the README or a separate CHANGELOG file — that records what changed in each version. For large datasets, consider tools like DVC (Data Version Control), Git LFS, or LakeFS.
-
-For **documents**: Use tracked changes in Word, or better yet, write in plain text (Markdown/LaTeX) under version control.
-
-**Resources:**
-- Git: https://git-scm.com/
-- Git GUIs: https://git-scm.com/downloads/guis
-- DVC (Data Version Control): https://dvc.org/
-- Git LFS: https://git-lfs.com/
-- LakeFS: https://docs.lakefs.io/
-- Software Carpentry Git lesson: https://swcarpentry.github.io/git-novice/
-
----
 
 ## Topic 3 — Proprietary and Inappropriate File Formats
-
-### In-game problem dialog
 
 **What's wrong**
 
@@ -167,42 +85,8 @@ Keep the original if needed for your workflow, but always save an additional cop
 - Library of Congress Recommended Formats: https://www.loc.gov/preservation/resources/rfs/
 - UK Data Service file format guidance: https://ukdataservice.ac.uk/learning-hub/research-data-management/format-your-data/recommended-formats/
 
-### RDM Guide — Problem 4: Proprietary and Inappropriate File Formats
-
-**What's wrong:** The project uses several problematic formats:
-
-| File | Format Problem |
-|------|---------------|
-| All data in `.xlsx` | Proprietary (Microsoft Excel). Not guaranteed to be readable by all tools or in 10 years. Can silently corrupt data (e.g., gene names auto-formatted as dates). |
-| `analysis_results_USE THIS ONE.docx` | Data stored in a Word document — not machine-readable. |
-| `sensor_output.dat` | Proprietary instrument format with unknown calibration. |
-| `microscopy_sample_12.jpg` | JPEG is lossy — every save degrades quality. Microscopy images should be in a lossless format. |
-| `fig1_updated.jpg` | Same issue — figures for publication should be in lossless formats. |
-
-**Why it matters:** Proprietary formats can't always be opened without specific (often paid) software. Lossy formats permanently destroy information. Both violate the "interoperable" FAIR principle.
-
-**How to fix it:**
-
-| Data type | Current format | Recommended format |
-|-----------|---------------|-------------------|
-| Tabular data | .xlsx | .csv (with UTF-8 encoding) |
-| Text/reports | .docx | .pdf/A or plain text (.md, .txt) |
-| Microscopy images | .jpg | .tiff (uncompressed) or .png |
-| Figures for publication | .jpg | .png or .tiff |
-| Sensor data | .dat (proprietary) | .csv with header metadata |
-| Code | .py (this one is fine) | .py (keep as-is — Python is open) |
-
-Keep the proprietary original if you need it for your workflow, but always save an additional copy in an open format for archiving and sharing.
-
-**Resources:**
-- Library of Congress Recommended Formats: https://www.loc.gov/preservation/resources/rfs/
-- UK Data Service file format guidance: https://ukdataservice.ac.uk/learning-hub/research-data-management/format-your-data/recommended-formats/
-
----
 
 ## Topic 4 — No Documentation (No README)
-
-### In-game problem dialog
 
 **What's wrong**
 
@@ -227,30 +111,8 @@ Create a README.md at the root of the project. A good README should include:
 - Cornell README template: https://cornell.app.box.com/v/ReadmeTemplate
 - makeareadme.com: https://www.makeareadme.com/
 
-### RDM Guide — Problem 5: No Documentation (No README)
-
-**What's wrong:** There is no README file anywhere in the project. The only documentation consists of two informal text files (`notes.txt` and `meeting_notes_feb.txt`) that contain fragmentary personal notes with no structure, no context, and critical information buried in casual remarks (e.g., "the sensor at site 7 was broken in March" and "she said use 0.5 not 0.3").
-
-**Why it matters:** Without a README, no one — including the researchers themselves after a few months — can understand what the project is about, what the files contain, how the data was collected, what processing was applied, or how to reproduce the results. This violates the "reusable" FAIR principle.
-
-**How to fix it:** Create a README.md (or README.txt) at the root of the project. A good README should include:
-
-1. **General information**: Project title, principal investigator, contact info, dates of data collection, geographic location, funding sources.
-2. **Data and file overview**: A list of all files with brief descriptions, relationships between files (e.g., "script.py reads raw data and produces processed data").
-3. **Methodological information**: How data was collected (instruments, protocols), any quality control applied, known issues (like the broken sensor at site 7).
-4. **Data-specific information**: For each data file — number of variables, number of rows, variable names with descriptions and units, missing data codes and their meanings.
-5. **Sharing and access information**: License, restrictions, how to cite.
-
-**Resources:**
-- Cornell README template: https://cornell.app.box.com/v/ReadmeTemplate
-- Carpentries Incubator README template (referenced in the workshop): https://carpentries-incubator.github.io/scientific-metadata/files/AUTHOR_DATASET_ReadmeTemplate.txt
-- makeareadme.com: https://www.makeareadme.com/
-
----
 
 ## Topic 5 — Raw Data Not Preserved / Data Provenance
-
-### In-game problem dialog
 
 **What's wrong**
 
@@ -281,39 +143,10 @@ data/
 - UKRN Primer: Research Data Management: https://www.ukrn.org/primers/
 - DataONE Best Practice: Preserve information rich data: https://dataoneorg.github.io/Education/bestpractices/preserve-information-keep
 
-### RDM Guide — Problem 7: Raw and Processed Data Are Mixed Together
-
-**What's wrong:** Raw data (`soil samples.xlsx`, `temp&humidity_data_*.xlsx`, `sensor_output.dat`) and processed data (`cleaned data.xlsx`, `results_final.xlsx`) are in the same directory with no separation. There is no way to tell which files are original inputs and which are derived outputs.
-
-**Why it matters:** If you can't distinguish raw data from processed data, you risk accidentally modifying or overwriting your originals — which may be irreplaceable. It also makes it impossible for someone else to reproduce your analysis from scratch.
-
-**How to fix it:**
-
-1. **Separate raw and processed data** into different folders (`data/raw/` and `data/processed/`).
-2. **Make raw data read-only** (use file permissions: `chmod 444 data/raw/*` on Linux/Mac).
-3. **Never modify raw data files directly.** Always read them in your script and write outputs to a different location.
-4. **Document the processing chain**: which script transforms which input into which output.
-
-### RDM Guide — Problem 13: No Backup Strategy
-
-**What's wrong:** The data appears to exist in a single location with no backup strategy. There are browser-download duplicates (`data_new(1).xlsx`, `Figure 1 (1).png`) suggesting files are being moved around via email or downloads rather than through a systematic storage approach.
-
-**Why it matters:** A single hardware failure, theft, or accidental deletion could destroy all the data. Research data is often irreplaceable — especially observational data that can't be recollected.
-
-**How to fix it:** Apply the **3-2-1 backup rule**:
-- **3** copies of the data
-- On **2** different storage media
-- With **1** copy off-site
-
-For example: one copy on your workstation, one on your institute's network drive (backed up by IT), and one in a cloud service or repository.
-
----
 
 ## Topic 6 — Data Quality Issues Inside the Files
 
-This is the game's "Boss Battle": the player must find all 8 individual data-quality issues inside `soil samples.xlsx`. The parent overview text is shown first, followed by the eight sub-problems.
-
-### In-game problem dialog (parent overview)
+This is the game's "Boss Battle": the player must find all 8 individual data-quality issues inside `soil samples.xlsx`. The parent overview text is shown first, followed by the eight sub-problems. (parent overview)
 
 **What's wrong**
 
@@ -507,39 +340,8 @@ Replace '??' with the standardised missing-value code (e.g. `NA`). Document the 
 
 - Tidy Data: https://vita.had.co.nz/papers/tidy-data.pdf
 
-### RDM Guide — Problem 8: Data Quality Issues Inside the Files
-
-**What's wrong:** Looking at `soil_samples_preview.csv`, the data has multiple internal problems:
-
-| Issue | Example |
-|-------|---------|
-| Merged-cell-style header rows | Row 1: "Alpine Soil Survey - Spring Campaign" spanning columns — this breaks CSV parsing |
-| Metadata in data rows | Row 2: empty except for a note about site 7 — not a data row |
-| Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |
-| No units anywhere | Is `temp` in Celsius or Fahrenheit? Is `col1` a percentage or a ratio? |
-| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of "missing" in one dataset |
-| Undocumented codes | `-999` appears to mean "sensor broken" but is never defined |
-| Free-text in data columns | `notes` column contains unstructured comments ("weird value", "check this") |
-
-**Why it matters:** These issues cause scripts to break, statistics to be wrong (e.g., `-999` would distort a mean if not excluded), and other researchers to misinterpret the data.
-
-**How to fix it:**
-
-1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.
-2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.
-3. **Standardize missing data** to a single code (blank or `NA`) and document what it means in the README.
-4. **Move notes to documentation** — the README or a separate data dictionary, not embedded in data cells.
-5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.
-
-**Resources:**
-- Broman & Woo (2018), "Data Organization in Spreadsheets" (The American Statistician): https://doi.org/10.1080/00031305.2017.1375989
-- Tidy Data (Hadley Wickham): https://vita.had.co.nz/papers/tidy-data.html
-
----
 
 ## Topic 7 — Code Has No Comments
-
-### In-game problem dialog
 
 **What's wrong**
 
@@ -560,30 +362,7 @@ Uncommented code is a black box. No one — including you in six months — will
 
 - Software Carpentry Python lesson: https://swcarpentry.github.io/python-novice-inflammation/
 
-### RDM Guide — Problem 9: Code Has No Comments and Is Not Reproducible
-
-**What's wrong:** `script.py` has no comments explaining what it does, uses hardcoded filenames with spaces and special characters, references ambiguous column names (`col1`, `col3`, `val`), has a leftover `TODO` and commented-out debug code, and produces no log or record of what it did. There are multiple versions of the script (`script.py`, `script_old.py`, `analysis v3 (Marias edits).py`) with no clear indication of which is current or what changed.
-
-**Why it matters:** Uncommented, unversioned code is a black box. No one — including you in six months — will know what it does, why it makes certain choices (like the 0.5 threshold), or which version produced the published results.
-
-**How to fix it:**
-
-1. **Add clear comments** explaining the purpose of each section, the meaning of parameters, and the rationale for decisions.
-2. **Use meaningful variable names**: `soil_chemistry_df` not `df`, `temperature_df` not `df2`.
-3. **Use relative file paths** or configuration files instead of hardcoded filenames.
-4. **Put code under Git version control** and delete the ad-hoc copies (`script_old.py`, etc.).
-5. **Include a requirements file** (`requirements.txt` or `environment.yml`) so others can recreate your environment.
-6. **Consider using Renku** for integrated data and code management.
-
-**Resources:**
-- Renku: https://renku.readthedocs.io/
-- Software Carpentry Python lesson: https://swcarpentry.github.io/python-novice-inflammation/
-
----
-
 ## Topic 8 — No License
-
-### In-game problem dialog
 
 **What's wrong**
 
@@ -609,37 +388,6 @@ Place a `LICENSE.md` file at the root of your project.
 
 - Creative Commons license chooser: https://chooser-beta.creativecommons.org/
 - Choose an open source license: https://choosealicense.com/
-
-### RDM Guide — Problem 10: No License
-
-**What's wrong:** There is no LICENSE file in the project. Without a license, the default legal status in most jurisdictions is "all rights reserved" — meaning no one else can legally use, share, or build upon the data or code, even if the files are publicly accessible.
-
-**Why it matters:** A missing license effectively prevents reuse, which defeats the purpose of sharing data. It violates the "reusable" FAIR principle.
-
-**How to fix it:**
-
-For **data**, use a Creative Commons license:
-- **CC0** (public domain dedication) — most open, recommended when you want maximum reuse. Data must still be cited by scholarly norms even without a legal requirement.
-- **CC BY 4.0** (attribution required) — most funders recommend this. Ensures you get credit.
-- Avoid **CC BY-ND** (no derivatives) — it prevents others from building on your data, which is overly restrictive for research. Some funders explicitly prohibit it.
-
-For **code**, use an open-source software license:
-- **MIT** — very permissive, widely used, simple to understand.
-- **Apache 2.0** — permissive with patent protection.
-- **GPL** — copyleft; requires derivative works to also be open-source.
-
-Place a `LICENSE` file (for code) or `LICENSE` + a note in the README (for data) at the root of your project.
-
-**Resources:**
-- Creative Commons license chooser: https://chooser-beta.creativecommons.org/
-- Choose an open source license: https://choosealicense.com/
-- Open Source Initiative license list: https://opensource.org/licenses
-
----
-
-# Additional RDM Guide Topics (not playable tasks)
-
-These topics appear only in the downloadable *RDM Problems and Fixes Guide*, not as in-game problems.
 
 ## Topic 9 — No Folder Structure (RDM Guide Problem 1)
 
@@ -724,7 +472,3 @@ Use re3data.org to find discipline-specific repositories if these don't fit.
 - EnviDat: https://www.envidat.ch/
 - Zenodo: https://zenodo.org/
 - re3data: https://www.re3data.org/
-
----
-
-*Sources: in-game problem text from `src/data/problems.json`; RDM Guide text from `public/downloads/RDM_Guide.html`. Generated for the RDM Scavenger Hunt — Lib4RI Basics of Research Data Management workshop.*

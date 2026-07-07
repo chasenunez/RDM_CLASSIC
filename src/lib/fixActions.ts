@@ -26,7 +26,7 @@ const MD: Omit<FileEntry, 'path' | 'name' | 'size'> = {
 const FOLDER: Omit<FileEntry, 'path' | 'name' | 'size'> = {
   type: 'folder',
   mimeGuess: 'inode/directory',
-  icon: '/icons/Floppy.svg',
+  icon: '/assets/folder.png',
   viewerType: 'folder',
   virtual: true,
 };

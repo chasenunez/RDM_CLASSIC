@@ -223,7 +223,7 @@ function FolderView() {
         >
           <img
             className="file-icon__image"
-            src={asset('/icons/Floppy.svg')}
+            src={asset('/assets/folder.png')}
             alt=""
             draggable={false}
           />
@@ -235,10 +235,16 @@ function FolderView() {
 }
 
 export function Desktop() {
-  const { gameState, dispatch, showContextMenu } = useGame();
+  const { gameState, dispatch, showContextMenu, problems } = useGame();
   const { openWindows } = gameState;
 
   const maxZ = Math.max(0, ...openWindows.map(w => w.zIndex));
+
+  // Only count main problems (not sub-problems) toward completion, same as App.tsx
+  const mainProblemIds = problems.map(p => p.id);
+  const foundMainCount = gameState.foundProblems.filter(id => mainProblemIds.includes(id)).length;
+  const allFound = problems.length > 0 && foundMainCount >= problems.length;
+  const projectIcon = allFound ? ASSETS.projectIconComplete : ASSETS.projectIconActive;
 
   const onDesktopContextMenu = useCallback(
     (e: React.MouseEvent) => {
@@ -294,7 +300,7 @@ export function Desktop() {
 
       <StickyNote />
 
-      {/* Floppy disk icon */}
+      {/* Project folder icon */}
       <div
         className="desktop-icon"
         style={{ right: 16, top: 8 }}
@@ -304,7 +310,7 @@ export function Desktop() {
         tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter') openProjectFolder(); }}
       >
-        <img className="desktop-icon__image" src={ASSETS.projectIcon} alt="" draggable={false} />
+        <img className="desktop-icon__image" src={projectIcon} alt="" draggable={false} />
         <span className="desktop-icon__label">{LABELS.projectIconLabel}</span>
       </div>
 

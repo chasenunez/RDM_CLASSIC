@@ -43,7 +43,12 @@ export function ProblemReportDialog() {
       onKeyDown={e => { if (e.key === 'Escape') dismissProblemDialog(); }}
     >
       <div className="dialog" style={{ maxWidth: 620 }}>
-        <img src={asset('/icons/Happy Mac.svg')} className="dialog__icon-img" alt="[OK]" />
+        <img
+          src={asset('/icons/Happy Mac.svg')}
+          className="dialog__icon-img"
+          alt="[OK]"
+          style={{ width: 96, height: 96 }}
+        />
         <h2 className="dialog__title" id="problem-title">
           {showFix && fixProblem ? `How to fix: ${fixProblem.name}` : `Found: ${activeProblem.name}`}
         </h2>
