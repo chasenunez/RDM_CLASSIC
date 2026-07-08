@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react';
 import { useGame } from '../GameContext';
-import { asset } from '../lib/asset';
 
 interface FileStructureDialogProps {
   onDone: () => void;
@@ -28,12 +27,6 @@ export function FileStructureDialog({ onDone }: FileStructureDialogProps) {
       onKeyDown={e => { if (e.key === 'Enter') handleOrganize(); }}
     >
       <div className="dialog" style={{ maxWidth: 500 }}>
-        <img
-          src={asset('/icons/Info.svg')}
-          className="dialog__icon-img"
-          alt=""
-          style={{ width: 32, height: 32 }}
-        />
         <h2 className="dialog__title" id="file-structure-title">
           Almost done!
         </h2>

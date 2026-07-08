@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { useGame } from '../GameContext';
-import { asset } from '../lib/asset';
 
 export function ProblemSelectionDialog() {
   const {
@@ -34,7 +33,6 @@ export function ProblemSelectionDialog() {
       onKeyDown={e => { if (e.key === 'Escape') cancelProblemSelection(); }}
     >
       <div className="dialog" style={{ maxWidth: 420 }}>
-        <img src={asset('/icons/Info.svg')} className="dialog__icon-img" alt="[?]" />
         <h2 className="dialog__title" id="selection-title">
           What's the problem here?
         </h2>

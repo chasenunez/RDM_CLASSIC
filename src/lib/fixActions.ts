@@ -18,7 +18,7 @@ const TEXT: Omit<FileEntry, 'path' | 'name' | 'size'> = {
 const MD: Omit<FileEntry, 'path' | 'name' | 'size'> = {
   type: 'file',
   mimeGuess: 'text/markdown',
-  icon: '/icons/Text file.svg',
+  icon: '/assets/md.png',
   viewerType: 'markdown',
   virtual: true,
 };
@@ -109,7 +109,7 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
         type: 'file',
         size: 800,
         mimeGuess: 'text/x-python',
-        icon: '/icons/THINK Pascal.svg',
+        icon: '/assets/code.png',
         viewerType: 'text',
         virtual: true,
       },
