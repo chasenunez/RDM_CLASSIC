@@ -11,8 +11,8 @@ import { CompletionDialog } from './components/CompletionDialog';
 import { BossBattleIntro } from './components/BossBattleIntro';
 import { BossBattleComplete } from './components/BossBattleComplete';
 import { FileStructureDialog } from './components/FileStructureDialog';
-import { centeredAt } from './lib/layout';
-import { WINDOWS, LABELS } from './theme';
+import { computeProjectFolderLayout } from './lib/layout';
+import { LABELS } from './theme';
 
 import './styles/reset.css';
 import './styles/fonts.css';
@@ -113,8 +113,7 @@ function GameUI() {
         id: 'project-folder',
         title: LABELS.projectWindowTitle,
         viewerType: 'folder',
-        ...centeredAt(WINDOWS.projectFolder.width, WINDOWS.projectFolder.height),
-        ...WINDOWS.projectFolder,
+        ...computeProjectFolderLayout(),
       },
     });
 

@@ -16,7 +16,7 @@ import mappingData from './data/mapping.json';
 import { loadState, saveState } from './lib/persistence';
 import { matchTrigger, matchSelectedProblem, getParentId } from './lib/matchTrigger';
 import { playChime, playBonk, playFanfare, playSosumi } from './lib/sounds';
-import { centeredAt } from './lib/layout';
+import { centeredAt, computeProjectFolderLayout } from './lib/layout';
 import { FIX_ACTIONS } from './lib/fixActions';
 import { WINDOWS, LABELS } from './theme';
 
@@ -64,8 +64,7 @@ function getDefaultState(): PersistedState {
         id: 'project-folder',
         title: LABELS.projectWindowTitle,
         viewerType: 'folder',
-        ...centeredAt(WINDOWS.projectFolder.width, WINDOWS.projectFolder.height),
-        ...WINDOWS.projectFolder,
+        ...computeProjectFolderLayout(),
         zIndex: 1,
       },
     ],

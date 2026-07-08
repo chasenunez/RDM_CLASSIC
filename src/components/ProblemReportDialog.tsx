@@ -44,7 +44,7 @@ export function ProblemReportDialog() {
     >
       <div className="dialog" style={{ maxWidth: 620 }}>
         <img
-          src={asset('/icons/Happy Mac.svg')}
+          src={asset('/assets/cute_mac.png')}
           className="dialog__icon-img"
           alt="[OK]"
           style={{ width: 96, height: 96 }}
