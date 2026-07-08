@@ -26,11 +26,11 @@ export function WrongGuessDialog() {
     title = 'Already found!';
     body = `You already found "${alreadyFoundName}". Keep looking for the others!`;
   } else if (wrongKind === 'wrong_problem') {
-    icon = <img src={asset('/icons/Alert.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
+    icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'Something IS wrong here…';
     body = 'You\'ve spotted a real RDM problem — but you\'ve labeled it incorrectly. Take another look and try a different category.';
   } else {
-    icon = <img src={asset('/icons/Alert.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
+    icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'No RDM problem here.';
     body = 'That target does not reveal an RDM violation. Keep exploring — right-click files, open them and inspect cells or lines.';
   }
