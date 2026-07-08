@@ -14,7 +14,7 @@ import { FixViewer } from './viewers/FixViewer';
 import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
 import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS } from '../lib/fixActions';
-import { centeredAt } from '../lib/layout';
+import { centeredAt, computeProjectFolderLayout } from '../lib/layout';
 import { asset } from '../lib/asset';
 import { WINDOWS, ASSETS, LABELS, TRASH_GIFS } from '../theme';
 
@@ -77,10 +77,9 @@ function TrashView() {
       >
         <img
           className="file-icon__image"
-          src={asset('/icons/Spreadsheet file.svg')}
+          src={asset('/assets/spreadsheet.png')}
           alt=""
           draggable={false}
-          onError={e => { (e.currentTarget as HTMLImageElement).src = asset('/icons/Text file.svg'); }}
         />
         <span className="file-icon__label"><BreakableLabel text="raw_alpine_soil_data.xlsx" /></span>
       </div>
@@ -280,8 +279,7 @@ export function Desktop() {
         id: 'project-folder',
         title: LABELS.projectWindowTitle,
         viewerType: 'folder',
-        ...centeredAt(WINDOWS.projectFolder.width, WINDOWS.projectFolder.height),
-        ...WINDOWS.projectFolder,
+        ...computeProjectFolderLayout(),
       },
     });
   }, [dispatch]);

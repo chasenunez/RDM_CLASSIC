@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from 'react';
 import { useGame } from '../GameContext';
 import { clampPosition } from '../lib/windowManager';
+import { MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT } from '../lib/layout';
 
 type Corner = 'nw' | 'ne' | 'sw' | 'se';
 
@@ -11,10 +12,6 @@ const CORNER_CURSOR: Record<Corner, string> = {
   ne: 'nesw-resize',
   sw: 'nesw-resize',
 };
-
-// Must match .window's min-width/min-height in mac.css
-const MIN_WIDTH = 200;
-const MIN_HEIGHT = 100;
 
 interface WindowProps {
   id: string;
@@ -101,8 +98,8 @@ export function Window({
 
         const rawWidth = growsLeft ? startWidth - dx : startWidth + dx;
         const rawHeight = growsUp ? startHeight - dy : startHeight + dy;
-        const newWidth = Math.max(MIN_WIDTH, rawWidth);
-        const newHeight = Math.max(MIN_HEIGHT, rawHeight);
+        const newWidth = Math.max(MIN_WINDOW_WIDTH, rawWidth);
+        const newHeight = Math.max(MIN_WINDOW_HEIGHT, rawHeight);
 
         const newX = growsLeft ? startX + (startWidth - newWidth) : startX;
         const newY = growsUp ? startY + (startHeight - newHeight) : startY;

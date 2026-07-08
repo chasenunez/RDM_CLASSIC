@@ -22,7 +22,7 @@ export function WrongGuessDialog() {
   let body: string;
 
   if (isAlreadyFound) {
-    icon = <img src={asset('/icons/Sad Mac.svg')} className="dialog__icon-img" alt="[!]" />;
+    icon = <img src={asset('/assets/dead_mac.png')} className="dialog__icon-img" alt="[!]" />;
     title = 'Already found!';
     body = `You already found "${alreadyFoundName}". Keep looking for the others!`;
   } else if (wrongKind === 'wrong_problem') {

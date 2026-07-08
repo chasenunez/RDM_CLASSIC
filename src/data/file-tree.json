@@ -5,7 +5,7 @@
     "type": "file",
     "size": 18313,
     "mimeGuess": "image/jpeg",
-    "icon": "/icons/Paint file.svg",
+    "icon": "/assets/image.png",
     "viewerType": "image"
   },
   {
@@ -14,7 +14,7 @@
     "type": "file",
     "size": 996,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "icon": "/icons/Text file.svg",
+    "icon": "/assets/manuscript.png",
     "viewerType": "markdown"
   },
   {
@@ -23,7 +23,7 @@
     "type": "file",
     "size": 1512,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "icon": "/icons/Text file.svg",
+    "icon": "/assets/manuscript.png",
     "viewerType": "markdown"
   },
   {
@@ -32,7 +32,7 @@
     "type": "file",
     "size": 22275,
     "mimeGuess": "image/jpeg",
-    "icon": "/icons/Paint file.svg",
+    "icon": "/assets/microscope.png",
     "viewerType": "image"
   },
   {
@@ -50,7 +50,7 @@
     "type": "file",
     "size": 18542,
     "mimeGuess": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "icon": "/icons/Text file.svg",
+    "icon": "/assets/spreadsheet.png",
     "viewerType": "xlsx"
   }
 ]

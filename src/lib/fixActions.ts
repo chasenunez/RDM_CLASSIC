@@ -34,7 +34,7 @@ const FOLDER: Omit<FileEntry, 'path' | 'name' | 'size'> = {
 const XLSX_FILE: Omit<FileEntry, 'path' | 'name' | 'size'> = {
   type: 'file',
   mimeGuess: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  icon: '/icons/Text file.svg',
+  icon: '/assets/spreadsheet.png',
   viewerType: 'xlsx',
   virtual: true,
 };
@@ -50,8 +50,8 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
       'manuscript_draft_v2_JK comments.docx',
     ],
     add: [
-      { ...MD, path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.1.docx', name: '20260501_AlpineSoil_Manuscript_v0.1.docx', size: 996 },
-      { ...MD, path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.2.docx', name: '20260501_AlpineSoil_Manuscript_v0.2.docx', size: 1512 },
+      { ...MD, icon: '/assets/manuscript.png', path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.1.docx', name: '20260501_AlpineSoil_Manuscript_v0.1.docx', size: 996 },
+      { ...MD, icon: '/assets/manuscript.png', path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.2.docx', name: '20260501_AlpineSoil_Manuscript_v0.2.docx', size: 1512 },
     ],
   },
 
@@ -67,8 +67,8 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     remove: ['fig1_updated.jpg', 'microscopy_sample_12.jpg'],
     archive: ['fig1_updated.jpg', 'microscopy_sample_12.jpg'],
     add: [
-      { ...TEXT, path: 'sample_project/fig1_updated.png', name: 'fig1_updated.png', size: 18313, mimeGuess: 'image/png', viewerType: 'image', icon: '/icons/Paint file.svg' },
-      { ...TEXT, path: 'sample_project/microscopy_sample_12.png', name: 'microscopy_sample_12.png', size: 22275, mimeGuess: 'image/png', viewerType: 'image', icon: '/icons/Paint file.svg' },
+      { ...TEXT, path: 'sample_project/fig1_updated.png', name: 'fig1_updated.png', size: 18313, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/image.png' },
+      { ...TEXT, path: 'sample_project/microscopy_sample_12.png', name: 'microscopy_sample_12.png', size: 22275, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/microscope.png' },
     ],
   },
 

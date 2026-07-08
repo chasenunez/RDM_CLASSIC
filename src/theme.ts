@@ -14,9 +14,11 @@
 
 import { asset } from './lib/asset';
 
-/** Default width/height for each window type, in px. */
+/**
+ * Default width/height for each window type, in px. The project-folder
+ * window is sized dynamically instead — see computeProjectFolderLayout().
+ */
 export const WINDOWS = {
-  projectFolder:   { width: 800, height: 600 },
   fileViewer:      { width: 540, height: 360 },
   fileViewerImage: { width: 400, height: 360 },
   fixWindow:       { width: 560, height: 420 },
@@ -42,7 +44,7 @@ export const ASSETS = {
   // plain folder once the player has fixed everything.
   projectIconActive:     asset('/assets/folder_fire.png'),
   projectIconComplete:   asset('/assets/folder.png'),
-  trashIcon:             asset('/icons/Trash.png'),
+  trashIcon:             asset('/assets/trash.png'),
 } as const;
 
 export const LABELS = {
