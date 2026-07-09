@@ -116,6 +116,7 @@ export interface PersistedState {
   foundProblems: string[];   // main problem IDs + sub-problem IDs
   fixedProblems: string[];   // problem IDs where "Let's fix it" was clicked
   wrongGuesses: number;
+  hasSeenTitle: boolean;     // dismissed the title slide (click-to-start)
   hasSeenWelcome: boolean;
   isMuted: boolean;
   openWindows: WindowState[];
