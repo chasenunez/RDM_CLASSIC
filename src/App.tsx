@@ -3,6 +3,7 @@ import { GameProvider, useGame } from './GameContext';
 import { MenuBar } from './components/MenuBar';
 import { Desktop } from './components/Desktop';
 import { ContextMenu } from './components/ContextMenu';
+import { TitleSlide } from './components/TitleSlide';
 import { WelcomeDialog } from './components/WelcomeDialog';
 import { ProblemReportDialog } from './components/ProblemReportDialog';
 import { ProblemSelectionDialog } from './components/ProblemSelectionDialog';
@@ -25,6 +26,7 @@ import './styles/mac.css';
 // order; a newer dialog waits until the older one above it is dismissed. The
 // list is chronological, so "higher priority" also means "triggered earlier".
 const MODAL_ORDER = [
+  'title',
   'welcome',
   'problemSelection',
   'problemReport',
@@ -54,7 +56,7 @@ function GameUI() {
     bossIntroShowing,
     bossCompletionShowing,
   } = useGame();
-  const { foundProblems, hasSeenWelcome } = gameState;
+  const { foundProblems, hasSeenTitle, hasSeenWelcome } = gameState;
 
   const [showFileStructure, setShowFileStructure] = useState(false);
   const [fileStructureDone, setFileStructureDone] = useState(false);
@@ -75,7 +77,8 @@ function GameUI() {
   // underlying "wants to show" state persists while it's suppressed, so it
   // renders as soon as the ones ahead of it are resolved.
   const modalWants: Record<(typeof MODAL_ORDER)[number], boolean> = {
-    welcome: !hasSeenWelcome,
+    title: !hasSeenTitle,
+    welcome: hasSeenTitle && !hasSeenWelcome,
     problemSelection: pendingTarget != null,
     problemReport: activeProblem != null,
     wrongGuess: showWrong || alreadyFoundName != null,
@@ -136,6 +139,7 @@ function GameUI() {
       {/* At most one modal renders at a time, with a 1s gap between them —
           see MODAL_ORDER / activeModal / visibleModal. */}
       {visibleModal === 'problemSelection' && <ProblemSelectionDialog />}
+      {visibleModal === 'title' && <TitleSlide />}
       {visibleModal === 'welcome' && <WelcomeDialog />}
       {visibleModal === 'problemReport' && <ProblemReportDialog />}
       {visibleModal === 'wrongGuess' && <WrongGuessDialog />}

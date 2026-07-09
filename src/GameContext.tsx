@@ -57,6 +57,7 @@ function getDefaultState(): PersistedState {
     foundProblems: [],
     fixedProblems: [],
     wrongGuesses: 0,
+    hasSeenTitle: false,
     hasSeenWelcome: false,
     isMuted: false,
     openWindows: [
@@ -78,6 +79,7 @@ type Action =
   | { type: 'FIND_PROBLEM'; id: string }
   | { type: 'FIX_PROBLEM'; id: string }
   | { type: 'WRONG_GUESS' }
+  | { type: 'DISMISS_TITLE' }
   | { type: 'DISMISS_WELCOME' }
   | { type: 'OPEN_WINDOW'; window: Omit<WindowState, 'zIndex'> }
   | { type: 'CLOSE_WINDOW'; id: string }
@@ -98,6 +100,9 @@ function reducer(state: PersistedState, action: Action): PersistedState {
 
     case 'WRONG_GUESS':
       return { ...state, wrongGuesses: state.wrongGuesses + 1 };
+
+    case 'DISMISS_TITLE':
+      return { ...state, hasSeenTitle: true };
 
     case 'DISMISS_WELCOME':
       return { ...state, hasSeenWelcome: true };

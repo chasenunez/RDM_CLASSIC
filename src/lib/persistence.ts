@@ -16,6 +16,8 @@ export function loadState(): PersistedState | null {
       localStorage.removeItem(STORAGE_KEY);
       return null;
     }
+    // Default fields added in later versions so older saves stay valid.
+    if (typeof parsed.hasSeenTitle !== 'boolean') parsed.hasSeenTitle = false;
     return parsed as PersistedState;
   } catch {
     return null;

@@ -73,8 +73,14 @@
   text-align: center;
   margin-top: 4px;
   padding: 1px 3px;
-  max-width: 70px;
+  /* Fit within the 100px icon column. The white box sizes to the text, so any
+     word wider than the box must wrap rather than spill past it (the old
+     max-width: 70px + word-break: normal let long words like "Project"
+     overflow the background). overflow-wrap breaks an over-long run as a last
+     resort so the label always encloses every character. */
+  max-width: 92px;
   word-break: normal;
+  overflow-wrap: break-word;
   line-height: 1.5;
   border: 1px solid transparent;
 }
@@ -1195,24 +1201,47 @@
 
 /* ── Boss Battle intro overlay ───────────────────────────────────────────── */
 
+/* Boss-battle intro — a large centered window (not full-screen), styled to
+   match the title / finale windows. The overlay is a translucent backdrop;
+   clicking anywhere dismisses it. */
 .boss-intro-overlay {
   position: fixed;
   inset: 0;
-  background-color: #d4ecd5;
-  background-image: repeating-conic-gradient(#ACDBAF 0deg 90deg, #ffffff 90deg 180deg);
-  background-size: 2px 2px;
+  background: rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1100;
   cursor: pointer;
   user-select: none;
 }
 
+.boss-intro-window {
+  background-color: #d4ecd5;
+  background-image: repeating-conic-gradient(#ACDBAF 0deg 90deg, #ffffff 90deg 180deg);
+  background-size: 2px 2px;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0 #000000;
+  width: calc(100vw - 64px);
+  max-width: 640px;
+  max-height: calc(100vh - 80px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.boss-intro__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 24px 32px;
+  overflow-y: auto;
+}
+
 .boss-intro__image {
-  max-width: 80vw;
-  max-height: 70vh;
+  max-width: 100%;
+  max-height: 46vh;
   object-fit: contain;
   image-rendering: pixelated;
 }
@@ -1230,6 +1259,57 @@
   font-size: 9px;
   color: #444444;
   margin-top: 12px;
+  animation: boss-blink 1s step-start infinite;
+}
+
+/* Opening title slide — same windowed "click to start" treatment as the boss
+   intro, shown before the WelcomeDialog instructions. */
+.title-slide-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  cursor: pointer;
+  user-select: none;
+}
+
+.title-slide-window {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0 #000000;
+  width: calc(100vw - 64px);
+  max-width: 720px;
+  max-height: calc(100vh - 64px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-slide__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px 28px;
+  overflow-y: auto;
+}
+
+.title-slide__image {
+  max-width: 100%;
+  max-height: 62vh;
+  object-fit: contain;
+  display: block;
+}
+
+.title-slide__click-hint {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: #444444;
+  margin-top: 20px;
+  text-align: center;
   animation: boss-blink 1s step-start infinite;
 }
 
