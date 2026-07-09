@@ -34,7 +34,7 @@ export const WINDOWS = {
  */
 export const TRASH_GIFS = [
   { id: 'flying-toasters', label: 'FlyingToasters.gif', src: asset('/assets/FlyingToasters.gif') },
-  { id: 'seal',            label: 'seal.gif',           src: asset('/assets/seal.gif') },
+  { id: 'surf',            label: 'surf.gif',           src: asset('/assets/seal.gif') },
 ] as const;
 
 /** Image paths (served from public/). Swap these to change the logo / icons. */

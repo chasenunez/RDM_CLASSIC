@@ -30,8 +30,10 @@ export function WelcomeDialog() {
 
           <div className="dialog__body">
             <p style={{ marginBottom: '10px', lineHeight: 2 }}>
-              You have just inherited a colleague&apos;s research project.
-              It's a mess. Your mission: use what you know about good reserach data management practices to find and fix all the
+              Uh oh. Remember that side project you did a while ago that went nowhere? Well now a colleague wants it to go somewhere, and is asked you for the project file.
+              The only thing standing between you and a productive collaborative project is your past-self.</p>
+            <p style={{ marginBottom: '10px', lineHeight: 2 }}>
+              <strong>Your mission:</strong> use what you now know about good reserach data management practices to find and fix all the
               problems hiding in the project files.
             </p>
             <p style={{ marginBottom: '10px', lineHeight: 2 }}>
@@ -39,13 +41,10 @@ export function WelcomeDialog() {
             </p>
             <ul style={{ lineHeight: 2.2, paddingLeft: '16px', marginBottom: '10px' }}>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
-                When you find a problem, <strong>Right-click</strong> (or long-press on touch) any file icon,
-                then choose <em>Report a RDM problem</em>.
+                Inspect every file in this project folder. <strong>Double-click</strong> a file to open it and inspect the contents.
+                Right-click offending file, individual lines, or cells to report a problem in the file.
               </li>
-              <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
-                <strong>Double-click</strong> a file to open it and inspect the contents.
-                Right-click individual lines or cells inside the viewer to report a problem in the file.
-              </li>
+              
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 To report items that are <em>missing</em> from the project,
                 right-click on the empty space in the folder, then choose
