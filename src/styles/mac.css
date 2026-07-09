@@ -429,6 +429,59 @@
   margin-bottom: 16px;
 }
 
+/* ── AIM-style instant message window (WelcomeDialog instructions) ────────── */
+
+.aim-window {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat log — fixed-height scrolling message area so the window doesn't jump
+   as lines arrive one by one. Period IM clients used a proportional system
+   font (Geneva/Arial), not the game's pixel font, so the chat text does too. */
+.aim-chat__log {
+  background: #ffffff;
+  font-family: Geneva, Verdana, Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  height: min(300px, calc(100vh - 220px));
+  overflow-y: auto;
+}
+
+.aim-chat__line {
+  margin-bottom: 8px;
+}
+
+.aim-chat__screenname {
+  color: #cc0000;
+  font-weight: bold;
+}
+
+/* Compose row — decorative "message entry" box with Let's go! as the Send
+   button, separated from the log like the classic IM window split. */
+.aim-chat__compose {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px 12px;
+  border-top: 2px solid #000000;
+  background: #eeeeee;
+}
+
+.aim-chat__input {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #000000;
+  min-height: 34px;
+}
+
+.aim-chat__compose .mac-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* Rendered markdown inside dialogs */
 .dialog__markdown h1,
 .dialog__markdown h2,

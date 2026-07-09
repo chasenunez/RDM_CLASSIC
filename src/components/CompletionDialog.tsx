@@ -18,9 +18,9 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
   const total = problems.length;
   const rating =
     wrongGuesses === 0
-      ? 'Flawless. RDM legend.'
+      ? 'Flawless! You are a RDM legend.'
       : wrongGuesses <= 3
-      ? 'RDM expert. Your future self thanks you.'
+      ? 'RDM expert. Way to go!'
       : wrongGuesses <= 8
       ? 'Solid instincts. A few blind spots to work on.'
       : 'Good start! Review the FAIR principles and try again.';
@@ -49,7 +49,7 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
           <p style={{ fontFamily: 'var(--font-pixel)', fontSize: '7px', lineHeight: 2, marginBottom: '10px' }}>
             {rating}
           </p>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px', }}>
             <span className="score-chip good">{total}/{total} found</span>
             <span className="score-chip">
               {wrongGuesses} wrong guess{wrongGuesses !== 1 ? 'es' : ''}
