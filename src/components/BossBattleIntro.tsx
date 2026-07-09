@@ -15,13 +15,13 @@ export function BossBattleIntro() {
       <div className="boss-intro-window">
         <div className="dialog__chrome-bar">
           <button className="window__close" aria-label="Start" tabIndex={-1}>×</button>
-          <span className="window__title">Boss Battle: Data Quality</span>
+          <span className="window__title">Mini Game: Data Quality</span>
         </div>
 
         <div className="boss-intro__content">
           <img
             src={asset('/assets/mini_game.png')}
-            alt="Boss Battle: Data Quality"
+            alt="Mini Game: Data Quality"
             className="boss-intro__image"
             draggable={false}
           />
