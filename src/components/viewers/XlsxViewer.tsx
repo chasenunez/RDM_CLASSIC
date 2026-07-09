@@ -103,7 +103,6 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
 
       {isBoss && bossFileFixed && (
         <div className="xlsx-fixed-banner">
-          <img src={asset('/assets/cute_mac.png')} alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
           Fixed! All data quality issues have been corrected.
         </div>
       )}
