@@ -13,18 +13,16 @@ import { useGame } from '../GameContext';
 const SCREEN_NAME = 'Lib4ri';
 
 const CHAT_LINES: React.ReactNode[] = [
-  <>Remember that side project that went nowhere? well, now a colleague wants it to go
-    somewhere, and they&apos;re asking for the project files.</>,
-  <><strong>YOUR MISSION:</strong> use what you now know about good research data
+  <>Remember that side project that went nowhere? A new colleague wants to pick it up,
+    and they&apos;re asking for the project files.</>,
+  <><strong>YOUR MISSION:</strong> Use what you know about good research data
     management to find and fix every problem hiding in the project files.</>,
-  <><strong>HOW TO PLAY:</strong> <strong>double-click</strong> a file to open and
-    inspect it. <strong>right-click</strong> an offending file, line, or cell to
-    report a problem.</>,
-  <>if something is <em>missing</em> from the project, right-click the empty space
-    in the folder and choose <em>Report missing artifact</em>.</>,
-  <>each correct find reveals the explanation and checks it off on the checklist in
-    the upper left. wrong guesses are counted, so be strategic!</>,
-  <>good luck. your future self thanks you ;-)</>,
+  <><strong>HOW TO PLAY:</strong> Explore the file looking at (and within) files for any problems.</>,
+  <>To report something a problem, right-click the file, data cell, or empty space where a file should be
+    and choose <em>"Report an RDM problem"</em>.</>,
+  <>Each correct find reveals an explanation and checks it off the list in the
+    upper left. Wrong guesses count against you, so be strategic!</>,
+  <>Good luck. Your future self thanks you ;-)</>,
 ];
 
 // All lines are visible after CHAT_LINES.length * LINE_INTERVAL_MS ≈ 3.6s (< 5s).
