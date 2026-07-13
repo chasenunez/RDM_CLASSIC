@@ -1,20 +1,6 @@
 # RDM Scavenger Hunt
 
-A browser-based educational game teaching Research Data Management (RDM) best practices through a faithful recreation of the Classic Mac OS (System 7) desktop. Players inherit a deliberately broken fake research project, explore its files, and right-click anything that looks wrong to report an RDM violation. Each correct find reveals a full explanation drawn from the original workshop answer key. There is **no server, no database, no login**; the app is a pile of static files (HTML, JS, CSS, JSON, images) that any web host can serve. That constraint drove almost every design decision.
-
-Designed as a hands-on companion to the Lib4RI **Basics of Research Data Management** workshop.
-
-[Play a beta version here](https://chasenunez.github.io/RDM_CLASSIC/)  
-
-[Submit bugs here](https://github.com/chasenunez/RDM_CLASSIC/issues)  
-
-![overview_graphics](assets/rdm_classic_overview.png)
-
----
-
-## How it works
-
-When you open the game you are placed at a System 7 Finder desktop (with some artistic liberties taken). A project folder window is already open, showing the files of a fictional alpine soil study — most of them violating at least one RDM principle.
+A browser-based educational game teaching Research Data Management (RDM) best practices through a System 7 Finder desktop (with some artistic liberties taken). A project folder window is already open, showing the files of a fictional alpine soil study — most of them violating at least one RDM principle.
 
 - **Right-click** (or long-press on touch) any file icon to open a context menu.
 - Choose **Report a RDM problem** to flag the file. If correct, a dialog explains what is wrong, why it matters, and how to fix it.
@@ -23,7 +9,15 @@ When you open the game you are placed at a System 7 Finder desktop (with some ar
 - A sticky-note checklist in the corner tracks your finds across the 8 problem categories. Wrong guesses increment a counter but never block you.
 - When every problem is found, the project files get reorganized into a tidy folder structure and you are offered a downloadable copy of the full answer key.
 
-Progress is saved to `localStorage` automatically. The Apple menu has a **Reset Game** option if you want to start over.
+Progress is saved to `localStorage` automatically. The Apple menu has a **Reset Game** option if you want to start over. There is **no server, no database, no login**; the app is a pile of static files (HTML, JS, CSS, JSON, images) that any web host can serve. That constraint drove almost every design decision.
+
+Designed as a hands-on companion to the Lib4RI **Basics of Research Data Management** workshop.
+
+[Play a beta version here](https://chasenunez.github.io/RDM_CLASSIC/)  
+
+[Submit bugs here](https://github.com/chasenunez/RDM_CLASSIC/issues)  
+
+![overview_graphics](assets/rdm_classic_overview.png)
 
 ---
 ## Development
