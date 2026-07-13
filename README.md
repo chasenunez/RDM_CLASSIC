@@ -14,7 +14,7 @@ Designed as a hands-on companion to the Lib4RI **Basics of Research Data Managem
 
 ## How it works
 
-When you open the game you are placed at a System 7 Finder desktop. A project folder window is already open, showing the files of a fictional alpine soil study — most of them violating at least one RDM principle.
+When you open the game you are placed at a System 7 Finder desktop (with some artistic liberties taken). A project folder window is already open, showing the files of a fictional alpine soil study — most of them violating at least one RDM principle.
 
 - **Right-click** (or long-press on touch) any file icon to open a context menu.
 - Choose **Report a RDM problem** to flag the file. If correct, a dialog explains what is wrong, why it matters, and how to fix it.
