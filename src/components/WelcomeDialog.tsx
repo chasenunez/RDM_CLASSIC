@@ -18,7 +18,7 @@ const CHAT_LINES: React.ReactNode[] = [
   <><strong>YOUR MISSION:</strong> Use what you know about good research data
     management to find and fix every problem hiding in the project files.</>,
   <><strong>HOW TO PLAY:</strong> Explore the file looking at (and within) files for any problems.</>,
-  <>To report something a problem, right-click the file, data cell, or empty space where a file should be
+  <>To report a problem, right-click the file, data cell, or empty space where a file should be
     and choose <em>"Report an RDM problem"</em>.</>,
   <>Each correct find reveals an explanation and checks it off the list in the
     upper left. Wrong guesses count against you, so be strategic!</>,

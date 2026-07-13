@@ -1,6 +1,6 @@
 # RDM Scavenger Hunt
 
-A browser-based educational game teaching Research Data Management (RDM) best practices through a faithful recreation of the Classic Mac OS (System 7) desktop. Players inherit a deliberately broken fake research project, explore its files, and right-click anything that looks wrong to report an RDM violation. Each correct find reveals a full explanation drawn from the original workshop answer key.
+A browser-based educational game teaching Research Data Management (RDM) best practices through a faithful recreation of the Classic Mac OS (System 7) desktop. Players inherit a deliberately broken fake research project, explore its files, and right-click anything that looks wrong to report an RDM violation. Each correct find reveals a full explanation drawn from the original workshop answer key. There is **no server, no database, no login**; the app is a pile of static files (HTML, JS, CSS, JSON, images) that any web host can serve. That constraint drove almost every design decision.
 
 Designed as a hands-on companion to the Lib4RI **Basics of Research Data Management** workshop.
 
@@ -21,9 +21,137 @@ When you open the game you are placed at a System 7 Finder desktop (with some ar
 - **Double-click** a file to open it in a viewer (CSV table, code with line numbers, hex dump for binaries, etc.) and right-click individual cells or lines to find subtler violations.
 - Right-click **empty space** in the folder or on the desktop, then choose **Report missing artifact** to flag things that should be there but aren't — a README, a license, a DOI, a backup plan.
 - A sticky-note checklist in the corner tracks your finds across the 8 problem categories. Wrong guesses increment a counter but never block you.
-- When every problem is found, pixelated fireworks play and you are offered a downloadable copy of the full answer key.
+- When every problem is found, the project files get reorganized into a tidy folder structure and you are offered a downloadable copy of the full answer key.
 
 Progress is saved to `localStorage` automatically. The Apple menu has a **Reset Game** option if you want to start over.
+
+---
+## Development
+
+## 1. Where everything comes from
+
+| Piece                       | Origin                                                                                                                                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| App skeleton                | The standard **Vite + React + TypeScript** template (`npm create vite@latest`)                                                                                                     |
+| React 18, `react-dom`       | npm; the UI framework                                                                                                                                                              |
+| `xlsx` (SheetJS)            | npm; parses real `.xlsx` spreadsheet files in the browser                                                                                                                          |
+| `papaparse`                 | npm; parses CSV files                                                                                                                                                              |
+| `marked`                    | npm; converts Markdown strings to HTML for the teaching dialogs                                                                                                                    |
+| Press Start 2P font         | Downloaded and hosted locally in `public/fonts/` so the game works offline; OFL 1.1, credited to CodeMan38 in the project README                                                   |
+| The System 7 look           | **Hand-written CSS** in `src/styles/mac.css` (about 1,400 lines), with no UI library. Borders, title-bar stripes, dialogs, and menus are recreated from screenshots of the real OS |
+| Classic Mac-style SVG icons | Drawn by the project author, committed in `public/icons/` with a `manifest.json` catalog; CC BY-ND 4.0 (see `LICENSE-GRAPHICS.md`)                                                 |
+| Sound effects               | **None downloaded**; all four sounds (chime, bonk, fanfare, "sosumi") are synthesized at runtime with the Web Audio API in `src/lib/sounds.ts`                                     |
+| Teaching content            | The Lib4RI "Basics of Research Data Management" workshop answer key, hand-transcribed into `src/data/problems.json`                                                                |
+| The "broken" sample files   | Fabricated by hand (a fake manuscript, a deliberately messy spreadsheet, a badly written Python script) and committed verbatim in `public/files/sample_project/`                   |
+
+## 2. The three big architectural ideas
+
+**Idea 1: The game is data, not code.** What files exist, what is wrong with them, and what a right-click reveals are all defined in three hand-edited JSON files: `file-tree.json` (which icons appear), `problems.json` (the teaching text), and `mapping.json` (which click target reveals which problem). The TypeScript code is an *engine* that interprets them. A whole new puzzle can be added without touching a `.tsx` file.
+
+**Idea 2: One state object, one reducer.** All persistent game state (found problems, fixed problems, wrong guesses, open windows, mute flag) lives in a single `PersistedState` object managed by a React `useReducer` in `GameContext.tsx`. Every change goes through a named action (`FIND_PROBLEM`, `OPEN_WINDOW`, `MOVE_WINDOW`, and so on). A one-line `useEffect` saves the whole object to `localStorage` after every change; that is the entire save system.
+
+**Idea 3: Everything is a window.** The folder, the trash, every file viewer, even the animated GIFs are the same `Window` component with different children. A window is just `{id, title, viewerType, x, y, width, height, zIndex}` in an array; a `switch` on `viewerType` picks what renders inside.
+
+Style flows alongside (`mac.css` grows with each component). Nothing on the left imports anything on the right. If you remember one diagram, make it this one.
+```
+types.ts ──► data/*.json ──► lib/ (pure functions) ──► GameContext ──► components ──► App
+```
+
+## 3. The build order
+
+### Phase 1: Scaffold and toolchain
+
+```bash
+npm create vite@latest rdm-scavenger-hunt -- --template react-ts
+cd rdm-scavenger-hunt && npm install && npm run dev
+```
+
+This yields `index.html` (a single `<div id="root">`), `src/main.tsx` (mounts `<App/>` with `createRoot`), and hot reloading. Delete the demo content, then add `"typecheck": "tsc --noEmit"` to the `package.json` scripts; it gets run constantly.
+
+**Milestone:** a blank page served at `localhost:5173`.
+
+### Phase 2: The look, CSS before components
+
+Create `src/styles/` with three files, imported in this order in `App.tsx`: `reset.css` (kills browser defaults), `fonts.css` (a `@font-face` for Press Start 2P and the CSS custom properties `--font-pixel` / `--font-mono`), and `mac.css`, the big one. Start `mac.css` with a `:root` palette block, then build just three classes: `.menu-bar`, `.desktop`, and `.window` with its `__title-bar`, `__close`, and `__body` children (BEM-style naming throughout). Everything else in the file (dialogs, icons, sticky note, tables) is added when its component is.
+
+Why CSS first? Because the aesthetic *is* the app. The retro styling supplies all of the game's whimsy and is the main thing that keeps it from feeling like an ordinary virtual machine. Getting one convincing window on screen confirms that the pixel font, borders, and title-bar stripes work visually before any effort goes into game logic.
+
+**Milestone:** a static, non-functional System 7 window hard-coded in JSX.
+
+### Phase 3: Types and the data files
+
+This phase is why the project uses TypeScript rather than plain JavaScript. Write `src/types.ts` *before* the data. It defines the contract: `FileEntry` (path, name, icon, `viewerType`), `Problem` (id, name, `what`/`why`/`fix` as Markdown strings, resources), the five `Trigger` variants (`file`, `cell`, `line`, `project-absence`, `desktop`), `WindowState`, and `PersistedState`. TypeScript's discriminated unions (`type: 'cell'` vs `type: 'line'`) do real work here; the compiler forces every trigger-handling `switch` to handle every case.
+
+Then comes the logical meat of the app in `src/data/`:
+
+- `problems.json`: 8 problems (`file-naming`, `versioning`, `file-formats`, `no-readme`, `no-backup`, `data-quality`, `code-quality`, `no-license`); `data-quality` carries 8 `subProblems` for the later boss battle.
+- `file-tree.json`: one entry per visible file, each pointing at a real file placed in `public/files/sample_project/`.
+- `mapping.json`: the trigger groups connecting clicks to problem ids (8 main plus 8 boss-battle cell triggers).
+
+JSON imports are typed with a cast at the top of `GameContext.tsx`: `const problems = problemsData as Problem[]`.
+
+**Milestone:** `npm run typecheck` passes with the data imported and logged to the console.
+
+### Phase 4: The window system (the hardest pure-UI code)
+
+Build `src/components/Window.tsx` plus two helpers:
+
+- `lib/layout.ts`: constants (`MENU_BAR_H = 30`, minimum window size) and `centeredAt(w, h, cascade)`. Constants that must match CSS values carry a comment saying so, a small but important lesson in keeping two sources of truth honest.
+- `lib/windowManager.ts`: `clampPosition()`, which keeps at least 40px of a dragged title bar on screen.
+
+Dragging is the classic three-listener pattern: `mousedown` on the title bar records the offset, then attaches `mousemove` and `mouseup` to `document` (not the element; the mouse outruns the div). Resizing repeats the pattern from four corner handles. Focus means "highest zIndex": clicking a window dispatches `FOCUS_WINDOW`, which stamps it with `nextZIndex++`. No sorting, no arrays reordered; the biggest number wins.
+
+**Milestone:** two draggable, resizable, focusable windows with fake content.
+
+### Phase 5: Central state, `GameContext.tsx`
+
+Now formalize state. One file provides:
+
+- the **reducer**: 11 actions, all pure (find/fix problem, wrong guess, open/close/focus/move/resize window, dismiss the two intro screens, toggle mute),
+- **persistence** via `lib/persistence.ts`: `loadState()` validates the parsed shape and discards incompatible saves (the storage key is versioned: `rdm-scavenger-hunt:v2`), and `saveState()` runs in a `useEffect` on every change,
+- a `useGame()` hook that throws if used outside the provider; fail loudly, fail early.
+
+Ephemeral UI state (which dialog is up, the pending right-click target) stays in ordinary `useState` in the provider. It deliberately does *not* go in the persisted reducer. Separating "game progress" from "what's on screen this second" is the key state-design decision in the app.
+
+**Milestone:** windows survive a page reload.
+
+### Phase 6: Files on screen: icons, folder view, viewers
+
+- `FileIcon.tsx`: icon plus label; double-click opens, right-click reports. The label uses `BreakableLabel.tsx`, a tiny component (21 lines) that inserts `<wbr>` after underscores and dots so `microscopy_sample_12.jpg` wraps nicely.
+- `Desktop.tsx`: renders the wallpaper, the sticky-note checklist, two desktop icons (project folder, trash), and maps `openWindows` to `Window` components. `ViewerForWindow` is the `switch` that turns `viewerType` into a viewer.
+- Viewers, **built simplest-first**: `TextViewer` (fetch text, render numbered lines, each right-clickable), `ImageViewer` (an `<img>`), `MarkdownViewer` (`marked.parse` into `dangerouslySetInnerHTML`), `CsvViewer` (PapaParse into a `<table>` with right-clickable cells), `XlsxViewer` (SheetJS `XLSX.read` on an ArrayBuffer, with sheet tabs), and `BinaryViewer` (a hex dump; pure string formatting and a great exercise).
+
+All viewers share one hook, `lib/useFileContent.ts`, which fetches from `public/files/sample_project/` and handles loading, errors, and stale-fetch cancellation in exactly one place. When three viewers need the same fetch logic, *that* is the moment to extract a hook, not before.
+
+**Milestone:** double-clicking any icon opens its real file contents.
+
+### Phase 7: The game loop, from right-click to verdict
+
+This is where it becomes a game, in four small pieces:
+
+1. `ContextMenu.tsx`: a positioned `<div>` that appears at the click coordinates, closes on Escape or an outside click, and offers "Report a RDM problem…".
+2. `lib/matchTrigger.ts`: the referee, and the only genuinely game-specific algorithm. `matchTrigger(target, mapping)` walks the mapping and returns the problem id whose trigger matches; `matchSelectedProblem()` grades the player's guess as `correct`, `wrong_problem` (real problem, wrong label), or `no_problem`. It is pure, with no React in it, and therefore trivially testable.
+3. `ProblemSelectionDialog` (pick a category), which dispatches `FIND_PROBLEM` on success and hands off to `WrongGuessDialog` otherwise; `ProblemReportDialog` shows the what/why/fix Markdown.
+4. `StickyNote.tsx`: reads `foundProblems` and renders checkboxes. Pure derived state: it computes, it never dispatches.
+
+Add `lib/sounds.ts` here; each sound is roughly 20 lines of oscillator plus gain envelope. Compare `playChime` (sine, C-E-G arpeggio) with `playBonk` (a square wave sliding from 120 down to 40 Hz) and the whole Web Audio API is taught in one file.
+
+**Milestone:** the full find loop works end-to-end with sound and a checklist.
+
+### Phase 8: Fixes that change the world, `lib/fixActions.ts`
+
+When a player clicks "Let's fix it!", files should get renamed, converted, or archived. The trick, and the most instructive design in the app, is that **nothing is ever mutated**. `file-tree.json` stays frozen; `computeDisplayFiles(baseTree, fixedProblems)` *derives* the current folder contents each render by applying each fixed problem's `FixAction` (`remove`, `archive`, `add`, `organize`) as a pure transformation. Undo, save, and reload all come for free because state is just a list of fixed ids. This phase also adds the archive window and the post-fix `data/`, `manuscripts/`, and `code/` subfolders.
+
+### Phase 9: Set pieces: intro, boss battle, ending
+
+- `TitleSlide` (a click-anywhere hero) and `WelcomeDialog` (instructions styled as a mid-90s instant-messenger chat whose lines appear on a timer).
+- **Boss battle**: opening `soil samples.xlsx` triggers a minigame where the 8 `data-quality` sub-problems are individual bad cells (`-999`, `NA`, blanks) reported directly. It reuses everything (the XlsxViewer, cell triggers, the same reducer) plus about 60 lines of state in GameContext: `bossFoundCount` and an effect that detects the found-them-all moment.
+- `FileStructureDialog` and then `CompletionDialog` finish the arc.
+- Finally, the **modal traffic cop** in `App.tsx`: several dialogs can become eligible in the same instant, so a `MODAL_ORDER` array decides which single one renders, and "automatic" end-game popups wait 1 second so they do not flash in on top of each other. Sequencing overlapping UI is a real problem in every app; this is a clean, readable solution.
+
+### Phase 10: Polish
+
+Touch support (`lib/longPress.ts`, a 500ms long-press hook standing in for right-click), keyboard and ARIA support on every clickable div, and the `asset()` helper prefixing every URL with `import.meta.env.BASE_URL` so the app works under GitHub Pages' `/RDM_CLASSIC/` sub-path (set `base` in `vite.config.ts`). Then `npm run build` and publish `dist/` to Pages.
 
 ---
 
@@ -265,12 +393,11 @@ rdm-scavenger-hunt/
 │   │   ├── Window.tsx           # generic draggable, focusable window chrome
 │   │   ├── FileIcon.tsx         # individual file icon with right-click / long-press
 │   │   ├── ContextMenu.tsx      # right-click menu with Report / Report missing
-│   │   ├── StickyNote.tsx       # 13-item checklist, top-left of desktop
+│   │   ├── StickyNote.tsx       # 8-item checklist, top-left of desktop
 │   │   ├── WelcomeDialog.tsx    # first-load instructions
 │   │   ├── ProblemReportDialog.tsx  # shown on correct find (tabbed: what / why / fix)
 │   │   ├── WrongGuessDialog.tsx # shown on wrong guess or already-found repeat
-│   │   ├── CompletionDialog.tsx # shown after all 13 found
-│   │   ├── Fireworks.tsx        # pixel canvas animation on completion
+│   │   ├── CompletionDialog.tsx # shown after all 8 found
 │   │   └── viewers/
 │   │       ├── TextViewer.tsx   # .txt .py .md — line-by-line with right-click
 │   │       ├── CsvViewer.tsx    # .csv — table with right-clickable cells
@@ -280,8 +407,7 @@ rdm-scavenger-hunt/
 │   ├── data/
 │   │   ├── problems.json        # SOURCE OF TRUTH — hand-edit (teaching content)
 │   │   ├── file-tree.json       # SOURCE OF TRUTH — hand-edit (what the desktop shows)
-│   │   ├── mapping.json         # SOURCE OF TRUTH — hand-edit (click → problem)
-│   │   └── sub-problems.json    # SOURCE OF TRUTH — hand-edit (data-quality boss sub-items)
+│   │   └── mapping.json         # SOURCE OF TRUTH — hand-edit (click → problem)
 │   ├── lib/
 │   │   ├── matchTrigger.ts      # maps a right-click target to a problem ID
 │   │   ├── persistence.ts       # localStorage read/write
@@ -310,7 +436,7 @@ All sounds are generated at runtime using the Web Audio API and no external audi
 
 | Component | License |
 |-----------|---------|
-| Game source code | MIT |
+| Game source code | MIT (see [LICENSE](LICENSE)) |
+| Graphics and icons | All original artwork by Chase Núñez. [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/): free to reuse with attribution, no modifications (see [LICENSE-GRAPHICS.md](LICENSE-GRAPHICS.md)) |
 | Press Start 2P font | OFL 1.1 (CodeMan38) |
-| Classic Mac OS icons | Recreations — no explicit license in source repo; use for educational purposes |
 | RDM answer key content | © Lib4RI — Basics of Research Data Management workshop |
