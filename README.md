@@ -38,9 +38,9 @@ Progress is saved to `localStorage` automatically. The Apple menu has a **Reset 
 | `papaparse`                 | npm; parses CSV files                                                                                                                                                              |
 | `marked`                    | npm; converts Markdown strings to HTML for the teaching dialogs                                                                                                                    |
 | Press Start 2P font         | Downloaded and hosted locally in `public/fonts/` so the game works offline; OFL 1.1, credited to CodeMan38 in the project README                                                   |
-| The System 7 look           | **Hand-written CSS** in `src/styles/mac.css` (about 1,400 lines), with no UI library. Borders, title-bar stripes, dialogs, and menus are recreated from screenshots of the real OS |
-| Classic Mac-style SVG icons | Drawn by the project author, committed in `public/icons/` with a `manifest.json` catalog; CC BY-ND 4.0 (see `LICENSE-GRAPHICS.md`)                                                 |
-| Sound effects               | **None downloaded**; all four sounds (chime, bonk, fanfare, "sosumi") are synthesized at runtime with the Web Audio API in `src/lib/sounds.ts`                                     |
+| The System 7 look           | no UI library. Borders, title-bar stripes, dialogs, and menus are recreated in CSS from screenshots of the real OS |
+| Classic Mac-style SVG icons | Drawn by Chase Núñez, committed in `public/icons/` with a `manifest.json` catalog; CC BY-ND 4.0 (see `LICENSE-GRAPHICS.md`)                                                 |
+| Sound effects               | all four sounds (chime, bonk, fanfare, "sosumi") are synthesized at runtime with the Web Audio API in `src/lib/sounds.ts`                                     |
 | Teaching content            | The Lib4RI "Basics of Research Data Management" workshop answer key, hand-transcribed into `src/data/problems.json`                                                                |
 | The "broken" sample files   | Fabricated by hand (a fake manuscript, a deliberately messy spreadsheet, a badly written Python script) and committed verbatim in `public/files/sample_project/`                   |
 
@@ -437,6 +437,5 @@ All sounds are generated at runtime using the Web Audio API and no external audi
 | Component | License |
 |-----------|---------|
 | Game source code | MIT (see [LICENSE](LICENSE)) |
-| Graphics and icons | All original artwork by Chase Núñez. [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/): free to reuse with attribution, no modifications (see [LICENSE-GRAPHICS.md](LICENSE-GRAPHICS.md)) |
+| Graphics and icons | original artwork by Chase Núñez. [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/): free to reuse with attribution, no modifications (see [LICENSE-GRAPHICS.md](LICENSE-GRAPHICS.md)) |
 | Press Start 2P font | OFL 1.1 (CodeMan38) |
-| RDM answer key content | © Lib4RI — Basics of Research Data Management workshop |
