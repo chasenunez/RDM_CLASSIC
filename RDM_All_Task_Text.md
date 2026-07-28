@@ -3,27 +3,29 @@
 
 **What's wrong**
 
-The manuscript files violate good naming practices:
+The file `manuscript draft.docx` breaks good naming practice:
 
-| File | Problems |
+| Problem | Why it trips things up |
 |------|----------|
-| `manuscript draft.docx` | Spaces in filename, no date, no version number |
-| `manuscript_draft_v2_JK comments.docx` | Person's name embedded instead of a version number |
+| Space in the name (`manuscript draft`) | Many programs and scripts read a space as the end of the name, so the file gets split in two or simply isn't found |
+| No date | You can't sort by when it was made, or tell an old copy from a new one |
+| No version number | There's no way to see which draft is the latest |
+
+Computers also struggle with special characters. Avoid these in file names: `/ \ : * ? " < > | & % # { } $`. Stick to letters, numbers, hyphens, and underscores.
 
 **Why it matters**
 
-Bad file names make it impossible to sort, search, or identify files without opening them. They cause errors in scripts (spaces break command-line tools), create confusion about which version is current, and are meaningless to anyone outside the project.
+Good names let you (and anyone after you) sort, search, and recognise a file without opening it. Names with spaces or special characters can break command-line tools and scripts, get mangled when files move between Windows, Mac, and Linux, or when they're uploaded to a repository. Vague names like "draft" are meaningless to a colleague, or to you in six months.
 
 **How to fix it**
 
-Adopt the convention: `Date_ProjectName_DocumentType_Version.extension`
+Adopt the pattern: `YYYYMMDD_ProjectName_DocumentType_Version.extension`
 
 | Original | Fixed |
 |----------|-------|
-| `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v0.1.docx` |
-| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v0.2.docx` |
+| `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v1.0.docx` |
 
-Rules: no spaces (use underscores), no special characters, date in YYYYMMDD format, descriptive project name, document type, semantic version number.
+Rules: no spaces (use underscores), no special characters, the date as YYYYMMDD, a descriptive project name, the document type, and a version number.
 
 **Resources**
 
@@ -32,21 +34,33 @@ Rules: no spaces (use underscores), no special characters, date in YYYYMMDD form
 - Jenny Bryan's naming convention guide: https://speakerdeck.com/jennybc/how-to-name-files
 
 
-## Topic 2 — No Versioning System
+## Topic 2 — Ad-hoc File Versioning
 
 **What's wrong**
 
-The project uses ad-hoc "versioning" through filename suffixes like `v2`, `JK comments`. There is no version control for code or data. There is no way to know what changed between versions, when, or why.
+The file `manuscript_draft_v2_JK comments.docx` shows how *not* to track versions:
+
+| Problem | Why it trips things up |
+|------|----------|
+| Ad-hoc version tag (`v2`) | `v2` of what? There's no `v1` in sight, and no record of what changed |
+| A person's name baked in (`JK comments`) | Names track *who touched it*, not *which version it is*, and they pile up: `_JK_then_AB_final_final` |
+| A space in the name | Spaces break scripts and command-line tools |
+
+This is how projects end up with `final`, `final_v2`, and `final_REALLY_final`, and no idea which one is current.
 
 **Why it matters**
 
-Without proper versioning, you can't trace the history of changes, you can't undo mistakes, you can't tell which version of the code produced which results, and you risk accidentally working on or sharing the wrong version.
+Without a real versioning system you can't tell what changed between drafts, when, or why; you can't cleanly undo a mistake; and you risk sharing or building on the wrong copy. Filename tags like `v2` and `JK comments` record none of that.
 
 **How to fix it**
 
-For **code**: Use Git. Initialize a repository, commit changes with descriptive messages, and use branches for experimental work. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.
+For **documents and data**: use clear, semantic version numbers in the name (v1.0, v1.1, v2.0) and keep a short changelog (in the README or a separate CHANGELOG file) that records what changed in each version.
 
-For **data**: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and maintain a changelog — either in the README or a separate CHANGELOG file — that records what changed in each version.
+| Original | Fixed |
+|----------|-------|
+| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v1.1.docx` |
+
+For **code**: use Git. It records every change, who made it, and why, so you never need `_final_v2` again. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.
 
 **Resources**
 
@@ -60,25 +74,30 @@ For **data**: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and m
 
 **What's wrong**
 
-The project uses JPEG images for figures and microscopy:
+The project uses proprietary and lossy file formats:
 
 | File | Format Problem |
 |------|---------------|
-| `fig1_updated.jpg` | JPEG is lossy — every save degrades quality. Figures for publication should be in lossless formats. |
+| `fig1.jpg` | JPEG is lossy — every save degrades quality. Figures for publication should be in lossless formats. |
 | `microscopy_sample_12.jpg` | JPEG is lossy — microscopy images should be in a lossless format to preserve fine detail. |
+| `.xlsx` spreadsheets | Excel's format is proprietary: it needs specific software and can hide formulas, macros, and formatting quirks. |
 
 **Why it matters**
 
-Lossy formats permanently destroy information with every save. This violates the "interoperable" FAIR principle and can compromise the scientific integrity of images used in publications.
+Lossy formats permanently destroy information with every save. Proprietary formats lock your data to one program and may be unreadable in the future. Both violate the "interoperable" FAIR principle and can compromise the scientific integrity of the work.
 
 **How to fix it**
+
+Images:
 
 | Data type | Current format | Recommended format |
 |-----------|---------------|-------------------|
 | Microscopy images | .jpg | .tiff (uncompressed) |
 | Figures for publication | .jpg | .png or .tiff |
 
-Keep the original if needed for your workflow, but always save an additional copy in a lossless format for archiving and sharing.
+Spreadsheets: for sharing and long-term reuse, also export tabular data as **CSV** (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Researchers naturally reach for Excel because it matches day-to-day reality, but the archived, shareable copy should be an open format like CSV.
+
+Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing. (Figures can keep short descriptive names like `fig1.png` — the naming rules just mean no spaces or special characters, and a lossless format.)
 
 **Resources**
 
@@ -128,7 +147,7 @@ Follow these raw-data rules:
 
 1. **Never delete raw data.** Archive it in a read-only location.
 2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.
-3. **Store raw data in at least two places** (e.g., your local drive AND your institute's storage or a repository).
+3. **Follow the 3-2-1 rule**: keep at least **3** copies of your data, on **2** different types of media (for example your computer and an institutional server), with **1** copy kept off-site (a repository or cloud backup). Two copies on the same laptop is not a backup.
 4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.
 
 A clean project layout separates concerns:
@@ -146,7 +165,7 @@ data/
 
 ## Topic 6 — Data Quality Issues Inside the Files
 
-This is the game's "Boss Battle": the player must find all 8 individual data-quality issues inside `soil samples.xlsx`. The parent overview text is shown first, followed by the eight sub-problems. (parent overview)
+This is the game's "Boss Battle": the player must find all 9 individual data-quality issues inside `soil samples.xlsx`. The parent overview text is shown first, followed by the nine sub-problems.
 
 **What's wrong**
 
@@ -158,6 +177,7 @@ Looking at `soil samples.xlsx`, the data has multiple internal problems:
 | Embedded note | Row 1: free-text note in a data cell |
 | Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |
 | Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of "missing" |
+| Mixed data types / decimal formats | `42,1` stored as text (comma decimal) where the column is otherwise numbers |
 
 **Why it matters**
 
@@ -167,8 +187,9 @@ These issues cause scripts to break, statistics to be wrong (e.g., `-999` would 
 
 1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.
 2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.
-3. **Standardize missing data** to a single code (blank or `NA`) and document what it means in the README.
-4. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.
+3. **Use one explicit missing-value code** — the R/Python convention is `NA` — and document it in the README. Don't leave cells blank: a blank is ambiguous (not collected? below detection? forgotten?), while `NA` is unmistakable.
+4. **Keep types and formats consistent**: numbers stored as numbers, one decimal separator (the dot `.`), no stray text in numeric columns.
+5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.
 
 **Resources**
 
@@ -340,12 +361,32 @@ Replace '??' with the standardised missing-value code (e.g. `NA`). Document the 
 
 - Tidy Data: https://vita.had.co.nz/papers/tidy-data.pdf
 
+#### Sub-problem 6.9 — Mixed type / decimal format
+
+**What's wrong**
+
+Cell (row 4, col2) of `soil samples.xlsx` holds **"42,1"** — a number written with a comma decimal separator and stored as text, while the rest of that column are ordinary numbers written with a dot (e.g. `45.6`).
+
+**Why it matters**
+
+Mixing decimal separators (`,` vs `.`) and storing a number as text makes analysis tools misread the value — they may drop it, treat it as zero, or refuse to compute statistics for the whole column. The error is silent, so it slips into results unnoticed.
+
+**How to fix it**
+
+Use one decimal separator throughout — the dot `.` is the safest for software — and store numbers as numbers, not text. Fix `42,1` to `42.1`. If the data was entered in a locale that uses the comma, convert it on import and document the convention in the data dictionary.
+
+**Resources**
+
+- Data Organization in Spreadsheets: https://doi.org/10.1080/00031305.2017.1375989
+
 
 ## Topic 7 — Code Has No Comments
 
 **What's wrong**
 
 `script.py` has no comments explaining what the code does. It uses hardcoded filenames, references ambiguous column names (`col1`, `col3`, `val`), and produces no log or record of what it did.
+
+(The file name `script.py` itself is fine — short, no spaces, correct extension. The problem here is what's *inside* the file, not what it's called.)
 
 **Why it matters**
 
@@ -362,23 +403,33 @@ Uncommented code is a black box. No one — including you in six months — will
 
 - Software Carpentry Python lesson: https://swcarpentry.github.io/python-novice-inflammation/
 
-## Topic 8 — No License
+---
+
+## Part 2 — Beyond your own computer
+
+Topics 1–7 are about keeping your *own* working copy of a project in good shape: how you name, version, format, document, back up, and organise the files on your machine.
+
+Topics 8–12 shift outward, to what has to be true before your data can leave your computer to be shared, published, and reused by others: a licence that says how it may be used, a structure others can navigate, rich metadata, a data availability statement, and a persistent identifier (DOI). Good local habits make this second step almost free; skipping them makes it painful.
+
+---
+
+## Topic 8 — No Licence
 
 **What's wrong**
 
-There is no LICENSE file in the project. Without a license, the default legal status in most jurisdictions is "all rights reserved" — meaning no one else can legally use, share, or build upon the data or code.
+There is no LICENSE file in the project. Without a licence, the default legal status in most jurisdictions is "all rights reserved", meaning no one else can legally use, share, or build upon the data or code.
 
 **Why it matters**
 
-A missing license effectively prevents reuse, which defeats the purpose of sharing data. It violates the "reusable" FAIR principle.
+A missing licence effectively prevents reuse, which defeats the purpose of sharing data. It violates the "reusable" FAIR principle.
 
 **How to fix it**
 
-For **data**, use a Creative Commons license:
+For **data**, use a Creative Commons licence:
 - **CC0** (public domain dedication) — most open, recommended when you want maximum reuse.
 - **CC BY 4.0** (attribution required) — most funders recommend this.
 
-For **code**, use an open-source license:
+For **code**, use an open-source licence:
 - **MIT** — very permissive, widely used.
 - **Apache 2.0** — permissive with patent protection.
 
@@ -389,13 +440,13 @@ Place a `LICENSE.md` file at the root of your project.
 - Creative Commons license chooser: https://chooser-beta.creativecommons.org/
 - Choose an open source license: https://choosealicense.com/
 
-## Topic 9 — No Folder Structure (RDM Guide Problem 1)
+## Topic 9 — File/folder organization (RDM Guide Problem 1)
 
-**What's wrong:** All 24 files — raw data, processed data, code, figures, manuscripts, and personal notes — are dumped in a single directory. There is no separation between data stages, no distinction between inputs and outputs, and no logical grouping.
+**What's wrong:** The whole project is one flat pile. All the files — raw data, processed data, code, figures, manuscripts, and personal notes — are dumped in a single directory, with no separation between data stages, no distinction between inputs and outputs, and no logical grouping. There is also no version control (no Git repository), so nothing records the history of the project as a whole.
 
-**Why it matters:** Without structure, it's impossible to tell at a glance what stage a file belongs to, whether it's an input or output, or what depends on what. This gets worse as projects grow. A new team member would have no idea where to start.
+**Why it matters:** Without structure, it's impossible to tell at a glance what stage a file belongs to, whether it's an input or output, or what depends on what. This gets worse as projects grow, and a new team member would have no idea where to start. Without version control, there is no history of how the project reached its current state and no safe way to undo a change across the whole project.
 
-**How to fix it:** Adopt a consistent folder hierarchy that separates concerns. For example:
+**How to fix it:** Do two things. **First, organise the folder** into a consistent hierarchy that separates concerns. For example:
 
 ```
 20260301_AlpineSoilSurvey/
@@ -416,9 +467,12 @@ Place a `LICENSE.md` file at the root of your project.
 
 Key principles: separate raw from processed data, keep code in its own folder, isolate outputs (figures, results) from inputs, and put documentation (README, LICENSE) at the root.
 
+**Second, put the project under version control** with Git so every change to the project as a whole is tracked. Host it on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server. (Git tracks the *project*; the semantic version numbers in Topic 2 track individual *files*. Together they give you a complete history.)
+
 **Resources:**
 - The Turing Way — Research Data Management: https://the-turing-way.netlify.app/reproducible-research/rdm
 - CESSDA Data Management Guide: https://dmeg.cessda.eu/
+- Software Carpentry Git lesson: https://swcarpentry.github.io/git-novice/
 
 ## Topic 10 — No Metadata (RDM Guide Problem 6)
 
@@ -464,11 +518,27 @@ This should specify: the repository name, the DOI, what the dataset contains, an
 
 - **EnviDat** — the environmental data repository for WSL
 - **Zenodo** — a general-purpose repository hosted by CERN (free, accepts any research output)
-- **ERIC** — for ETH domain research
+- **PSI Public Data Repository (SciCat)** — PSI's repository for experimental data, which can mint DOIs <!-- TODO(verify): confirm the official name and public URL of the PSI data repository / SciCat instance before publishing -->
+- **ERIC** <!-- TODO(verify): confirm ERIC's actual scope (whole ETH Domain vs Eawag-specific) and its URL. The earlier wording "for ETH domain research" was questioned in review; do not restate it as fact until confirmed. -->
 
-Use re3data.org to find discipline-specific repositories if these don't fit.
+For any field, use re3data.org to find a discipline-specific repository that mints DOIs.
 
 **Resources:**
 - EnviDat: https://www.envidat.ch/
 - Zenodo: https://zenodo.org/
 - re3data: https://www.re3data.org/
+
+
+## Lib4RI resources
+
+Alongside the general references above, point players to our own material. The exact links and files still need to be added.
+
+- Lib4RI RDM trainings <!-- TODO(add asset): link the current Lib4RI RDM training schedule / registration page -->
+- Lib4RI OER (open educational resources) on RDM <!-- TODO(add asset): link the OER landing page -->
+- The RDM infosheet and the poster produced with Estelle <!-- TODO(add asset): add the PDF(s); one of these can double as the downloadable end-of-game handout -->
+
+**Training (separate from the reference links above)**
+
+- Carpentries lessons (via Clemens Lange) <!-- TODO(add asset): confirm which Carpentries lessons to feature and add the link -->
+
+**Handout:** a version of all this task text will be combined into a single downloadable handout offered at the end of the game. <!-- TODO(add asset): decide whether the handout is the Lib4RI RDM infosheet, the poster made with Estelle, or a purpose-built compilation, and wire up the download. -->

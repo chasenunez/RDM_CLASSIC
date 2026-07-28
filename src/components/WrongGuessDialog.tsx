@@ -31,8 +31,8 @@ export function WrongGuessDialog() {
     body = 'You\'ve spotted a real RDM problem — but you\'ve labeled it incorrectly. Take another look and try a different category.';
   } else {
     icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
-    title = 'No RDM problem here.';
-    body = 'That target does not reveal an RDM violation. Keep exploring — right-click files, open them and inspect cells or lines.';
+    title = 'Looks fine here.';
+    body = 'This one checks out. Not everything in the project is broken — some files (a well-named script, say) are perfectly good. Keep exploring: open files and right-click the cells or lines inside them.';
   }
 
   return (

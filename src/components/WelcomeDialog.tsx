@@ -22,6 +22,9 @@ const CHAT_LINES: React.ReactNode[] = [
     and choose <em>"Report an RDM problem"</em>.</>,
   <>Each correct find reveals an explanation and checks it off the list in the
     upper left. Wrong guesses count against you, so be strategic!</>,
+  <>Heads up: a messy data file is its own mini-game — you have to find
+    <em> every</em> problem inside it before it gets cleaned up. (Files and folders
+    out in the project get sorted one at a time as you find them.)</>,
   <>Good luck. Your future self thanks you ;-)</>,
 ];
 

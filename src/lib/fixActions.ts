@@ -40,22 +40,30 @@ const XLSX_FILE: Omit<FileEntry, 'path' | 'name' | 'size'> = {
 };
 
 export const FIX_ACTIONS: Record<string, FixAction> = {
+  // File naming is now scoped to a single file: the space-in-name manuscript
+  // is replaced with one following the naming convention (v1.0).
   'file-naming': {
-    remove: [
-      'manuscript draft.docx',
-      'manuscript_draft_v2_JK comments.docx',
-    ],
-    archive: [
-      'manuscript draft.docx',
-      'manuscript_draft_v2_JK comments.docx',
-    ],
+    remove: ['manuscript draft.docx'],
+    archive: ['manuscript draft.docx'],
     add: [
-      { ...MD, icon: '/assets/manuscript.png', path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.1.docx', name: '20260501_AlpineSoil_Manuscript_v0.1.docx', size: 996 },
-      { ...MD, icon: '/assets/manuscript.png', path: 'sample_project/20260501_AlpineSoil_Manuscript_v0.2.docx', name: '20260501_AlpineSoil_Manuscript_v0.2.docx', size: 1512 },
+      { ...MD, icon: '/assets/manuscript.png', path: 'sample_project/20260501_AlpineSoil_Manuscript_v1.0.docx', name: '20260501_AlpineSoil_Manuscript_v1.0.docx', size: 996 },
     ],
   },
 
+  // Versioning is now scoped to files: the ad-hoc "v2 / JK comments" manuscript
+  // becomes a properly versioned copy (v1.1) that continues from v1.0.
   'versioning': {
+    remove: ['manuscript_draft_v2_JK comments.docx'],
+    archive: ['manuscript_draft_v2_JK comments.docx'],
+    add: [
+      { ...MD, icon: '/assets/manuscript.png', path: 'sample_project/20260501_AlpineSoil_Manuscript_v1.1.docx', name: '20260501_AlpineSoil_Manuscript_v1.1.docx', size: 1512 },
+    ],
+  },
+
+  // File/folder organization is the whole-project fix: it drops in a Git repo so
+  // the project gains version control. The folder restructure itself is applied
+  // separately by the end-of-game file-structure step.
+  'folder-organization': {
     remove: [],
     archive: [],
     add: [
@@ -64,10 +72,10 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
   },
 
   'file-formats': {
-    remove: ['fig1_updated.jpg', 'microscopy_sample_12.jpg'],
-    archive: ['fig1_updated.jpg', 'microscopy_sample_12.jpg'],
+    remove: ['fig1.jpg', 'microscopy_sample_12.jpg'],
+    archive: ['fig1.jpg', 'microscopy_sample_12.jpg'],
     add: [
-      { ...TEXT, path: 'sample_project/fig1_updated.png', name: 'fig1_updated.png', size: 18313, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/image.png' },
+      { ...TEXT, path: 'sample_project/fig1.png', name: 'fig1.png', size: 18313, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/image.png' },
       { ...TEXT, path: 'sample_project/microscopy_sample_12.png', name: 'microscopy_sample_12.png', size: 22275, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/microscope.png' },
     ],
   },
@@ -95,7 +103,7 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     remove: ['soil samples.xlsx'],
     archive: ['soil samples.xlsx'],
     add: [
-      { ...XLSX_FILE, path: '_fix/20260315_AlpineSoil_Chem_v1.xlsx', name: '20260315_AlpineSoil_Chem_v1.xlsx', size: 6200 },
+      { ...XLSX_FILE, path: '_fix/20260315_AlpineSoil_Chem_v1.0.xlsx', name: '20260315_AlpineSoil_Chem_v1.0.xlsx', size: 6200 },
     ],
   },
 
@@ -135,10 +143,10 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     organize: {
       // Names are matched *before* the file-formats csv conversion, so list the
       // .xlsx names here even though they may render as .csv afterwards.
-      'data': ['raw_alpine_soil_data.xlsx', 'soil samples.xlsx', 'fig1_updated.png', 'microscopy_sample_12.png', '20260315_AlpineSoil_Chem_v1.xlsx'],
+      'data': ['raw_alpine_soil_data.xlsx', 'soil samples.xlsx', 'fig1.png', 'microscopy_sample_12.png', '20260315_AlpineSoil_Chem_v1.0.xlsx'],
       'manuscripts': [
-        '20260501_AlpineSoil_Manuscript_v0.1.docx',
-        '20260501_AlpineSoil_Manuscript_v0.2.docx',
+        '20260501_AlpineSoil_Manuscript_v1.0.docx',
+        '20260501_AlpineSoil_Manuscript_v1.1.docx',
       ],
       'code': ['20260410_AlpineSoil_Analysis_v1.0.py'],
     },

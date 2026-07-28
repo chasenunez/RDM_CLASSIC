@@ -14,7 +14,7 @@
 | File | Description |
 | --- | --- |
 | `raw_data.xlsx` | Field measurements, one row per sample site |
-| `20260315_AlpineSoil_Chem_v1.xlsx` | Cleaned soil chemistry results |
+| `20260315_AlpineSoil_Chem_v1.0.xlsx` | Cleaned soil chemistry results |
 | `20260410_AlpineSoil_Analysis_v1.0.py` | Analysis script (Python 3) |
 
 ## Methodological information

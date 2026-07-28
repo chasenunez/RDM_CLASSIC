@@ -15,13 +15,32 @@ interface SheetData {
 
 const MISSING_VALUES = new Set(['-999', 'NA', 'n/a', '??']);
 
+// The single explicit missing-value code the fixed file uses everywhere, so the
+// spreadsheet matches the written advice ("use one explicit code such as NA").
+const MISSING_CODE = 'NA';
+
+// A number written with a comma decimal separator and stored as text, e.g.
+// "42,1". These read as strings (not numbers) and break analysis silently.
+const COMMA_DECIMAL = /^-?\d+,\d+$/;
+
+// Ambiguous headers renamed to self-descriptive names (with units) when the
+// file is shown in its fixed state — mirrors the dq-col-names fix guidance.
+const HEADER_RENAME: Record<string, string> = {
+  col1: 'soil_moisture_pct',
+  col2: 'organic_carbon_g_per_kg',
+  col3: 'bulk_density_g_per_cm3',
+  temp: 'temperature_C',
+};
+
 function cellClass(filePath: string, rowIdx: number, cell: string): string {
   if (filePath !== BOSS_FILE) return '';
   if (rowIdx === 0) return 'xlsx-meta-title';
   if (rowIdx === 1) return 'xlsx-meta-note';
   if (rowIdx === 2) return ''; // header row — styled via th
-  if (MISSING_VALUES.has(cell.trim())) return 'xlsx-bad-value';
-  if (cell.trim() === '' && rowIdx > 2) return 'xlsx-blank-value';
+  const v = cell.trim();
+  if (MISSING_VALUES.has(v)) return 'xlsx-bad-value';
+  if (COMMA_DECIMAL.test(v)) return 'xlsx-bad-value'; // comma-decimal text
+  if (v === '' && rowIdx > 2) return 'xlsx-blank-value';
   return '';
 }
 
@@ -53,12 +72,18 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
   const isBoss = filePath === BOSS_FILE;
   const errorsRemaining = bossTotalErrors - bossFoundCount;
 
-  // Fixed mode: skip meta rows and clean up bad values
+  // Fixed mode: skip the two meta rows, then clean up the data so the file
+  // reflects the advice the game gives — one explicit missing-value code,
+  // consistent decimals, and self-descriptive column headers. Row 0 of the
+  // sliced rows is the header (was row 2 in the original).
   const displayRows = isBoss && bossFileFixed
-    ? current.rows.slice(2).map(row =>
+    ? current.rows.slice(2).map((row, rowIdx) =>
         row.map(cell => {
           const v = String(cell ?? '').trim();
-          if (MISSING_VALUES.has(v) || v === '') return '';
+          if (rowIdx === 0) return HEADER_RENAME[v] ?? cell;   // header row
+          if (MISSING_VALUES.has(v) || v === '') return MISSING_CODE;
+          const m = v.match(COMMA_DECIMAL);
+          if (m) return v.replace(',', '.');                    // 42,1 -> 42.1
           return cell;
         })
       )

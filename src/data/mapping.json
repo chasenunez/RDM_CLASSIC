@@ -3,22 +3,21 @@
     {
       "id": "file-naming",
       "triggers": [
-        { "type": "file", "path": "manuscript draft.docx" },
-        { "type": "file", "path": "manuscript_draft_v2_JK comments.docx" }
+        { "type": "file", "path": "manuscript draft.docx" }
       ],
       "matchRule": "any"
     },
     {
       "id": "versioning",
       "triggers": [
-        { "type": "project-absence", "name": ".git" }
+        { "type": "file", "path": "manuscript_draft_v2_JK comments.docx" }
       ],
       "matchRule": "any"
     },
     {
       "id": "file-formats",
       "triggers": [
-        { "type": "file", "path": "fig1_updated.jpg" },
+        { "type": "file", "path": "fig1.jpg" },
         { "type": "file", "path": "microscopy_sample_12.jpg" }
       ],
       "matchRule": "any"
@@ -113,6 +112,14 @@
       "matchRule": "any"
     },
     {
+      "id": "dq-type-mismatch",
+      "parentId": "data-quality",
+      "triggers": [
+        { "type": "cell", "path": "soil samples.xlsx", "row": 4, "col": 2 }
+      ],
+      "matchRule": "any"
+    },
+    {
       "id": "code-quality",
       "triggers": [
         { "type": "line", "path": "script.py", "line": 1 },
@@ -133,6 +140,13 @@
       "id": "no-license",
       "triggers": [
         { "type": "project-absence", "name": "LICENSE.md" }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "folder-organization",
+      "triggers": [
+        { "type": "project-absence", "name": ".git" }
       ],
       "matchRule": "any"
     }

@@ -24,7 +24,7 @@ DATA_DIR = Path("data")
 # Cleaned soil chemistry produced by the data-quality fix. The header is the
 # first row now (the title/notes rows were removed), so no header offset is
 # needed as it was in the old script.
-soil = pd.read_excel(DATA_DIR / "20260315_AlpineSoil_Chem_v1.xlsx")
+soil = pd.read_excel(DATA_DIR / "20260315_AlpineSoil_Chem_v1.0.xlsx")
 
 # --- Clean & derive ----------------------------------------------------------
 # Drop rows with any missing values before summarising

@@ -3,9 +3,9 @@
     "id": "file-naming",
     "name": "File naming",
     "fullTitle": "Bad File Naming",
-    "what": "The manuscript files violate good naming practices:\n\n| File | Problems |\n|------|----------|\n| `manuscript draft.docx` | Spaces in filename, no date, no version number |\n| `manuscript_draft_v2_JK comments.docx` | Person's name embedded instead of a version number |",
-    "why": "Bad file names make it impossible to sort, search, or identify files without opening them. They cause errors in scripts (spaces break command-line tools), create confusion about which version is current, and are meaningless to anyone outside the project.",
-    "fix": "Adopt the convention: `Date_ProjectName_DocumentType_Version.extension`\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v0.1.docx` |\n| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v0.2.docx` |\n\nRules: no spaces (use underscores), no special characters, date in YYYYMMDD format, descriptive project name, document type, semantic version number.",
+    "what": "The file `manuscript draft.docx` breaks good naming practice:\n\n| Problem | Why it trips things up |\n|------|----------|\n| Space in the name (`manuscript draft`) | Many programs and scripts read a space as the end of the name, so the file gets split in two or simply isn't found |\n| No date | You can't sort by when it was made, or tell an old copy from a new one |\n| No version number | There's no way to see which draft is the latest |\n\nComputers also struggle with special characters. Avoid these in file names: `/ \\ : * ? \" < > | & % # { } $`. Stick to letters, numbers, hyphens, and underscores.",
+    "why": "Good names let you (and anyone after you) sort, search, and recognise a file without opening it. Names with spaces or special characters can break command-line tools and scripts, get mangled when files move between Windows, Mac, and Linux, or when they're uploaded to a repository. Vague names like \"draft\" are meaningless to a colleague, or to you in six months.",
+    "fix": "Adopt the pattern: `YYYYMMDD_ProjectName_DocumentType_Version.extension`\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v1.0.docx` |\n\nRules: no spaces (use underscores), no special characters, the date as YYYYMMDD, a descriptive project name, the document type, and a version number.",
     "resources": [
       {
         "title": "Bulk Rename Utility (Windows)",
@@ -24,10 +24,10 @@
   {
     "id": "versioning",
     "name": "Versioning",
-    "fullTitle": "No Versioning System",
-    "what": "The project uses ad-hoc \"versioning\" through filename suffixes like `v2`, `JK comments`. There is no version control for code or data. There is no way to know what changed between versions, when, or why.",
-    "why": "Without proper versioning, you can't trace the history of changes, you can't undo mistakes, you can't tell which version of the code produced which results, and you risk accidentally working on or sharing the wrong version.",
-    "fix": "For **code**: Use Git. Initialize a repository, commit changes with descriptive messages, and use branches for experimental work. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.\n\nFor **data**: Use semantic version numbers in filenames (v1.0, v1.1, v2.0) and maintain a changelog — either in the README or a separate CHANGELOG file — that records what changed in each version.",
+    "fullTitle": "Ad-hoc File Versioning",
+    "what": "The file `manuscript_draft_v2_JK comments.docx` shows how *not* to track versions:\n\n| Problem | Why it trips things up |\n|------|----------|\n| Ad-hoc version tag (`v2`) | `v2` of what? There's no `v1` in sight, and no record of what changed |\n| A person's name baked in (`JK comments`) | Names track *who touched it*, not *which version it is* — and they pile up: `_JK_then_AB_final_final` |\n| A space in the name | Spaces break scripts and command-line tools |\n\nThis is how projects end up with `final`, `final_v2`, and `final_REALLY_final`, and no idea which one is current.",
+    "why": "Without a real versioning system you can't tell what changed between drafts, when, or why; you can't cleanly undo a mistake; and you risk sharing or building on the wrong copy. Filename tags like `v2` and `JK comments` record none of that.",
+    "fix": "For **documents and data**: use clear, semantic version numbers in the name (`v1.0`, `v1.1`, `v2.0`) and keep a short changelog (in the README or a separate `CHANGELOG` file) that notes what changed in each version.\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v1.1.docx` |\n\nFor **code**: use Git. It records every change, who made it, and why, so you never need `_final_v2` again.",
     "resources": [
       {
         "title": "Git",
@@ -47,9 +47,9 @@
     "id": "file-formats",
     "name": "File formats",
     "fullTitle": "Proprietary and Inappropriate File Formats",
-    "what": "The project uses JPEG images for figures and microscopy:\n\n| File | Format Problem |\n|------|---------------|\n| `fig1_updated.jpg` | JPEG is lossy — every save degrades quality. Figures for publication should be in lossless formats. |\n| `microscopy_sample_12.jpg` | JPEG is lossy — microscopy images should be in a lossless format to preserve fine detail. |",
-    "why": "Lossy formats permanently destroy information with every save. This violates the \"interoperable\" FAIR principle and can compromise the scientific integrity of images used in publications.",
-    "fix": "| Data type | Current format | Recommended format |\n|-----------|---------------|-------------------|\n| Microscopy images | .jpg | .tiff (uncompressed) |\n| Figures for publication | .jpg | .png or .tiff |\n\nKeep the original if needed for your workflow, but always save an additional copy in a lossless format for archiving and sharing.",
+    "what": "The project uses proprietary and lossy file formats:\n\n| File | Format Problem |\n|------|---------------|\n| `fig1.jpg` | JPEG is lossy — every save degrades quality. Figures for publication should be in lossless formats. |\n| `microscopy_sample_12.jpg` | JPEG is lossy — microscopy images should be in a lossless format to preserve fine detail. |\n| `.xlsx` spreadsheets | Excel's format is proprietary: it needs specific software and can hide formulas, macros, and formatting quirks. |",
+    "why": "Lossy formats permanently destroy information with every save. Proprietary formats lock your data to one program and may be unreadable in the future. Both violate the \"interoperable\" FAIR principle and can compromise the scientific integrity of the work.",
+    "fix": "**Images:**\n\n| Data type | Current format | Recommended format |\n|-----------|---------------|-------------------|\n| Microscopy images | .jpg | .tiff (uncompressed) |\n| Figures for publication | .jpg | .png or .tiff |\n\n**Spreadsheets:** for sharing and long-term reuse, also export tabular data as **CSV** (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Keep the original if your workflow needs it, but always save an open, non-proprietary copy for archiving and sharing.\n\n(Figures can keep short descriptive names like `fig1.png` — the naming rules just mean no spaces or special characters, and a lossless format.)",
     "resources": [
       {
         "title": "Library of Congress Recommended Formats",
@@ -85,7 +85,7 @@
     "fullTitle": "Raw Data Not Preserved",
     "what": "`raw_alpine_soil_data.xlsx` — the original, unprocessed data file — was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.",
     "why": "Raw data is the ground truth of your research. If something goes wrong downstream — a processing error, a bug in your script, a question from a reviewer — you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.",
-    "fix": "Follow these raw-data rules:\n\n1. **Never delete raw data.** Archive it in a read-only location.\n2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.\n3. **Store raw data in at least two places** (e.g., your local drive AND your institute's storage or a repository).\n4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.\n\nA clean project layout separates concerns:\n```\ndata/\n  raw/          ← original files, never touched\n  processed/    ← output of your scripts\n```",
+    "fix": "Follow these raw-data rules:\n\n1. **Never delete raw data.** Archive it in a read-only location.\n2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.\n3. **Follow the 3-2-1 rule**: keep at least **3** copies of your data, on **2** different types of media (for example your computer and an institutional server), with **1** copy kept off-site (a repository or cloud backup).\n4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.\n\nA clean project layout separates concerns:\n```\ndata/\n  raw/          ← original files, never touched\n  processed/    ← output of your scripts\n```",
     "resources": [
       {
         "title": "UKRN Primer: Research Data Management",
@@ -101,9 +101,9 @@
     "id": "data-quality",
     "name": "Data quality (inside files)",
     "fullTitle": "Data Quality Issues Inside the Files",
-    "what": "Looking at `soil samples.xlsx`, the data has multiple internal problems:\n\n| Issue | Example |\n|-------|---------|\n| Floating title row | Row 0: survey title embedded in data — breaks automated parsing |\n| Embedded note | Row 1: free-text note in a data cell |\n| Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |\n| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of \"missing\" |",
+    "what": "Looking at `soil samples.xlsx`, the data has multiple internal problems:\n\n| Issue | Example |\n|-------|---------|\n| Floating title row | Row 0: survey title embedded in data — breaks automated parsing |\n| Embedded note | Row 1: free-text note in a data cell |\n| Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |\n| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of \"missing\" |\n| Mixed data types / decimal formats | `42,1` stored as text (comma decimal) where the column is otherwise numbers |",
     "why": "These issues cause scripts to break, statistics to be wrong (e.g., `-999` would distort a mean if not excluded), and other researchers to misinterpret the data.",
-    "fix": "1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.\n2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.\n3. **Standardize missing data** to a single code (blank or `NA`) and document what it means in the README.\n4. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.",
+    "fix": "1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.\n2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.\n3. **Use one explicit missing-value code** — the R/Python convention is `NA` — and document it in the README. Don't leave cells blank: a blank is ambiguous (not collected? below detection? forgotten?), while `NA` is unmistakable.\n4. **Keep types and formats consistent**: numbers stored as numbers, one decimal separator (the dot `.`), no stray text in numeric columns.\n5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.",
     "resources": [
       {
         "title": "Broman & Woo (2018), \"Data Organization in Spreadsheets\" (The American Statistician)",
@@ -218,6 +218,19 @@
             "url": "https://vita.had.co.nz/papers/tidy-data.pdf"
           }
         ]
+      },
+      {
+        "id": "dq-type-mismatch",
+        "name": "Mixed type / decimal format",
+        "what": "Cell (row 4, col2) of `soil samples.xlsx` holds **\"42,1\"** — a number written with a comma decimal separator and stored as text, while the rest of that column are ordinary numbers written with a dot (e.g. `45.6`).",
+        "why": "Mixing decimal separators (`,` vs `.`) and storing a number as text makes analysis tools misread the value — they may drop it, treat it as zero, or refuse to compute statistics for the whole column. The error is silent, so it slips into results unnoticed.",
+        "fix": "Use **one** decimal separator throughout — the dot `.` is the safest for software — and store numbers as numbers, not text. Fix `42,1` to `42.1`. If the data was entered in a locale that uses the comma, convert it on import and document the convention in the data dictionary.",
+        "resources": [
+          {
+            "title": "Data Organization in Spreadsheets",
+            "url": "https://doi.org/10.1080/00031305.2017.1375989"
+          }
+        ]
       }
     ]
   },
@@ -225,7 +238,7 @@
     "id": "code-quality",
     "name": "Code quality",
     "fullTitle": "Code Has No Comments",
-    "what": "`script.py` has no comments explaining what the code does. It uses hardcoded filenames, references ambiguous column names (`col1`, `col3`, `val`), and produces no log or record of what it did.",
+    "what": "`script.py` has no comments explaining what the code does. It uses hardcoded filenames, references ambiguous column names (`col1`, `col3`, `val`), and produces no log or record of what it did.\n\n(The file name `script.py` itself is fine — it's short, has no spaces, and uses the right extension. The problem here is what's *inside* the file, so open it and inspect the code.)",
     "why": "Uncommented code is a black box. No one — including you in six months — will know what it does, why it makes certain choices, or which version produced the published results.",
     "fix": "1. **Add clear comments** explaining the purpose of each section, the meaning of parameters, and the rationale for decisions.\n2. **Use meaningful variable names**: `soil_chemistry_df` not `df`, `temperature_df` not `df2`.\n3. **Use relative file paths** or configuration files instead of hardcoded filenames.\n4. **Include a requirements file** (`requirements.txt` or `environment.yml`) so others can recreate your environment.",
     "resources": [
@@ -238,10 +251,10 @@
   {
     "id": "no-license",
     "name": "Licensing",
-    "fullTitle": "No License",
-    "what": "There is no LICENSE file in the project. Without a license, the default legal status in most jurisdictions is \"all rights reserved\" — meaning no one else can legally use, share, or build upon the data or code.",
-    "why": "A missing license effectively prevents reuse, which defeats the purpose of sharing data. It violates the \"reusable\" FAIR principle.",
-    "fix": "For **data**, use a Creative Commons license:\n- **CC0** (public domain dedication) — most open, recommended when you want maximum reuse.\n- **CC BY 4.0** (attribution required) — most funders recommend this.\n\nFor **code**, use an open-source license:\n- **MIT** — very permissive, widely used.\n- **Apache 2.0** — permissive with patent protection.\n\nPlace a `LICENSE.md` file at the root of your project.",
+    "fullTitle": "No Licence",
+    "what": "There is no LICENSE file in the project. Without a licence, the default legal status in most jurisdictions is \"all rights reserved\", meaning no one else can legally use, share, or build upon the data or code.",
+    "why": "A missing licence effectively prevents reuse, which defeats the purpose of sharing data. It violates the \"reusable\" FAIR principle.",
+    "fix": "For **data**, use a Creative Commons licence:\n- **CC0** (public domain dedication) — most open, recommended when you want maximum reuse.\n- **CC BY 4.0** (attribution required) — most funders recommend this.\n\nFor **code**, use an open-source licence:\n- **MIT** — very permissive, widely used.\n- **Apache 2.0** — permissive with patent protection.\n\nPlace a `LICENSE.md` file at the root of your project.",
     "resources": [
       {
         "title": "Creative Commons license chooser",
@@ -250,6 +263,24 @@
       {
         "title": "Choose an open source license",
         "url": "https://choosealicense.com/"
+      }
+    ]
+  },
+  {
+    "id": "folder-organization",
+    "name": "File/folder organization",
+    "fullTitle": "No Project Organization or Version Control",
+    "what": "The whole project is one flat pile of files with no organisation and no version control:\n\n- Raw data, processed data, code, figures, and manuscripts all sit in the same folder, with no way to tell inputs from outputs.\n- There is no Git repository, so nothing records the history of the project as a whole.",
+    "why": "Without a logical folder structure, no one can tell at a glance what a file is for, or what depends on what, and it only gets worse as the project grows. Without version control (Git), there is no history of how the project reached its current state, and no safe way to undo a change across the whole project.",
+    "fix": "1. **Organise the folder** so each kind of file has a home, for example:\n```\n20260301_AlpineSurvey/\n  data/\n    raw/\n    processed/\n  code/\n  results/\n  README.md\n```\nKeep raw data separate from processed, code in its own folder, and documentation at the top.\n\n2. **Put the project under version control** with Git so every change is tracked. Host it on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.",
+    "resources": [
+      {
+        "title": "The Turing Way — Research Data Management",
+        "url": "https://the-turing-way.netlify.app/reproducible-research/rdm"
+      },
+      {
+        "title": "Software Carpentry Git lesson",
+        "url": "https://swcarpentry.github.io/git-novice/"
       }
     ]
   }

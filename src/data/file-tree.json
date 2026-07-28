@@ -1,7 +1,7 @@
 [
   {
-    "path": "sample_project/fig1_updated.jpg",
-    "name": "fig1_updated.jpg",
+    "path": "sample_project/fig1.jpg",
+    "name": "fig1.jpg",
     "type": "file",
     "size": 18313,
     "mimeGuess": "image/jpeg",

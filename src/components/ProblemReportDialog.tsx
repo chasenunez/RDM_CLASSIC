@@ -6,7 +6,7 @@ import { asset } from '../lib/asset';
 type Tab = 'what' | 'why';
 
 export function ProblemReportDialog() {
-  const { activeProblem, activeParentId, dismissProblemDialog, handleFixProblem, isBossBattleActive, problems } = useGame();
+  const { activeProblem, activeParentId, dismissProblemDialog, handleFixProblem, isBossBattleActive, problems, bossTotalErrors } = useGame();
   const hideFix = isBossBattleActive || activeParentId === 'data-quality';
   const [tab, setTab] = useState<Tab>('what');
   const [showFix, setShowFix] = useState(false);
@@ -54,7 +54,7 @@ export function ProblemReportDialog() {
         </h2>
         {!showFix && activeParentId && (
           <p style={{ fontFamily: 'var(--font-pixel)', fontSize: '7px', color: '#666', marginBottom: 8 }}>
-            Boss Battle: Data Quality issue {activeParentId ? '— find all 8 to complete!' : ''}
+            Boss Battle: Data Quality issue — find all {bossTotalErrors} to complete!
           </p>
         )}
 

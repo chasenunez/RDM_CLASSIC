@@ -39,9 +39,14 @@ export function RulesDialog({ onClose }: RulesDialogProps) {
                 right-click on the empty space in the folder, then choose
                 <em> Report missing artifact</em>.
               </li>
-              <li style={{ listStyle: 'disc' }}>
+              <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 Each correct find reveals the explanation and marks it off on the checklist in the upper left of your screen.
                 Wrong guesses are counted, so be strategic!
+              </li>
+              <li style={{ listStyle: 'disc' }}>
+                A data file with problems <em>inside</em> it is a mini-game: you must find
+                <strong> every</strong> issue in the file before it can be fixed. Files and folders
+                out in the project, by contrast, are resolved one at a time as you find them.
               </li>
             </ul>
             <p style={{ lineHeight: 2 }}>

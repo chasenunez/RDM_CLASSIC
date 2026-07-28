@@ -1427,4 +1427,15 @@
   background: #eeeeee;
   color: transparent;
   outline: 1px dashed #aaaaaa;
+  cursor: pointer;            /* signal that the empty cell is still clickable */
+  position: relative;
+}
+
+/* A faint "(blank)" placeholder so empty target cells don't look inert — they
+   have visible content to hover and right-click, which the plain empty cell
+   did not. */
+.table-viewer td.xlsx-blank-value::after {
+  content: '(blank)';
+  color: #999999;
+  font-style: italic;
 }
