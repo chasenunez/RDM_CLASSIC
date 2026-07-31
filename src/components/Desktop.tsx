@@ -10,7 +10,6 @@ import { XlsxViewer } from './viewers/XlsxViewer';
 import { ImageViewer } from './viewers/ImageViewer';
 import { BinaryViewer } from './viewers/BinaryViewer';
 import { MarkdownViewer } from './viewers/MarkdownViewer';
-import { FixViewer } from './viewers/FixViewer';
 import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
 import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS, ORGANIZING_PROBLEM_ID } from '../lib/fixActions';
@@ -122,7 +121,7 @@ function ViewerForWindow({ win }: { win: WindowState }) {
 
   if (win.viewerType === 'archive') return <ArchiveView files={archiveFiles} />;
   if (win.viewerType === 'subfolder') return <SubfolderView folderName={win.filePath!} />;
-  if (!win.filePath && win.viewerType !== 'trash' && win.viewerType !== 'fix') return null;
+  if (!win.filePath && win.viewerType !== 'trash') return null;
 
   switch (win.viewerType) {
     case 'text':     return <TextViewer filePath={win.filePath!} />;
@@ -131,7 +130,6 @@ function ViewerForWindow({ win }: { win: WindowState }) {
     case 'image':    return <ImageViewer filePath={win.filePath!} />;
     case 'binary':   return <BinaryViewer filePath={win.filePath!} />;
     case 'markdown': return <MarkdownViewer filePath={win.filePath!} />;
-    case 'fix':      return <FixViewer problemId={win.problemId!} />;
     case 'gif':      return <GifViewer src={win.filePath!} />;
     case 'trash':    return <TrashView />;
     default:         return null;

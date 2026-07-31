@@ -431,7 +431,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setPendingTarget(null);
   }, []);
 
-  // Open "Let's fix it" window for a problem
+  // Apply a fix. The "how to fix" text itself is shown in place inside
+  // ProblemReportDialog; this handles the consequences out in the project.
   const handleFixProblem = useCallback(
     (problemId: string) => {
       // Mark as fixed
@@ -441,13 +442,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         ?? [...subProblemMap.values()].find(sp => sp.id === problemId);
       if (!prob) return;
 
-      // For sub-problems, use the parent's fix content
+      // Sub-problems don't have fixes of their own; the parent's fix covers them.
       const fixProblemId = subProblemMap.has(problemId)
         ? (subProblemMap.get(problemId)!.parentId)
         : problemId;
-
-      // The "How to fix" content is shown in-place inside the problem dialog
-      // (see ProblemReportDialog) — we no longer open a separate fix window.
 
       // Apply the file-system side effects of the fix. A fix replaces messy
       // files with improved ones (see FIX_ACTIONS). If the user was reading one

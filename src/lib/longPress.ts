@@ -59,3 +59,28 @@ export function useLongPress({ onLongPress, onPress }: LongPressOptions) {
     onTouchCancel: cancel,
   };
 }
+
+/**
+ * Long-press for grids and code listings, where a hook per cell or per line
+ * isn't practical. One hook on the container works out which element the finger
+ * is on, so touch users reach the same targets a right-click reaches.
+ *
+ * Without this, spreadsheet cells and code lines were mouse-only: the boss
+ * battle and the code-quality problem were simply unplayable on a tablet, even
+ * though the Rules dialog promised long-press worked.
+ */
+export function useLongPressWithin(
+  selector: string,
+  onLongPress: (el: HTMLElement, x: number, y: number) => void,
+) {
+  return useLongPress({
+    onLongPress: e => {
+      const touch = e.touches[0] ?? e.changedTouches[0];
+      if (!touch) return;
+      // The event's own target is the element under the finger, so there's no
+      // need to look it up by coordinate.
+      const match = (e.target as HTMLElement | null)?.closest<HTMLElement>(selector);
+      if (match) onLongPress(match, touch.clientX, touch.clientY);
+    },
+  });
+}

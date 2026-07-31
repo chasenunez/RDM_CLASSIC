@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { useGame, BOSS_FILE } from '../../GameContext';
 import { useFileContent } from '../../lib/useFileContent';
+import { useLongPressWithin } from '../../lib/longPress';
 import { asset } from '../../lib/asset';
 
 interface XlsxViewerProps {
@@ -69,6 +70,21 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
   const [activeSheet, setActiveSheet] = useState(0);
   const { data: buf, error } = useFileContent(filePath, 'arrayBuffer');
 
+  // Touch equivalent of right-clicking a cell. Attached to the table wrapper
+  // rather than to each cell, since a hook per cell isn't workable in a grid.
+  const longPress = useLongPressWithin('[data-cell]', (el, x, y) => {
+    if (el.dataset.locked === 'true') return;
+    showContextMenu({
+      x, y,
+      target: {
+        kind: 'cell',
+        path: filePath,
+        row: Number(el.dataset.row),
+        col: Number(el.dataset.col),
+      },
+    });
+  });
+
   const sheets = useMemo<SheetData[]>(() => {
     if (!buf) return [];
     const wb = XLSX.read(buf, { type: 'array' });
@@ -131,7 +147,8 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
       {isBoss && !bossFileFixed && (
         <div className="xlsx-boss-hint">
           <img src={asset('/assets/dead_mac.png')} alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
-          Boss Battle — find all {bossTotalErrors} data quality issues! Right-click suspicious cells.
+          Boss Battle — find all {bossTotalErrors} data quality issues! Right-click
+          (or long-press) suspicious cells.
         </div>
       )}
 
@@ -142,7 +159,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
         </div>
       )}
 
-      <div className="table-viewer" style={{ flex: 1 }}>
+      <div className="table-viewer" style={{ flex: 1 }} {...longPress}>
         <table>
           <tbody>
             {displayRows.map((row, rowIdx) => {
@@ -171,6 +188,10 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
                       <Tag
                         key={colIdx}
                         className={extraClass || undefined}
+                        data-cell=""
+                        data-row={rowIdx}
+                        data-col={colIdx}
+                        data-locked={!canRightClick}
                         onContextMenu={e => {
                           if (!canRightClick) return;
                           e.preventDefault();
@@ -180,7 +201,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
                             target: { kind: 'cell', path: filePath, row: rowIdx, col: colIdx },
                           });
                         }}
-                        title={canRightClick ? `Row ${rowIdx}, Col ${colIdx} — right-click to report` : undefined}
+                        title={canRightClick ? `Row ${rowIdx}, Col ${colIdx} — right-click or long-press to report` : undefined}
                       >
                         {cell}
                       </Tag>

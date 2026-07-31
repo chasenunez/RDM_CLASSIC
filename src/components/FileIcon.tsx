@@ -12,12 +12,13 @@ interface FileIconProps {
 export function FileIcon({ entry }: FileIconProps) {
   const { showContextMenu, openFile } = useGame();
 
+  // Only files are reportable here. Folders used to open the empty-space menu,
+  // which since the missing-artifact list landed would have offered "what is
+  // this project missing?" while pointing at a folder that plainly exists.
   const openContextMenu = useCallback(
     (x: number, y: number) => {
-      const target: ContextTarget =
-        entry.type === 'folder'
-          ? { kind: 'desktop' }
-          : { kind: 'file', path: entry.name };
+      if (entry.type !== 'file') return;
+      const target: ContextTarget = { kind: 'file', path: entry.name };
       showContextMenu({ x, y, target });
     },
     [entry, showContextMenu],

@@ -51,12 +51,15 @@ export function WelcomeDialog() {
     return () => clearInterval(t);
   }, [allShown]);
 
-  // Keep the newest message in view, and hand focus to the button at the end.
+  // The button is the only control here and is live from the start, so it takes
+  // focus on mount: Enter skips ahead, then Enter again starts the game.
+  useEffect(() => { goRef.current?.focus(); }, []);
+
+  // Keep the newest message in view as the conversation fills in.
   useEffect(() => {
     const log = logRef.current;
     if (log) log.scrollTop = log.scrollHeight;
-    if (allShown) goRef.current?.focus();
-  }, [shownCount, allShown]);
+  }, [shownCount]);
 
   // One button, two jobs: catch up the conversation, then start the game.
   const advance = () => {

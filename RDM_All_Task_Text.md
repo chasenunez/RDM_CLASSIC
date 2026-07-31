@@ -1,5 +1,5 @@
 
-## Topic 1 — Bad File Naming
+## Topic 1: Bad File Naming
 
 **What's wrong**
 
@@ -34,7 +34,7 @@ Rules: no spaces (use underscores), no special characters, the date as YYYYMMDD,
 - Jenny Bryan's naming convention guide: https://speakerdeck.com/jennybc/how-to-name-files
 
 
-## Topic 2 — Ad-hoc File Versioning
+## Topic 2: Ad-hoc File Versioning
 
 **What's wrong**
 
@@ -70,7 +70,7 @@ For **code**: use Git. It records every change, who made it, and why, so you nev
 
 
 
-## Topic 3 — Proprietary and Inappropriate File Formats
+## Topic 3: Proprietary and Inappropriate File Formats
 
 **What's wrong**
 
@@ -78,8 +78,8 @@ The project uses proprietary and lossy file formats:
 
 | File | Format Problem |
 |------|---------------|
-| `fig1.jpg` | JPEG is lossy — every save degrades quality. Figures for publication should be in lossless formats. |
-| `microscopy_sample_12.jpg` | JPEG is lossy — microscopy images should be in a lossless format to preserve fine detail. |
+| `fig1.jpg` | JPEG is lossy; every save degrades quality. Figures for publication should be in lossless formats. |
+| `microscopy_sample_12.jpg` | JPEG is lossy; microscopy images should be in a lossless format to preserve fine detail. |
 | `.xlsx` spreadsheets | Excel's format is proprietary: it needs specific software and can hide formulas, macros, and formatting quirks. |
 
 **Why it matters**
@@ -97,7 +97,7 @@ Images:
 
 Spreadsheets: for sharing and long-term reuse, also export tabular data as **CSV** (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Researchers naturally reach for Excel because it matches day-to-day reality, but the archived, shareable copy should be an open format like CSV.
 
-Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing. (Figures can keep short descriptive names like `fig1.png` — the naming rules just mean no spaces or special characters, and a lossless format.)
+Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing. (Figures can keep short descriptive names like `fig1.png`: the naming rules just mean no spaces or special characters, and a lossless format.)
 
 **Resources**
 
@@ -105,7 +105,7 @@ Keep the original if your workflow needs it, but always save an additional copy 
 - UK Data Service file format guidance: https://ukdataservice.ac.uk/learning-hub/research-data-management/format-your-data/recommended-formats/
 
 
-## Topic 4 — No Documentation (No README)
+## Topic 4: No Documentation (No README)
 
 **What's wrong**
 
@@ -113,7 +113,7 @@ There is no README file anywhere in the project. Without it, there is no way to 
 
 **Why it matters**
 
-Without a README, no one — including the researchers themselves after a few months — can understand or reuse the project. This violates the "reusable" FAIR principle.
+Without a README, no one (including the researchers themselves after a few months) can understand or reuse the project. This violates the "reusable" FAIR principle.
 
 **How to fix it**
 
@@ -131,15 +131,15 @@ Create a README.md at the root of the project. A good README should include:
 - makeareadme.com: https://www.makeareadme.com/
 
 
-## Topic 5 — Raw Data Not Preserved / Data Provenance
+## Topic 5: Raw Data Not Preserved / Data Provenance
 
 **What's wrong**
 
-`raw_alpine_soil_data.xlsx` — the original, unprocessed data file — was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.
+`raw_alpine_soil_data.xlsx` (the original, unprocessed data file) was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.
 
 **Why it matters**
 
-Raw data is the ground truth of your research. If something goes wrong downstream — a processing error, a bug in your script, a question from a reviewer — you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.
+Raw data is the ground truth of your research. If something goes wrong downstream (a processing error, a bug in your script, a question from a reviewer) you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.
 
 **How to fix it**
 
@@ -163,7 +163,7 @@ data/
 - DataONE Best Practice: Preserve information rich data: https://dataoneorg.github.io/Education/bestpractices/preserve-information-keep
 
 
-## Topic 6 — Data Quality Issues Inside the Files
+## Topic 6: Data Quality Issues Inside the Files
 
 This is the game's "Boss Battle": the player must find all 9 individual data-quality issues inside `soil samples.xlsx`. The parent overview text is shown first, followed by the nine sub-problems.
 
@@ -173,10 +173,10 @@ Looking at `soil samples.xlsx`, the data has multiple internal problems:
 
 | Issue | Example |
 |-------|---------|
-| Floating title row | Row 0: survey title embedded in data — breaks automated parsing |
+| Floating title row | Row 0: survey title embedded in data, which breaks automated parsing |
 | Embedded note | Row 1: free-text note in a data cell |
-| Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |
-| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of "missing" |
+| Ambiguous column names | `col1`, `col2`, `col3`: meaningless without documentation |
+| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??`: five different representations of "missing" |
 | Mixed data types / decimal formats | `42,1` stored as text (comma decimal) where the column is otherwise numbers |
 
 **Why it matters**
@@ -187,7 +187,7 @@ These issues cause scripts to break, statistics to be wrong (e.g., `-999` would 
 
 1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.
 2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.
-3. **Use one explicit missing-value code** — the R/Python convention is `NA` — and document it in the README. Don't leave cells blank: a blank is ambiguous (not collected? below detection? forgotten?), while `NA` is unmistakable.
+3. **Use one explicit missing-value code** (the R/Python convention is `NA`) and document it in the README. Don't leave cells blank: a blank is ambiguous (not collected? below detection? forgotten?), while `NA` is unmistakable.
 4. **Keep types and formats consistent**: numbers stored as numbers, one decimal separator (the dot `.`), no stray text in numeric columns.
 5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.
 
@@ -198,11 +198,11 @@ These issues cause scripts to break, statistics to be wrong (e.g., `-999` would 
 
 ---
 
-#### Sub-problem 6.1 — Floating title row
+#### Sub-problem 6.1: Floating title row
 
 **What's wrong**
 
-Row 0 of `soil samples.xlsx` contains **"Alpine Soil Survey - Spring Campaign"** — a survey title embedded inside the data file. This creates a floating header that breaks automated parsing.
+Row 0 of `soil samples.xlsx` contains **"Alpine Soil Survey - Spring Campaign"**, a survey title embedded inside the data file. This creates a floating header that breaks automated parsing.
 
 **Why it matters**
 
@@ -226,11 +226,11 @@ Row 0: id, col1, col2 ...  ← header is first row
 
 - Tidy Data (Hadley Wickham): https://vita.had.co.nz/papers/tidy-data.pdf
 
-#### Sub-problem 6.2 — Embedded note in data
+#### Sub-problem 6.2: Embedded note in data
 
 **What's wrong**
 
-Row 1, column F of `soil samples.xlsx` contains the note *"site 7 sensor broken in March"* — a free-text note embedded inside the spreadsheet grid.
+Row 1, column F of `soil samples.xlsx` contains the note *"site 7 sensor broken in March"*, a free-text note embedded inside the spreadsheet grid.
 
 **Why it matters**
 
@@ -244,7 +244,7 @@ Remove the note from the cell. Record it in a dedicated **notes** column in the 
 
 - DataONE Best Practices: https://www.dataone.org/best-practices/
 
-#### Sub-problem 6.3 — Ambiguous column names
+#### Sub-problem 6.3: Ambiguous column names
 
 **What's wrong**
 
@@ -270,11 +270,11 @@ Rename columns to meaningful names **with units** where applicable:
 
 - Data Organization in Spreadsheets (Broman & Woo): https://doi.org/10.1080/00031305.2017.1375989
 
-#### Sub-problem 6.4 — Missing value: 'NA' string
+#### Sub-problem 6.4: Missing value: 'NA' string
 
 **What's wrong**
 
-Cell (row 5, col2) of `soil samples.xlsx` contains the string **"NA"** as a missing-value indicator — while other cells use **'n/a'**, **'-999'**, **'??'**, or blank.
+Cell (row 5, col2) of `soil samples.xlsx` contains the string **"NA"** as a missing-value indicator, while other cells use **'n/a'**, **'-999'**, **'??'**, or blank.
 
 **Why it matters**
 
@@ -290,11 +290,11 @@ Replace all other codes ('n/a', '-999', '??', blanks) with that single code thro
 
 - Data Organization in Spreadsheets: https://doi.org/10.1080/00031305.2017.1375989
 
-#### Sub-problem 6.5 — Missing value: 'n/a' string
+#### Sub-problem 6.5: Missing value: 'n/a' string
 
 **What's wrong**
 
-Cell (row 6, pH column) of `soil samples.xlsx` contains **"n/a"** — a second, differently-cased spelling of the not-available indicator used elsewhere as **'NA'**.
+Cell (row 6, pH column) of `soil samples.xlsx` contains **"n/a"**, a second, differently-cased spelling of the not-available indicator used elsewhere as **'NA'**.
 
 **Why it matters**
 
@@ -302,17 +302,17 @@ Case-sensitive languages (Python, R) treat 'NA' and 'n/a' as different values. M
 
 **How to fix it**
 
-Standardise all missing values to a single code. Replace every variant ('n/a', 'NA', '-999', '??', blank) with the chosen standard — for example, `NA`.
+Standardise all missing values to a single code. Replace every variant ('n/a', 'NA', '-999', '??', blank) with the chosen standard, for example `NA`.
 
 **Resources**
 
 - Tidy Data: https://vita.had.co.nz/papers/tidy-data.pdf
 
-#### Sub-problem 6.6 — Missing value: blank cell
+#### Sub-problem 6.6: Missing value: blank cell
 
 **What's wrong**
 
-`soil samples.xlsx` has **blank cells** in its measurement columns: all of col1, col2, and col3 on row 9, and the temp reading on row 5. Blanks in the free-text `notes` column are fine; an empty note is not a missing measurement. These blanks are an implicit missing-value code — it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.
+`soil samples.xlsx` has **blank cells** in its measurement columns: all of col1, col2, and col3 on row 9, and the temp reading on row 5. Blanks in the free-text `notes` column are fine; an empty note is not a missing measurement. These blanks are an implicit missing-value code; it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.
 
 **Why it matters**
 
@@ -320,17 +320,17 @@ Blank cells are ambiguous. When a file is re-saved, blanks can shift. They also 
 
 **How to fix it**
 
-Replace all blank cells in data rows with the chosen explicit missing-value code (e.g. `NA`). **Never leave cells blank in data columns** — use an explicit code and document it.
+Replace all blank cells in data rows with the chosen explicit missing-value code (e.g. `NA`). **Never leave cells blank in data columns**: use an explicit code and document it.
 
 **Resources**
 
 - Data Organization in Spreadsheets: https://doi.org/10.1080/00031305.2017.1375989
 
-#### Sub-problem 6.7 — Missing value: -999 sentinel
+#### Sub-problem 6.7: Missing value: -999 sentinel
 
 **What's wrong**
 
-Row 9, pH and temp columns of `soil samples.xlsx` contain **-999** — a numeric sentinel used as a missing-value code. Sentinels that look like plausible numbers are especially dangerous.
+Row 9, pH and temp columns of `soil samples.xlsx` contain **-999**, a numeric sentinel used as a missing-value code. Sentinels that look like plausible numbers are especially dangerous.
 
 **Why it matters**
 
@@ -344,11 +344,11 @@ Replace -999 (and any other numeric sentinels) with an explicit missing-value co
 
 - Data Organization in Spreadsheets: https://doi.org/10.1080/00031305.2017.1375989
 
-#### Sub-problem 6.8 — Missing value: '??' string
+#### Sub-problem 6.8: Missing value: '??' string
 
 **What's wrong**
 
-Row 11, pH column of `soil samples.xlsx` contains **"??"** — an informal placeholder that does not appear in any documentation.
+Row 11, pH column of `soil samples.xlsx` contains **"??"**, an informal placeholder that does not appear in any documentation.
 
 **Why it matters**
 
@@ -362,36 +362,36 @@ Replace '??' with the standardised missing-value code (e.g. `NA`). Document the 
 
 - Tidy Data: https://vita.had.co.nz/papers/tidy-data.pdf
 
-#### Sub-problem 6.9 — Mixed type / decimal format
+#### Sub-problem 6.9: Mixed type / decimal format
 
 **What's wrong**
 
-Cell (row 4, col2) of `soil samples.xlsx` holds **"42,1"** — a number written with a comma decimal separator and stored as text, while the rest of that column are ordinary numbers written with a dot (e.g. `45.6`).
+Cell (row 4, col2) of `soil samples.xlsx` holds **"42,1"**, a number written with a comma decimal separator and stored as text, while the rest of that column are ordinary numbers written with a dot (e.g. `45.6`).
 
 **Why it matters**
 
-Mixing decimal separators (`,` vs `.`) and storing a number as text makes analysis tools misread the value — they may drop it, treat it as zero, or refuse to compute statistics for the whole column. The error is silent, so it slips into results unnoticed.
+Mixing decimal separators (`,` vs `.`) and storing a number as text makes analysis tools misread the value; they may drop it, treat it as zero, or refuse to compute statistics for the whole column. The error is silent, so it slips into results unnoticed.
 
 **How to fix it**
 
-Use one decimal separator throughout — the dot `.` is the safest for software — and store numbers as numbers, not text. Fix `42,1` to `42.1`. If the data was entered in a locale that uses the comma, convert it on import and document the convention in the data dictionary.
+Use one decimal separator throughout (the dot `.` is the safest for software) and store numbers as numbers, not text. Fix `42,1` to `42.1`. If the data was entered in a locale that uses the comma, convert it on import and document the convention in the data dictionary.
 
 **Resources**
 
 - Data Organization in Spreadsheets: https://doi.org/10.1080/00031305.2017.1375989
 
 
-## Topic 7 — Code Has No Comments
+## Topic 7: Code Has No Comments
 
 **What's wrong**
 
 `script.py` has no comments explaining what the code does. It uses hardcoded filenames, references ambiguous column names (`col1`, `col3`, `val`), and produces no log or record of what it did.
 
-(The file name `script.py` itself is fine — short, no spaces, correct extension. The problem here is what's *inside* the file, not what it's called.)
+(The file name `script.py` itself is fine: short, no spaces, correct extension. The problem here is what's *inside* the file, not what it's called.)
 
 **Why it matters**
 
-Uncommented code is a black box. No one — including you in six months — will know what it does, why it makes certain choices, or which version produced the published results.
+Uncommented code is a black box. No one (including you in six months) will know what it does, why it makes certain choices, or which version produced the published results.
 
 **How to fix it**
 
@@ -406,7 +406,7 @@ Uncommented code is a black box. No one — including you in six months — will
 
 ---
 
-## Part 2 — Beyond your own computer
+## Part 2: Beyond your own computer
 
 Topics 1–7 are about keeping your *own* working copy of a project in good shape: how you name, version, format, document, back up, and organise the files on your machine.
 
@@ -414,7 +414,7 @@ Topics 8–12 shift outward, to what has to be true before your data can leave y
 
 ---
 
-## Topic 8 — No Licence
+## Topic 8: No Licence
 
 **What's wrong**
 
@@ -427,12 +427,12 @@ A missing licence effectively prevents reuse, which defeats the purpose of shari
 **How to fix it**
 
 For **data**, use a Creative Commons licence:
-- **CC0** (public domain dedication) — most open, recommended when you want maximum reuse.
-- **CC BY 4.0** (attribution required) — most funders recommend this.
+- **CC0** (public domain dedication): most open, recommended when you want maximum reuse.
+- **CC BY 4.0** (attribution required): most funders recommend this.
 
 For **code**, use an open-source licence:
-- **MIT** — very permissive, widely used.
-- **Apache 2.0** — permissive with patent protection.
+- **MIT**: very permissive, widely used.
+- **Apache 2.0**: permissive with patent protection.
 
 Place a `LICENSE.md` file at the root of your project.
 
@@ -441,9 +441,9 @@ Place a `LICENSE.md` file at the root of your project.
 - Creative Commons license chooser: https://chooser-beta.creativecommons.org/
 - Choose an open source license: https://choosealicense.com/
 
-## Topic 9 — File/folder organization (RDM Guide Problem 1)
+## Topic 9: File/folder organization (RDM Guide Problem 1)
 
-**What's wrong:** The whole project is one flat pile. All the files — raw data, processed data, code, figures, manuscripts, and personal notes — are dumped in a single directory, with no separation between data stages, no distinction between inputs and outputs, and no logical grouping. There is also no version control (no Git repository), so nothing records the history of the project as a whole.
+**What's wrong:** The whole project is one flat pile. All the files (raw data, processed data, code, figures, manuscripts, and personal notes) are dumped in a single directory, with no separation between data stages, no distinction between inputs and outputs, and no logical grouping. There is also no version control (no Git repository), so nothing records the history of the project as a whole.
 
 **Why it matters:** Without structure, it's impossible to tell at a glance what stage a file belongs to, whether it's an input or output, or what depends on what. This gets worse as projects grow, and a new team member would have no idea where to start. Without version control, there is no history of how the project reached its current state and no safe way to undo a change across the whole project.
 
@@ -471,11 +471,11 @@ Key principles: separate raw from processed data, keep code in its own folder, i
 **Second, put the project under version control** with Git so every change to the project as a whole is tracked. Host it on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server. (Git tracks the *project*; the semantic version numbers in Topic 2 track individual *files*. Together they give you a complete history.)
 
 **Resources:**
-- The Turing Way — Research Data Management: https://the-turing-way.netlify.app/reproducible-research/rdm
+- The Turing Way, Research Data Management: https://the-turing-way.netlify.app/reproducible-research/rdm
 - CESSDA Data Management Guide: https://dmeg.cessda.eu/
 - Software Carpentry Git lesson: https://swcarpentry.github.io/git-novice/
 
-## Topic 10 — No Metadata (RDM Guide Problem 6)
+## Topic 10: No Metadata (RDM Guide Problem 6)
 
 **What's wrong:** There is no structured metadata associated with any data file. Column headers in the data are ambiguous (`col1`, `col2`, `col3`, `val`, `temp`) with no descriptions or units. There is no information about the instruments used, measurement protocols, or coordinate reference systems.
 
@@ -484,18 +484,18 @@ Key principles: separate raw from processed data, keep code in its own folder, i
 **How to fix it:**
 
 1. **Rename columns** to be self-descriptive: `col1` → `soil_moisture_pct`, `col3` → `organic_carbon_g_per_kg`, `temp` → `air_temperature_degC`.
-2. **Standardize missing data codes**: Pick one explicit code (`NA` is the R/Python convention) and use it consistently — not a mix of `NA`, `n/a`, `-999`, `??`, and blank cells.
+2. **Standardize missing data codes**: Pick one explicit code (`NA` is the R/Python convention) and use it consistently, not a mix of `NA`, `n/a`, `-999`, `??`, and blank cells.
 3. **Adopt a metadata standard** for your discipline. Use directories like the Digital Curation Centre, RDA Metadata Standards, or FAIRsharing to find the right one.
-4. **Use controlled vocabularies** — don't switch between "picture" and "image" or "location" and "site" for the same concept.
+4. **Use controlled vocabularies**: don't switch between "picture" and "image" or "location" and "site" for the same concept.
 
 **Resources:**
 - Digital Curation Centre metadata standards: https://www.dcc.ac.uk/guidance/standards/
 - RDA Metadata Standards Catalog: https://rdamsc.bath.ac.uk/
 - FAIRsharing: https://fairsharing.org/
 
-## Topic 11 — No Data Availability Statement (RDM Guide Problem 11)
+## Topic 11: No Data Availability Statement (RDM Guide Problem 11)
 
-**What's wrong:** The manuscript drafts in this project presumably describe the analysis, but there is no data availability statement — no information about where the data will be deposited, under what DOI, with what license, or how others can access it.
+**What's wrong:** The manuscript drafts in this project presumably describe the analysis, but there is no data availability statement: no information about where the data will be deposited, under what DOI, with what license, or how others can access it.
 
 **Why it matters:** Without a data availability statement, readers of the published paper have no way to find or access the underlying data. Many journals now require these statements.
 
@@ -509,7 +509,7 @@ This should specify: the repository name, the DOI, what the dataset contains, an
 - Springer Nature data availability statement examples: https://www.springernature.com/gp/authors/research-data-policy/data-availability-statements
 - re3data (find a repository): https://www.re3data.org/
 
-## Topic 12 — No Persistent Identifier (DOI) (RDM Guide Problem 12)
+## Topic 12: No Persistent Identifier (DOI) (RDM Guide Problem 12)
 
 **What's wrong:** None of the data has been deposited in a repository, so none of it has a DOI or any other persistent identifier. The data exists only on local machines.
 
@@ -517,9 +517,9 @@ This should specify: the repository name, the DOI, what the dataset contains, an
 
 **How to fix it:** Deposit the data in a repository that assigns DOIs. Options relevant to this context include:
 
-- **EnviDat** — the environmental data repository for WSL
-- **Zenodo** — a general-purpose repository hosted by CERN (free, accepts any research output)
-- **PSI Public Data Repository (SciCat)** — PSI's repository for experimental data, which can mint DOIs <!-- TODO(verify): confirm the official name and public URL of the PSI data repository / SciCat instance before publishing -->
+- **EnviDat**: the environmental data repository for WSL
+- **Zenodo**: a general-purpose repository hosted by CERN (free, accepts any research output)
+- **PSI Public Data Repository (SciCat)**: PSI's repository for experimental data, which can mint DOIs <!-- TODO(verify): confirm the official name and public URL of the PSI data repository / SciCat instance before publishing -->
 - **ERIC** <!-- TODO(verify): confirm ERIC's actual scope (whole ETH Domain vs Eawag-specific) and its URL. The earlier wording "for ETH domain research" was questioned in review; do not restate it as fact until confirmed. -->
 
 For any field, use re3data.org to find a discipline-specific repository that mints DOIs.

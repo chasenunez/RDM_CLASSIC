@@ -25,7 +25,7 @@
     "id": "versioning",
     "name": "Versioning",
     "fullTitle": "Ad-hoc File Versioning",
-    "what": "The file `manuscript_draft_v2_JK comments.docx` shows how *not* to track versions:\n\n| Problem | Why it trips things up |\n|------|----------|\n| Ad-hoc version tag (`v2`) | `v2` of what? There's no `v1` in sight, and no record of what changed |\n| A person's name baked in (`JK comments`) | Names track *who touched it*, not *which version it is* — and they pile up: `_JK_then_AB_final_final` |\n| A space in the name | Spaces break scripts and command-line tools |\n\nThis is how projects end up with `final`, `final_v2`, and `final_REALLY_final`, and no idea which one is current.",
+    "what": "The file `manuscript_draft_v2_JK comments.docx` shows how *not* to track versions:\n\n| Problem | Why it trips things up |\n|------|----------|\n| Ad-hoc version tag (`v2`) | `v2` of what? There's no `v1` in sight, and no record of what changed |\n| A person's name baked in (`JK comments`) | Names track *who touched it*, not *which version it is*, and they pile up: `_JK_then_AB_final_final` |\n| A space in the name | Spaces break scripts and command-line tools |\n\nThis is how projects end up with `final`, `final_v2`, and `final_REALLY_final`, and no idea which one is current.",
     "why": "Without a real versioning system you can't tell what changed between drafts, when, or why; you can't cleanly undo a mistake; and you risk sharing or building on the wrong copy. Filename tags like `v2` and `JK comments` record none of that.",
     "fix": "Use clear, semantic version numbers in the name (`v1.0`, `v1.1`, `v2.0`) and keep a short changelog (in the README, or a separate `CHANGELOG` file) noting what changed in each version and why.\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v1.1.docx` |\n\nBump the **minor** number for revisions within a draft (`v1.0` → `v1.1`), and the **major** number when the document changes substantially (`v1.x` → `v2.0`). Reviewer initials never belong in a filename; track who commented in the changelog, or in the document's own review history.\n\nThis is the manual approach, and it is the right one for documents that live outside a repository. For anything text-based, proper version control does all of it for you automatically. That is a separate problem in this project, and it is worth finding.",
     "resources": [
@@ -39,9 +39,9 @@
     "id": "file-formats",
     "name": "File formats",
     "fullTitle": "Proprietary and Inappropriate File Formats",
-    "what": "The project uses proprietary and lossy file formats:\n\n| File | Format Problem |\n|------|---------------|\n| `fig1.jpg` | JPEG is lossy — every save degrades quality. Figures for publication should be in lossless formats. |\n| `microscopy_sample_12.jpg` | JPEG is lossy — microscopy images should be in a lossless format to preserve fine detail. |\n| `.xlsx` spreadsheets | Excel's format is proprietary: it needs specific software and can hide formulas, macros, and formatting quirks. |",
+    "what": "The project uses proprietary and lossy file formats:\n\n| File | Format Problem |\n|------|---------------|\n| `fig1.jpg` | JPEG is lossy; every save degrades quality. Figures for publication should be in lossless formats. |\n| `microscopy_sample_12.jpg` | JPEG is lossy; microscopy images should be in a lossless format to preserve fine detail. |\n| `.xlsx` spreadsheets | Excel's format is proprietary: it needs specific software and can hide formulas, macros, and formatting quirks. |",
     "why": "Lossy formats permanently destroy information with every save. Proprietary formats lock your data to one program and may be unreadable in the future. Both violate the \"interoperable\" FAIR principle and can compromise the scientific integrity of the work.",
-    "fix": "**Images:**\n\n| Data type | Current format | Recommended format |\n|-----------|---------------|-------------------|\n| Microscopy images | .jpg | .tiff (uncompressed) |\n| Figures for publication | .jpg | .png or .tiff |\n\n**Spreadsheets:** for sharing and long-term reuse, also export tabular data as **CSV** (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Keep the original if your workflow needs it, but always save an open, non-proprietary copy for archiving and sharing.\n\n(Figures can keep short descriptive names like `fig1.png` — the naming rules just mean no spaces or special characters, and a lossless format.)",
+    "fix": "**Images:**\n\n| Data type | Current format | Recommended format |\n|-----------|---------------|-------------------|\n| Microscopy images | .jpg | .tiff (uncompressed) |\n| Figures for publication | .jpg | .png or .tiff |\n\n**Spreadsheets:** for sharing and long-term reuse, also export tabular data as **CSV** (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Keep the original if your workflow needs it, but always save an open, non-proprietary copy for archiving and sharing.\n\n(Figures can keep short descriptive names like `fig1.png`: the naming rules just mean no spaces or special characters, and a lossless format.)",
     "resources": [
       {
         "title": "Library of Congress Recommended Formats",
@@ -58,7 +58,7 @@
     "name": "README / documentation",
     "fullTitle": "No Documentation (No README)",
     "what": "There is no README file anywhere in the project. Without it, there is no way to understand what the project is about, what the files contain, how the data was collected, what processing was applied, or how to reproduce the results.",
-    "why": "Without a README, no one — including the researchers themselves after a few months — can understand or reuse the project. This violates the \"reusable\" FAIR principle.",
+    "why": "Without a README, no one (including the researchers themselves after a few months) can understand or reuse the project. This violates the \"reusable\" FAIR principle.",
     "fix": "Create a README.md at the root of the project. A good README should include:\n\n1. **General information**: Project title, principal investigator, contact info, dates of data collection, geographic location, funding sources.\n2. **Data and file overview**: A list of all files with brief descriptions, relationships between files.\n3. **Methodological information**: How data was collected (instruments, protocols), any quality control applied, known issues.\n4. **Data-specific information**: Variable names with descriptions and units, missing data codes.\n5. **Sharing and access information**: License, restrictions, how to cite.",
     "resources": [
       {
@@ -75,8 +75,8 @@
     "id": "no-backup",
     "name": "Data provenance",
     "fullTitle": "Raw Data Not Preserved",
-    "what": "`raw_alpine_soil_data.xlsx` — the original, unprocessed data file — was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.",
-    "why": "Raw data is the ground truth of your research. If something goes wrong downstream — a processing error, a bug in your script, a question from a reviewer — you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.",
+    "what": "`raw_alpine_soil_data.xlsx` (the original, unprocessed data file) was found in the Trash. Raw data is the irreplaceable foundation of a research project. Once deleted or overwritten, it cannot be recreated.",
+    "why": "Raw data is the ground truth of your research. If something goes wrong downstream (a processing error, a bug in your script, a question from a reviewer) you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.",
     "fix": "Follow these raw-data rules:\n\n1. **Never delete raw data.** Archive it in a read-only location.\n2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.\n3. **Follow the 3-2-1 rule**: keep at least **3** copies of your data, on **2** different types of media (for example your computer and an institutional server), with **1** copy kept off-site (a repository or cloud backup).\n4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.\n\nA clean project layout separates concerns:\n```\ndata/\n  raw/          ← original files, never touched\n  processed/    ← output of your scripts\n```",
     "resources": [
       {
@@ -93,9 +93,9 @@
     "id": "data-quality",
     "name": "Data quality (inside files)",
     "fullTitle": "Data Quality Issues Inside the Files",
-    "what": "Looking at `soil samples.xlsx`, the data has multiple internal problems:\n\n| Issue | Example |\n|-------|---------|\n| Floating title row | Row 0: survey title embedded in data — breaks automated parsing |\n| Embedded note | Row 1: free-text note in a data cell |\n| Ambiguous column names | `col1`, `col2`, `col3` — meaningless without documentation |\n| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??` — five different representations of \"missing\" |\n| Mixed data types / decimal formats | `42,1` stored as text (comma decimal) where the column is otherwise numbers |",
+    "what": "Looking at `soil samples.xlsx`, the data has multiple internal problems:\n\n| Issue | Example |\n|-------|---------|\n| Floating title row | Row 0: survey title embedded in data, which breaks automated parsing |\n| Embedded note | Row 1: free-text note in a data cell |\n| Ambiguous column names | `col1`, `col2`, `col3`: meaningless without documentation |\n| Inconsistent missing data codes | Blank cells, `NA`, `n/a`, `-999`, `??`: five different representations of \"missing\" |\n| Mixed data types / decimal formats | `42,1` stored as text (comma decimal) where the column is otherwise numbers |",
     "why": "These issues cause scripts to break, statistics to be wrong (e.g., `-999` would distort a mean if not excluded), and other researchers to misinterpret the data.",
-    "fix": "1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.\n2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.\n3. **Use one explicit missing-value code** — the R/Python convention is `NA` — and document it in the README. Don't leave cells blank: a blank is ambiguous (not collected? below detection? forgotten?), while `NA` is unmistakable.\n4. **Keep types and formats consistent**: numbers stored as numbers, one decimal separator (the dot `.`), no stray text in numeric columns.\n5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.",
+    "fix": "1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.\n2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.\n3. **Use one explicit missing-value code** (the R/Python convention is `NA`) and document it in the README. Don't leave cells blank: a blank is ambiguous (not collected? below detection? forgotten?), while `NA` is unmistakable.\n4. **Keep types and formats consistent**: numbers stored as numbers, one decimal separator (the dot `.`), no stray text in numeric columns.\n5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.",
     "resources": [
       {
         "title": "Broman & Woo (2018), \"Data Organization in Spreadsheets\" (The American Statistician)",
@@ -110,7 +110,7 @@
       {
         "id": "dq-floating-header",
         "name": "Floating title row",
-        "what": "Row 0 of `soil samples.xlsx` contains **\"Alpine Soil Survey - Spring Campaign\"** — a survey title embedded inside the data file. This creates a floating header that breaks automated parsing.",
+        "what": "Row 0 of `soil samples.xlsx` contains **\"Alpine Soil Survey - Spring Campaign\"**, a survey title embedded inside the data file. This creates a floating header that breaks automated parsing.",
         "why": "Scripts expect the first row to be column headers or data. The extra title row shifts all row indices, causing errors in analysis pipelines and breaking tools that auto-detect headers.",
         "fix": "Remove the title row from the spreadsheet. Store the survey description in a separate README or data dictionary.\n\n```\n# Before\nRow 0: Alpine Soil Survey - Spring Campaign  <- doesn't belong here\nRow 1: (embedded note)\nRow 2: id, col1, col2 ...  <- actual header\n\n# After\nRow 0: id, col1, col2 ...  <- header is first row\n```",
         "resources": [
@@ -123,7 +123,7 @@
       {
         "id": "dq-embedded-note",
         "name": "Embedded note in data",
-        "what": "Row 1, column F of `soil samples.xlsx` contains the note *\"site 7 sensor broken in March\"* — a free-text note embedded inside the spreadsheet grid.",
+        "what": "Row 1, column F of `soil samples.xlsx` contains the note *\"site 7 sensor broken in March\"*, a free-text note embedded inside the spreadsheet grid.",
         "why": "Notes embedded in cells are invisible to data-loading scripts and are silently dropped when the file is converted or shared. They also prevent the file from being parsed as a clean rectangular table.",
         "fix": "Remove the note from the cell. Record it in a dedicated **notes** column in the data, or better yet, in the data dictionary or a separate events log.",
         "resources": [
@@ -149,7 +149,7 @@
       {
         "id": "dq-missing-na",
         "name": "Missing value: 'NA' string",
-        "what": "Cell (row 5, col2) of `soil samples.xlsx` contains the string **\"NA\"** as a missing-value indicator — while other cells use **'n/a'**, **'-999'**, **'??'**, or blank.",
+        "what": "Cell (row 5, col2) of `soil samples.xlsx` contains the string **\"NA\"** as a missing-value indicator, while other cells use **'n/a'**, **'-999'**, **'??'**, or blank.",
         "why": "Using multiple different codes for missing values breaks statistical software. Most tools only recognise one code; mixed codes cause silent errors where some missing values are treated as valid data.",
         "fix": "Pick **one** consistent missing-value code and document it in the data dictionary. The R/Python convention is `NA` (or `NaN`).\n\nReplace all other codes ('n/a', '-999', '??', blanks) with that single code throughout the file.",
         "resources": [
@@ -162,9 +162,9 @@
       {
         "id": "dq-missing-naa",
         "name": "Missing value: 'n/a' string",
-        "what": "Cell (row 6, pH column) of `soil samples.xlsx` contains **\"n/a\"** — a second, differently-cased spelling of the not-available indicator used elsewhere as **'NA'**.",
+        "what": "Cell (row 6, pH column) of `soil samples.xlsx` contains **\"n/a\"**, a second, differently-cased spelling of the not-available indicator used elsewhere as **'NA'**.",
         "why": "Case-sensitive languages (Python, R) treat 'NA' and 'n/a' as different values. Mixed spellings mean some missing values appear as valid strings, distorting summary statistics.",
-        "fix": "Standardise all missing values to a single code. Replace every variant ('n/a', 'NA', '-999', '??', blank) with the chosen standard — for example, `NA`.",
+        "fix": "Standardise all missing values to a single code. Replace every variant ('n/a', 'NA', '-999', '??', blank) with the chosen standard, for example `NA`.",
         "resources": [
           {
             "title": "Tidy Data",
@@ -175,9 +175,9 @@
       {
         "id": "dq-missing-blank",
         "name": "Missing value: blank cell",
-        "what": "`soil samples.xlsx` has **blank cells** in its measurement columns: all of col1, col2, and col3 on row 9, and the temp reading on row 5. These blanks are an implicit missing-value code — it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.\n\n(Blanks in the free-text `notes` column are fine. An empty note means there was nothing to note, which is not the same as a measurement going missing.)",
+        "what": "`soil samples.xlsx` has **blank cells** in its measurement columns: all of col1, col2, and col3 on row 9, and the temp reading on row 5. These blanks are an implicit missing-value code; it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.\n\n(Blanks in the free-text `notes` column are fine. An empty note means there was nothing to note, which is not the same as a measurement going missing.)",
         "why": "Blank cells are ambiguous. When a file is re-saved, blanks can shift. They also interact unpredictably with pivot tables and summary functions. An explicit code like `NA` is always unambiguous.",
-        "fix": "Replace all blank cells in data rows with the chosen explicit missing-value code (e.g. `NA`). **Never leave cells blank in data columns** — use an explicit code and document it.",
+        "fix": "Replace all blank cells in data rows with the chosen explicit missing-value code (e.g. `NA`). **Never leave cells blank in data columns**: use an explicit code and document it.",
         "resources": [
           {
             "title": "Data Organization in Spreadsheets",
@@ -188,7 +188,7 @@
       {
         "id": "dq-missing-999",
         "name": "Missing value: -999 sentinel",
-        "what": "Row 9, pH and temp columns of `soil samples.xlsx` contain **-999** — a numeric sentinel used as a missing-value code. Sentinels that look like plausible numbers are especially dangerous.",
+        "what": "Row 9, pH and temp columns of `soil samples.xlsx` contain **-999**, a numeric sentinel used as a missing-value code. Sentinels that look like plausible numbers are especially dangerous.",
         "why": "Statistical functions silently include -999 in averages, min/max, and correlations. A mean pH incorporating -999 is nonsensical, and the error is invisible.",
         "fix": "Replace -999 (and any other numeric sentinels) with an explicit missing-value code such as `NA`. **Never encode missing data as an extreme number.** Document the convention in the data dictionary.",
         "resources": [
@@ -201,7 +201,7 @@
       {
         "id": "dq-missing-qq",
         "name": "Missing value: '??' string",
-        "what": "Row 11, pH column of `soil samples.xlsx` contains **\"??\"** — an informal placeholder that does not appear in any documentation.",
+        "what": "Row 11, pH column of `soil samples.xlsx` contains **\"??\"**, an informal placeholder that does not appear in any documentation.",
         "why": "Informal codes like '??' are easy to forget and hard to search for programmatically. They get confused with valid data and cause parse errors in strictly-typed formats.",
         "fix": "Replace '??' with the standardised missing-value code (e.g. `NA`). Document the decision in the data dictionary so future users know there is exactly one missing-value code.",
         "resources": [
@@ -214,9 +214,9 @@
       {
         "id": "dq-type-mismatch",
         "name": "Mixed type / decimal format",
-        "what": "Cell (row 4, col2) of `soil samples.xlsx` holds **\"42,1\"** — a number written with a comma decimal separator and stored as text, while the rest of that column are ordinary numbers written with a dot (e.g. `45.6`).",
-        "why": "Mixing decimal separators (`,` vs `.`) and storing a number as text makes analysis tools misread the value — they may drop it, treat it as zero, or refuse to compute statistics for the whole column. The error is silent, so it slips into results unnoticed.",
-        "fix": "Use **one** decimal separator throughout — the dot `.` is the safest for software — and store numbers as numbers, not text. Fix `42,1` to `42.1`. If the data was entered in a locale that uses the comma, convert it on import and document the convention in the data dictionary.",
+        "what": "Cell (row 4, col2) of `soil samples.xlsx` holds **\"42,1\"**, a number written with a comma decimal separator and stored as text, while the rest of that column are ordinary numbers written with a dot (e.g. `45.6`).",
+        "why": "Mixing decimal separators (`,` vs `.`) and storing a number as text makes analysis tools misread the value; they may drop it, treat it as zero, or refuse to compute statistics for the whole column. The error is silent, so it slips into results unnoticed.",
+        "fix": "Use **one** decimal separator throughout (the dot `.` is the safest for software) and store numbers as numbers, not text. Fix `42,1` to `42.1`. If the data was entered in a locale that uses the comma, convert it on import and document the convention in the data dictionary.",
         "resources": [
           {
             "title": "Data Organization in Spreadsheets",
@@ -230,8 +230,8 @@
     "id": "code-quality",
     "name": "Code quality",
     "fullTitle": "Code Has No Comments",
-    "what": "`script.py` has no comments explaining what the code does. It uses hardcoded filenames, references ambiguous column names (`col1`, `col3`, `val`), and produces no log or record of what it did.\n\n(The file name `script.py` itself is fine — it's short, has no spaces, and uses the right extension. The problem here is what's *inside* the file, so open it and inspect the code.)",
-    "why": "Uncommented code is a black box. No one — including you in six months — will know what it does, why it makes certain choices, or which version produced the published results.",
+    "what": "`script.py` has no comments explaining what the code does. It uses hardcoded filenames, references ambiguous column names (`col1`, `col3`, `val`), and produces no log or record of what it did.\n\n(The file name `script.py` itself is fine: it's short, has no spaces, and uses the right extension. The problem here is what's *inside* the file, so open it and inspect the code.)",
+    "why": "Uncommented code is a black box. No one (including you in six months) will know what it does, why it makes certain choices, or which version produced the published results.",
     "fix": "1. **Add clear comments** explaining the purpose of each section, the meaning of parameters, and the rationale for decisions.\n2. **Use meaningful variable names**: `soil_chemistry_df` not `df`, `temperature_df` not `df2`.\n3. **Use relative file paths** or configuration files instead of hardcoded filenames.\n4. **Include a requirements file** (`requirements.txt` or `environment.yml`) so others can recreate your environment.",
     "resources": [
       {
@@ -246,7 +246,7 @@
     "fullTitle": "No Licence",
     "what": "There is no LICENSE file in the project. Without a licence, the default legal status in most jurisdictions is \"all rights reserved\", meaning no one else can legally use, share, or build upon the data or code.",
     "why": "A missing licence effectively prevents reuse, which defeats the purpose of sharing data. It violates the \"reusable\" FAIR principle.",
-    "fix": "For **data**, use a Creative Commons licence:\n- **CC0** (public domain dedication) — most open, recommended when you want maximum reuse.\n- **CC BY 4.0** (attribution required) — most funders recommend this.\n\nFor **code**, use an open-source licence:\n- **MIT** — very permissive, widely used.\n- **Apache 2.0** — permissive with patent protection.\n\nPlace a `LICENSE.md` file at the root of your project.",
+    "fix": "For **data**, use a Creative Commons licence:\n- **CC0** (public domain dedication) (most open, recommended when you want maximum reuse.\n- **CC BY 4.0** (attribution required)) most funders recommend this.\n\nFor **code**, use an open-source licence:\n- **MIT** (very permissive, widely used.\n- **Apache 2.0**) permissive with patent protection.\n\nPlace a `LICENSE.md` file at the root of your project.",
     "resources": [
       {
         "title": "Creative Commons license chooser",
@@ -267,7 +267,7 @@
     "fix": "Give each kind of file a home:\n```\n20260301_AlpineSurvey/\n  data/\n    raw/          ← original files, never touched\n    processed/    ← output of your scripts\n  code/\n  manuscripts/\n  README.md\n  LICENSE.md\n```\n\nKeep raw data separate from processed, code in its own folder, and documentation at the top level where people look first. This also makes the README easier to write: you describe each folder in a sentence instead of listing every file.",
     "resources": [
       {
-        "title": "The Turing Way — Research Data Management",
+        "title": "The Turing Way, Research Data Management",
         "url": "https://the-turing-way.netlify.app/reproducible-research/rdm"
       },
       {

@@ -21,7 +21,6 @@ import { asset } from './lib/asset';
 export const WINDOWS = {
   fileViewer:      { width: 540, height: 360 },
   fileViewerImage: { width: 400, height: 360 },
-  fixWindow:       { width: 560, height: 420 },
   trash:           { width: 360, height: 280 },
   subfolder:       { width: 600, height: 400 },
   archive:         { width: 600, height: 400 },
