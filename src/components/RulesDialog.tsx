@@ -37,9 +37,9 @@ export function RulesDialog({ onClose }: RulesDialogProps) {
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 Some problems are things that <em>aren't there</em>. Right-click the empty
-                space in the folder to get a list of what a good project should have,
-                and pick the one you think is missing. You still have to say which RDM
-                problem it is, so pick carefully.
+                space in the folder to get a list of what a good project should have, and
+                pick whatever you think is missing. Look before you pick: some of the
+                things on that list are already in the project.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 Each correct find reveals the explanation and marks it off on the checklist in the upper left of your screen.

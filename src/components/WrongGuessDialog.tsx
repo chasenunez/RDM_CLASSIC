@@ -3,7 +3,7 @@ import { useGame } from '../GameContext';
 import { asset } from '../lib/asset';
 
 export function WrongGuessDialog() {
-  const { showWrong, wrongKind, alreadyFoundName, dismissWrongDialog, dismissAlreadyFound } = useGame();
+  const { showWrong, wrongKind, notMissingReason, alreadyFoundName, dismissWrongDialog, dismissAlreadyFound } = useGame();
   const okRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -25,6 +25,12 @@ export function WrongGuessDialog() {
     icon = <img src={asset('/assets/dead_mac.png')} className="dialog__icon-img" alt="[!]" />;
     title = 'Already found!';
     body = `You already found "${alreadyFoundName}". Keep looking for the others!`;
+  } else if (wrongKind === 'not_missing') {
+    icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
+    title = "That one's already here.";
+    body = notMissingReason
+      ? `${notMissingReason} Check what the project has before reporting it missing.`
+      : 'That one is already in the project. Check what the project has before reporting it missing.';
   } else if (wrongKind === 'wrong_problem') {
     icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'Something IS wrong here…';

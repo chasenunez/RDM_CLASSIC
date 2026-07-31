@@ -78,18 +78,32 @@ export interface MappedProblem {
   comment?: string;
 }
 
+/**
+ * A red herring in the "Report something missing" menu: something a good
+ * project needs that this one already has. Reporting it is a wrong guess, and
+ * `present` says where to find the thing the player claimed was absent.
+ */
+export interface MissingArtifactDecoy {
+  name: string;
+  label: string;
+  present: string;
+}
+
 export interface Mapping {
   problems: MappedProblem[];
+  missingArtifactDecoys?: MissingArtifactDecoy[];
 }
 
 // ── Context menu target ───────────────────────────────────────────────────────
 
+// What a right-click landed on. Empty space is 'desktop'; the missing-artifact
+// menu it opens reports by artifact name instead of through a context target,
+// so there is no 'absence' variant here.
 export type ContextTarget =
   | { kind: 'file'; path: string }
   | { kind: 'cell'; path: string; row: number; col: number }
   | { kind: 'line'; path: string; line: number }
-  | { kind: 'desktop' }
-  | { kind: 'absence'; name: string };
+  | { kind: 'desktop' };
 
 export interface ContextMenuState {
   x: number;

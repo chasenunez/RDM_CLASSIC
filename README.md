@@ -5,7 +5,7 @@ A browser-based educational game teaching Research Data Management (RDM) best pr
 - **Right-click** (or long-press on touch) any file icon to open a context menu.
 - Choose **Report an RDM problem** to flag the file. If correct, a dialog explains what is wrong, why it matters, and how to fix it.
 - **Double-click** a file to open it in a viewer (CSV table, code with line numbers, hex dump for binaries, etc.) and right-click individual cells or lines to find subtler violations.
-- Right-click **empty space** in the folder or on the desktop to get a list of things a good project should have (a README, a licence, a folder structure, version history) and report whichever you think is missing.
+- Right-click **empty space** in the folder or on the desktop to get a list of things a good project should have, and report whichever you think is missing. Picking one reports it directly, with no follow-up dialog. Some entries are red herrings: things the project already has.
 - A sticky-note checklist in the corner tracks your finds across the 10 problem categories. Wrong guesses increment a counter but never block you.
 - Fixing a problem changes the project on the spot: files get renamed, converted, filed into folders, or recovered from the Trash. When every problem is found, you are offered a downloadable copy of the full answer key.
 
@@ -373,6 +373,24 @@ organize: {
 `matchRule: "any"` means **any one** matching trigger marks the problem as found. This is the only supported value; there is no "all" mode.
 
 Entries may also carry a `comment` string. It is ignored at runtime and exists so the reasoning behind a trigger set lives next to the triggers.
+
+### Red herrings in the missing-artifact menu
+
+`project-absence` triggers are the only ones with no click target: the player picks the artifact by name from the empty-space menu, and that pick *is* the guess, graded straight away by `matchMissingArtifact`. There is no problem-selection step, because naming the artifact and naming the problem would be the same answer twice.
+
+That would make the menu a list where every entry scores, so `mapping.json` also carries `missingArtifactDecoys`: things a good project needs that this project already has. Reporting one is a wrong guess, and `present` says where the thing actually is.
+
+```jsonc
+"missingArtifactDecoys": [
+  {
+    "name": "decoy-analysis-code",
+    "label": "The analysis code",
+    "present": "script.py is in the project folder. It has plenty wrong with it, but it is not missing."
+  }
+]
+```
+
+`getMissingArtifactMenu()` merges the real absences with the decoys and sorts by label, so the two kinds interleave; listing the real ones first would give the answer away by position. Entries the player has already found drop out of the list. Keep the decoy count in the low single digits: enough that the menu has to be read, not so many that finding the real ones is a slog.
 
 > **The rule that matters most here: anything the game highlights must be reportable.** `XlsxViewer` tints suspicious cells, and `TextViewer` hints at lines with triggers. A tinted cell reads as an invitation, so a highlight with no matching trigger charges the player a wrong guess for spotting something real. This drifted once already, costing 20 cells in the boss spreadsheet. The converse is fine and deliberate: the ambiguous `col1` / `col2` headers are reportable but unstyled, because noticing them is the exercise. If you widen `cellClass`, widen the triggers to match.
 

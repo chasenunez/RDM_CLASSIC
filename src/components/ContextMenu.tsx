@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { useGame, BOSS_FILE } from '../GameContext';
-import { getMissingArtifacts } from '../lib/matchTrigger';
+import { getMissingArtifactMenu } from '../lib/matchTrigger';
 import { LABELS } from '../theme';
 
 export function ContextMenu() {
   const {
     contextMenu,
+    gameState,
     hideContextMenu,
     openProblemSelection,
+    reportMissingArtifact,
     openFile,
     fileTree,
     mapping,
@@ -67,19 +69,20 @@ export function ContextMenu() {
   }
 
   // Empty space holds no file to inspect, so the only thing worth reporting
-  // there is something that *should* be present and isn't. Naming the artifact
-  // is the first half of the guess; the problem dialog asks for the second.
+  // there is something that *should* be present and isn't. Picking an entry is
+  // the whole guess and reports it straight away; some entries are things the
+  // project already has, so the list is not a set of free points.
   if (target.kind === 'desktop') {
-    const missing = getMissingArtifacts(mapping);
+    const menu = getMissingArtifactMenu(mapping, gameState.foundProblems);
     return (
       <div className="context-menu" style={style} ref={menuRef} role="menu">
         <div className="context-menu__heading">{LABELS.reportMissing}</div>
-        {missing.map(item => (
+        {menu.map(item => (
           <div
             key={item.name}
             className="context-menu__item"
             role="menuitem"
-            onClick={() => openProblemSelection({ kind: 'absence', name: item.name })}
+            onClick={() => reportMissingArtifact(item.name)}
           >
             {item.label}
           </div>

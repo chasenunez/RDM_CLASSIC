@@ -33,15 +33,9 @@ export function matchSelectedProblem(
 ): MatchResult {
   const selectedEntry = mapping.problems.find(p => p.id === selectedId);
 
-  // Direct trigger match for the selected problem.
-  //
-  // There used to be a fallback here accepting *any* absence-triggered problem
-  // whenever the player right-clicked empty space, because nothing in the UI
-  // could produce an 'absence' target. That made a third of the game free: you
-  // could claim the missing README, licence, and version control without ever
-  // working out which was which. The context menu now names the missing
-  // artifact (see getMissingArtifacts), so the ordinary trigger match below
-  // does the grading and the player has to pair artifact with problem.
+  // Direct trigger match for the selected problem. Absence-triggered problems
+  // never reach here: they are reported by name from the missing-artifact menu
+  // and graded by matchMissingArtifact.
   if (selectedEntry) {
     const direct = selectedEntry.triggers.some(t => matches(target, t));
     if (direct) return 'correct';
@@ -62,20 +56,49 @@ export function matchSelectedProblem(
 }
 
 /**
- * Every artifact the project is missing, gathered from the `project-absence`
- * triggers. Drives the "Report something missing" menu, so the menu and the
- * grading rules always come from the same place in mapping.json.
+ * The "Report something missing" menu: everything genuinely absent (gathered
+ * from the `project-absence` triggers) blended with the decoys, which are
+ * things the project already has.
+ *
+ * Sorted by label so the two kinds interleave. Listing the real absences first
+ * would give the answer away by position, and the menu is the whole guess now:
+ * picking an entry reports it directly, with no follow-up dialog.
+ *
+ * `found` drops entries the player has already scored, matching how the
+ * problem-selection list hides solved problems.
  */
-export function getMissingArtifacts(mapping: Mapping): { name: string; label: string }[] {
-  const seen = new Map<string, string>();
+export function getMissingArtifactMenu(
+  mapping: Mapping,
+  found: string[] = [],
+): { name: string; label: string }[] {
+  const real = new Map<string, string>();
   for (const problem of mapping.problems) {
+    if (found.includes(problem.id)) continue;
     for (const trigger of problem.triggers) {
-      if (trigger.type === 'project-absence' && !seen.has(trigger.name)) {
-        seen.set(trigger.name, trigger.label);
+      if (trigger.type === 'project-absence' && !real.has(trigger.name)) {
+        real.set(trigger.name, trigger.label);
       }
     }
   }
-  return [...seen].map(([name, label]) => ({ name, label }));
+
+  const entries = [
+    ...[...real].map(([name, label]) => ({ name, label })),
+    ...(mapping.missingArtifactDecoys ?? []).map(d => ({ name: d.name, label: d.label })),
+  ];
+
+  return entries.sort((a, b) => a.label.localeCompare(b.label));
+}
+
+/**
+ * The problem revealed by reporting `name` as missing, or null if `name` is a
+ * decoy (or unknown). This is the whole grading rule for the missing-artifact
+ * menu.
+ */
+export function matchMissingArtifact(name: string, mapping: Mapping): string | null {
+  const hit = mapping.problems.find(p =>
+    p.triggers.some(t => t.type === 'project-absence' && t.name === name),
+  );
+  return hit?.id ?? null;
 }
 
 /**
@@ -106,7 +129,8 @@ function matches(target: ContextTarget, trigger: Trigger): boolean {
       );
 
     case 'project-absence':
-      return target.kind === 'absence' && target.name === trigger.name;
+      // Graded by matchMissingArtifact, not by a context-menu target.
+      return false;
 
     case 'desktop':
       return target.kind === 'desktop';

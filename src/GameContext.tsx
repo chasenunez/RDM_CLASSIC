@@ -14,7 +14,7 @@ import problemsData from './data/problems.json';
 import fileTreeData from './data/file-tree.json';
 import mappingData from './data/mapping.json';
 import { loadState, saveState } from './lib/persistence';
-import { matchTrigger, matchSelectedProblem, getParentId } from './lib/matchTrigger';
+import { matchTrigger, matchSelectedProblem, getParentId, matchMissingArtifact } from './lib/matchTrigger';
 import { playChime, playBonk, playFanfare, playSosumi } from './lib/sounds';
 import { centeredAt, computeProjectFolderLayout } from './lib/layout';
 import { FIX_ACTIONS } from './lib/fixActions';
@@ -39,6 +39,10 @@ function getSubProblemIds(parentId: string): string[] {
     .filter(sp => sp.parentId === parentId)
     .map(sp => sp.id);
 }
+
+// The three ways a guess can be wrong. 'not_missing' is specific to the
+// missing-artifact menu: the named thing is already in the project.
+export type WrongKind = 'no_problem' | 'wrong_problem' | 'not_missing';
 
 // ── Boss battle constants ─────────────────────────────────────────────────────
 
@@ -176,7 +180,8 @@ interface GameContextType {
   activeProblem: Problem | SubProblem | null;
   activeParentId: string | null;
   showWrong: boolean;
-  wrongKind: 'no_problem' | 'wrong_problem';
+  wrongKind: WrongKind;
+  notMissingReason: string | null;
   alreadyFoundName: string | null;
   pendingTarget: ContextTarget | null;
 
@@ -199,6 +204,7 @@ interface GameContextType {
   showContextMenu: (menu: ContextMenuState) => void;
   hideContextMenu: () => void;
   openProblemSelection: (target: ContextTarget) => void;
+  reportMissingArtifact: (name: string) => void;
   handleProblemSelection: (selectedProblemId: string) => void;
   cancelProblemSelection: () => void;
   handleFixProblem: (problemId: string) => void;
@@ -230,7 +236,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [activeProblem, setActiveProblem] = useState<Problem | SubProblem | null>(null);
   const [activeParentId, setActiveParentId] = useState<string | null>(null);
   const [showWrong, setShowWrong] = useState(false);
-  const [wrongKind, setWrongKind] = useState<'no_problem' | 'wrong_problem'>('no_problem');
+  const [wrongKind, setWrongKind] = useState<WrongKind>('no_problem');
+  // Why the thing the player reported missing is actually present (decoys only).
+  const [notMissingReason, setNotMissingReason] = useState<string | null>(null);
   const [alreadyFoundName, setAlreadyFoundName] = useState<string | null>(null);
   const [pendingTarget, setPendingTarget] = useState<ContextTarget | null>(null);
 
@@ -299,6 +307,46 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   );
 
   // ──────────────────────────────────────────────────────────────────────────
+
+  // Direct report from the "Report something missing" menu. Like the boss
+  // battle, this skips the problem-selection dialog: naming the artifact *is*
+  // the guess, so asking which RDM problem it was would just be the same
+  // answer typed twice.
+  const reportMissingArtifact = useCallback(
+    (name: string) => {
+      setContextMenu(null);
+      const matchedId = matchMissingArtifact(name, mapping);
+
+      // A decoy: the thing named is already in the project.
+      if (!matchedId) {
+        const decoy = mapping.missingArtifactDecoys?.find(d => d.name === name);
+        dispatch({ type: 'WRONG_GUESS' });
+        setNotMissingReason(decoy?.present ?? null);
+        setWrongKind('not_missing');
+        setShowWrong(true);
+        if (!gameState.isMuted) playBonk();
+        return;
+      }
+
+      const problem = problems.find(p => p.id === matchedId) ?? null;
+
+      if (gameState.foundProblems.includes(matchedId)) {
+        setAlreadyFoundName(problem?.name ?? matchedId);
+        return;
+      }
+
+      dispatch({ type: 'FIND_PROBLEM', id: matchedId });
+      setActiveProblem(problem);
+      setActiveParentId(null);
+
+      if (!gameState.isMuted) {
+        const foundIds = new Set(gameState.foundProblems);
+        foundIds.add(matchedId);
+        problems.every(p => foundIds.has(p.id)) ? playFanfare() : playChime();
+      }
+    },
+    [gameState.foundProblems, gameState.isMuted, mapping],
+  );
 
   const showContextMenu = useCallback((menu: ContextMenuState) => {
     setContextMenu(menu);
@@ -511,6 +559,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     activeParentId,
     showWrong,
     wrongKind,
+    notMissingReason,
     alreadyFoundName,
     pendingTarget,
     problems,
@@ -529,6 +578,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     showContextMenu,
     hideContextMenu,
     openProblemSelection,
+    reportMissingArtifact,
     handleProblemSelection,
     cancelProblemSelection,
     handleFixProblem,

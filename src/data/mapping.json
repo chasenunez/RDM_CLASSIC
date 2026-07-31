@@ -1,4 +1,27 @@
 {
+  "_comment": "missingArtifactDecoys are red herrings for the 'Report something missing' menu. Each names something a good project needs that this project already has, so claiming it is missing is simply wrong. They keep the menu from being a list where every entry scores.",
+  "missingArtifactDecoys": [
+    {
+      "name": "decoy-analysis-code",
+      "label": "The analysis code",
+      "present": "script.py is in the project folder. It has plenty wrong with it, but it is not missing."
+    },
+    {
+      "name": "decoy-manuscript",
+      "label": "A manuscript draft",
+      "present": "There are two drafts in the project folder. Badly named, but present."
+    },
+    {
+      "name": "decoy-figures",
+      "label": "Figures for the manuscript",
+      "present": "fig1 and the microscopy image are both in the project folder."
+    },
+    {
+      "name": "decoy-measurements",
+      "label": "The measurement data",
+      "present": "The soil samples spreadsheet is in the project folder, and the raw file is recoverable from the Trash."
+    }
+  ],
   "problems": [
     {
       "id": "file-naming",

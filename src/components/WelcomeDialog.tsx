@@ -24,7 +24,8 @@ const CHAT_LINES: React.ReactNode[] = [
   <><strong>HOW TO PLAY:</strong> Explore the project. Look at the files, and inside them.</>,
   <>Right-click a file, or a cell or line within one, and choose
     <em> "{LABELS.reportProblem}"</em>. Right-click empty space to report something
-    the project is <em>missing</em>.</>,
+    the project is <em>missing</em>, but check first: not everything on that list
+    is actually gone.</>,
   <>Each correct find reveals an explanation and checks it off the list in the
     upper left. Wrong guesses count against you, so be strategic!</>,
   <>Heads up: a messy data file is its own mini-game — you have to find
