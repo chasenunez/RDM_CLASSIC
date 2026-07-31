@@ -260,10 +260,11 @@ Rename columns to meaningful names **with units** where applicable:
 
 | Old name | New name |
 |---|---|
+| id | site_id |
 | col1 | soil_moisture_pct |
 | col2 | organic_carbon_g_per_kg |
 | col3 | bulk_density_g_per_cm3 |
-| temp | temperature_C |
+| temp | air_temperature_degC |
 
 **Resources**
 
@@ -311,7 +312,7 @@ Standardise all missing values to a single code. Replace every variant ('n/a', '
 
 **What's wrong**
 
-Row 9 of `soil samples.xlsx` has **blank cells** in col1, col2, and col3. These blanks are an implicit missing-value code — it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.
+`soil samples.xlsx` has **blank cells** in its measurement columns: all of col1, col2, and col3 on row 9, and the temp reading on row 5. Blanks in the free-text `notes` column are fine; an empty note is not a missing measurement. These blanks are an implicit missing-value code — it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.
 
 **Why it matters**
 
@@ -483,7 +484,7 @@ Key principles: separate raw from processed data, keep code in its own folder, i
 **How to fix it:**
 
 1. **Rename columns** to be self-descriptive: `col1` → `soil_moisture_pct`, `col3` → `organic_carbon_g_per_kg`, `temp` → `air_temperature_degC`.
-2. **Standardize missing data codes**: Pick one code (e.g., `NA` or leave blank) and use it consistently — not a mix of `NA`, `n/a`, `-999`, `??`, and blank cells.
+2. **Standardize missing data codes**: Pick one explicit code (`NA` is the R/Python convention) and use it consistently — not a mix of `NA`, `n/a`, `-999`, `??`, and blank cells.
 3. **Adopt a metadata standard** for your discipline. Use directories like the Digital Curation Centre, RDA Metadata Standards, or FAIRsharing to find the right one.
 4. **Use controlled vocabularies** — don't switch between "picture" and "image" or "location" and "site" for the same concept.
 

@@ -1,2 +1,14 @@
+# Dependencies: restored by `npm ci` from package-lock.json
+node_modules/
+
+# Build output. GitHub Actions builds this on every push; see .github/workflows/deploy.yml
+dist/
+
+# Vite's local dependency cache
+.vite/
+
+# macOS Finder metadata
 .DS_Store
-src/.DS_Store
+
+# Local-only env overrides
+*.local

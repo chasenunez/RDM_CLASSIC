@@ -158,13 +158,13 @@
 <h3>6b. Embedded note in data</h3>
 <p>Row 1, column F contains the note <em>"site 7 sensor broken in March"</em> — free text embedded inside the grid, invisible to data-loading scripts. <em>Fix:</em> remove the note from the cell and record it in a dedicated notes column, the data dictionary, or a separate events log.</p>
 <h3>6c. Ambiguous column names</h3>
-<p>Headers <strong>col1, col2, col3</strong> are meaningless placeholders and <strong>temp</strong> has no units. <em>Fix:</em> rename columns to meaningful names with units, e.g. <code>soil_moisture_pct</code>, <code>organic_carbon_g_per_kg</code>, <code>bulk_density_g_per_cm3</code>, <code>temperature_C</code>.</p>
+<p>Headers <strong>col1, col2, col3</strong> are meaningless placeholders, <strong>temp</strong> has no units, and <strong>id</strong> doesn't say what it identifies. <em>Fix:</em> rename columns to meaningful names with units: <code>site_id</code>, <code>soil_moisture_pct</code>, <code>organic_carbon_g_per_kg</code>, <code>bulk_density_g_per_cm3</code>, <code>air_temperature_degC</code>.</p>
 <h3>6d. Missing value: 'NA' string</h3>
 <p>Cell (row 5, col2) contains the string <strong>"NA"</strong> while other cells use <code>n/a</code>, <code>-999</code>, <code>??</code>, or blank. <em>Fix:</em> pick one consistent missing-value code (the R/Python convention is <code>NA</code>) and use it everywhere; document it in the data dictionary.</p>
 <h3>6e. Missing value: 'n/a' string</h3>
 <p>Cell (row 6, pH column) contains <strong>"n/a"</strong> — a differently-cased spelling of the not-available indicator used elsewhere as <code>NA</code>. Case-sensitive languages treat them as different values. <em>Fix:</em> standardise all missing values to a single code.</p>
 <h3>6f. Missing value: blank cell</h3>
-<p>Row 9 has <strong>blank cells</strong> in col1, col2, and col3 — an ambiguous implicit missing-value code. <em>Fix:</em> replace all blanks in data rows with the chosen explicit code (e.g. <code>NA</code>); never leave data cells blank.</p>
+<p>Blank cells sit in the measurement columns: col1, col2, and col3 on row 9, and the temp reading on row 5. Each is an ambiguous implicit missing-value code (blanks in the free-text <code>notes</code> column are fine). <em>Fix:</em> replace all blanks in data rows with the chosen explicit code (e.g. <code>NA</code>); never leave data cells blank.</p>
 <h3>6g. Missing value: -999 sentinel</h3>
 <p>Row 9, pH and temp columns contain <strong>-999</strong>, a numeric sentinel that statistical functions silently include in averages and correlations. <em>Fix:</em> replace <code>-999</code> (and any numeric sentinels) with an explicit missing-value code such as <code>NA</code>.</p>
 <h3>6h. Missing value: '??' string</h3>
@@ -251,7 +251,7 @@
 <p><strong>How to fix it:</strong></p>
 <ol>
 <li><strong>Rename columns</strong> to be self-descriptive: <code>col1</code> → <code>soil_moisture_pct</code>, <code>col3</code> → <code>organic_carbon_g_per_kg</code>, <code>temp</code> → <code>air_temperature_degC</code>.</li>
-<li><strong>Standardize missing data codes</strong>: Pick one code (e.g., <code>NA</code> or leave blank) and use it consistently — not a mix of <code>NA</code>, <code>n/a</code>, <code>-999</code>, <code>??</code>, and blank cells.</li>
+<li><strong>Standardize missing data codes</strong>: Pick one explicit code (<code>NA</code> is the R/Python convention) and use it consistently — not a mix of <code>NA</code>, <code>n/a</code>, <code>-999</code>, <code>??</code>, and blank cells.</li>
 <li><strong>Adopt a metadata standard</strong> for your discipline. Use directories like the Digital Curation Centre, RDA Metadata Standards, or FAIRsharing to find the right one.</li>
 <li><strong>Use controlled vocabularies</strong> — don't switch between "picture" and "image" or "location" and "site" for the same concept.</li>
 </ol>

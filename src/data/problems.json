@@ -144,9 +144,9 @@
       {
         "id": "dq-col-names",
         "name": "Ambiguous column names",
-        "what": "Column headers **col1, col2, col3** are meaningless placeholders. **temp** has no units. Without knowing what these columns measure, the data cannot be interpreted.",
+        "what": "Column headers **col1, col2, col3** are meaningless placeholders. **temp** has no units, and **id** doesn't say what it identifies. Without knowing what these columns measure, the data cannot be interpreted.",
         "why": "Ambiguous names force every future user to hunt for external context. Analysis errors become more likely, and even the original researcher will forget the meaning within months.",
-        "fix": "Rename columns to meaningful names **with units** where applicable:\n\n| Old name | New name |\n|---|---|\n| col1 | soil_moisture_pct |\n| col2 | organic_carbon_g_per_kg |\n| col3 | bulk_density_g_per_cm3 |\n| temp | temperature_C |",
+        "fix": "Rename columns to meaningful names **with units** where applicable:\n\n| Old name | New name |\n|---|---|\n| id | site_id |\n| col1 | soil_moisture_pct |\n| col2 | organic_carbon_g_per_kg |\n| col3 | bulk_density_g_per_cm3 |\n| temp | air_temperature_degC |\n\n`pH` and `notes` are already clear, so they stay as they are. A good name says what was measured and in what unit; it doesn't have to be long.",
         "resources": [
           {
             "title": "Data Organization in Spreadsheets (Broman & Woo)",
@@ -183,7 +183,7 @@
       {
         "id": "dq-missing-blank",
         "name": "Missing value: blank cell",
-        "what": "Row 9 of `soil samples.xlsx` has **blank cells** in col1, col2, and col3. These blanks are an implicit missing-value code — it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.",
+        "what": "`soil samples.xlsx` has **blank cells** in its measurement columns: all of col1, col2, and col3 on row 9, and the temp reading on row 5. These blanks are an implicit missing-value code — it is impossible to tell if they mean 'not collected', 'below detection limit', or a data-entry error.\n\n(Blanks in the free-text `notes` column are fine. An empty note means there was nothing to note, which is not the same as a measurement going missing.)",
         "why": "Blank cells are ambiguous. When a file is re-saved, blanks can shift. They also interact unpredictably with pivot tables and summary functions. An explicit code like `NA` is always unambiguous.",
         "fix": "Replace all blank cells in data rows with the chosen explicit missing-value code (e.g. `NA`). **Never leave cells blank in data columns** — use an explicit code and document it.",
         "resources": [

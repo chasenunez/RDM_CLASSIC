@@ -145,7 +145,7 @@ When a player clicks "Let's fix it!", files should get renamed, converted, or ar
 
 ### Phase 10: Polish
 
-Touch support (`lib/longPress.ts`, a 500ms long-press hook standing in for right-click), keyboard and ARIA support on every clickable div, and the `asset()` helper prefixing every URL with `import.meta.env.BASE_URL` so the app works under GitHub Pages' `/RDM_CLASSIC/` sub-path (set `base` in `vite.config.ts`). Then `npm run build` and publish `dist/` to Pages.
+Touch support (`lib/longPress.ts`, a 500ms long-press hook standing in for right-click), keyboard and ARIA support on every clickable div, and the `asset()` helper prefixing every URL with `import.meta.env.BASE_URL` so the app works under GitHub Pages' `/RDM_CLASSIC/` sub-path (set `base` in `vite.config.ts`). Then wire up `.github/workflows/deploy.yml` so a push to `main` builds and publishes to Pages on its own; the build output stays out of version control.
 
 ---
 
@@ -195,14 +195,17 @@ npm run preview
 
 ### Deploying
 
-The `dist/` directory can be served from any static host with no configuration:
+**This repo deploys itself.** Pushing to `main` triggers [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which runs `npm ci`, runs `npm run build`, and publishes the resulting `dist/` to GitHub Pages. There is nothing to do by hand, and **`dist/` is not committed**; it is a build artifact and is listed in `.gitignore`.
+
+To host it somewhere else, run `npm run build` yourself and serve the generated `dist/`:
 
 | Host | How |
 |------|-----|
-| **GitHub Pages** | Push `dist/` to your `gh-pages` branch, or point Pages at `/dist` |
-| **Netlify / Vercel** | Set the publish directory to `dist` and build command to `npm run build` |
-| **nginx / Apache** | Copy `dist/` to your web root |
-| **S3 / R2** | Sync `dist/` to a bucket with static website hosting enabled |
+| **Netlify / Vercel** | Publish directory `dist`, build command `npm run build` |
+| **nginx / Apache** | Copy the built `dist/` to your web root |
+| **S3 / R2** | Sync the built `dist/` to a bucket with static website hosting enabled |
+
+Note that `vite.config.ts` sets `base: '/RDM_CLASSIC/'` for GitHub Pages. If you serve the game from a domain root instead, change `base` to `'/'` before building.
 
 There is no server-side rendering, no API, and no database. Every asset is a file.
 

@@ -72,6 +72,9 @@ export interface MappedProblem {
   triggers: Trigger[];
   matchRule: 'any';
   parentId?: string;  // set for boss-battle sub-problems
+  // Free-text note for whoever hand-edits mapping.json. Ignored at runtime;
+  // it exists so the reasoning behind a trigger set lives beside the triggers.
+  comment?: string;
 }
 
 export interface Mapping {

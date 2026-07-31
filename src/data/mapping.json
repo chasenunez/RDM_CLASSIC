@@ -44,16 +44,30 @@
     {
       "id": "dq-floating-header",
       "parentId": "data-quality",
+      "comment": "The whole of row 0 is the stray title row, so every cell in it is a valid report. The viewer tints the full row, and anything it tints must be reportable.",
       "triggers": [
-        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 0 }
+        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 0 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 1 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 2 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 3 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 4 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 5 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 0, "col": 6 }
       ],
       "matchRule": "any"
     },
     {
       "id": "dq-embedded-note",
       "parentId": "data-quality",
+      "comment": "Same reasoning as dq-floating-header: row 1 is the stray note row and is tinted end to end.",
       "triggers": [
-        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 5 }
+        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 0 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 1 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 2 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 3 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 4 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 5 },
+        { "type": "cell", "path": "soil samples.xlsx", "row": 1, "col": 6 }
       ],
       "matchRule": "any"
     },
@@ -87,7 +101,9 @@
     {
       "id": "dq-missing-blank",
       "parentId": "data-quality",
+      "comment": "Every blank in a measurement column, not just the row 9 cluster. The blank temp at row 5 is the same defect and was previously scored as a wrong guess. Blanks in the free-text notes column (col 6) are legitimately empty and are neither tinted nor reportable.",
       "triggers": [
+        { "type": "cell", "path": "soil samples.xlsx", "row": 5, "col": 5 },
         { "type": "cell", "path": "soil samples.xlsx", "row": 9, "col": 1 },
         { "type": "cell", "path": "soil samples.xlsx", "row": 9, "col": 2 },
         { "type": "cell", "path": "soil samples.xlsx", "row": 9, "col": 3 }

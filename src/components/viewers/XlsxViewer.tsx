@@ -23,24 +23,55 @@ const MISSING_CODE = 'NA';
 // "42,1". These read as strings (not numbers) and break analysis silently.
 const COMMA_DECIMAL = /^-?\d+,\d+$/;
 
-// Ambiguous headers renamed to self-descriptive names (with units) when the
-// file is shown in its fixed state — mirrors the dq-col-names fix guidance.
+/**
+ * Ambiguous headers renamed to self-descriptive names (with units) when the
+ * file is shown in its fixed state.
+ *
+ * This is the canonical cleaned schema for the sample project. Three other
+ * files quote it and must be kept in step:
+ *   - the dq-col-names fix table in src/data/problems.json
+ *   - the data dictionary in public/files/sample_project/README.md
+ *   - the column names used by 20260410_AlpineSoil_Analysis_v1.0.py
+ * `pH` and `notes` are already clear and pass through unchanged.
+ */
 const HEADER_RENAME: Record<string, string> = {
+  id:   'site_id',
   col1: 'soil_moisture_pct',
   col2: 'organic_carbon_g_per_kg',
   col3: 'bulk_density_g_per_cm3',
-  temp: 'temperature_C',
+  temp: 'air_temperature_degC',
 };
 
-function cellClass(filePath: string, rowIdx: number, cell: string): string {
-  if (filePath !== BOSS_FILE) return '';
+// Columns holding free-form prose rather than measurements. A blank here means
+// "nothing to say about this sample", which is not a data-quality defect, so
+// these cells are never tinted. Matched against the header row by name.
+const FREE_TEXT_HEADERS = new Set(['notes']);
+
+/**
+ * Decide the highlight class for one boss-file cell.
+ *
+ * The rule this function has to keep: **anything it tints must be reportable.**
+ * A tinted cell reads as an invitation (mac.css gives blanks a dashed outline,
+ * a "(blank)" placeholder, and a pointer cursor), so a tint with no matching
+ * trigger in mapping.json costs the player a wrong guess for being right. The
+ * converse is deliberately not true: the ambiguous `col1` / `col2` headers are
+ * reportable but left unstyled, because spotting them is the exercise.
+ */
+function cellClass(
+  rowIdx: number,
+  colIdx: number,
+  cell: string,
+  freeTextCols: Set<number>,
+): string {
+  // Rows 0 and 1 don't belong in the file at all, so the whole row is tinted
+  // and every cell in it maps to dq-floating-header / dq-embedded-note.
   if (rowIdx === 0) return 'xlsx-meta-title';
   if (rowIdx === 1) return 'xlsx-meta-note';
-  if (rowIdx === 2) return ''; // header row — styled via th
+  if (rowIdx === 2) return ''; // header row, styled via th
   const v = cell.trim();
   if (MISSING_VALUES.has(v)) return 'xlsx-bad-value';
   if (COMMA_DECIMAL.test(v)) return 'xlsx-bad-value'; // comma-decimal text
-  if (v === '' && rowIdx > 2) return 'xlsx-blank-value';
+  if (v === '' && !freeTextCols.has(colIdx)) return 'xlsx-blank-value';
   return '';
 }
 
@@ -90,6 +121,13 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
     : current.rows;
 
   const maxCols = Math.max(...displayRows.map(r => r.length));
+
+  // Header row is row 2 in the messy file (rows 0 and 1 are the stray title
+  // and note). Used to spot the free-text columns whose blanks are harmless.
+  const freeTextCols = new Set<number>();
+  (current.rows[2] ?? []).forEach((h, i) => {
+    if (FREE_TEXT_HEADERS.has(String(h ?? '').trim().toLowerCase())) freeTextCols.add(i);
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
@@ -146,7 +184,9 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
                   {Array.from({ length: maxCols }, (_, colIdx) => {
                     const cell = String(row[colIdx] ?? '');
                     const Tag = isHeaderRow ? 'th' : 'td';
-                    const extraClass = bossFileFixed ? '' : cellClass(filePath, rowIdx, cell);
+                    const extraClass = isBoss && !bossFileFixed
+                      ? cellClass(rowIdx, colIdx, cell, freeTextCols)
+                      : '';
 
                     // Only show context menu for boss cells during active battle,
                     // or for any cell when boss is not active
