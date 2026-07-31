@@ -237,7 +237,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   // ── Boss battle state ──────────────────────────────────────────────────────
   const [bossIntroShowing, setBossIntroShowing] = useState(false);
   const [bossCompletionShowing, setBossCompletionShowing] = useState(false);
-  const [bossFileFixed, setBossFileFixed] = useState(false);
+
+  // Derived, not stored. Beating the boss fixes the data-quality problem like
+  // any other fix, so the persisted fixedProblems list is the single source of
+  // truth. Holding this in useState meant a reload forgot the win and replayed
+  // the "Great job!" dialog.
+  const bossFileFixed = gameState.fixedProblems.includes(BOSS_PARENT_ID);
 
   const bossFoundCount = BOSS_SUB_IDS.filter(id => gameState.foundProblems.includes(id)).length;
   const bossComplete = bossFoundCount === BOSS_SUB_IDS.length;
@@ -254,10 +259,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, [bossComplete, bossWindowOpen, bossFileFixed]);
 
   const dismissBossIntro = useCallback(() => setBossIntroShowing(false), []);
-  const dismissBossComplete = useCallback(() => {
-    setBossCompletionShowing(false);
-    setBossFileFixed(true);
-  }, []);
+
   // Direct boss error report — skips the problem selection dialog
   const reportBossError = useCallback(
     (target: ContextTarget) => {
@@ -472,6 +474,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     },
     [gameState.openWindows, openFile],
   );
+
+  // Closing the victory dialog applies the data-quality fix through the same
+  // path every other problem uses: the messy spreadsheet is archived and the
+  // cleaned, well-named copy opens in its place.
+  const dismissBossComplete = useCallback(() => {
+    setBossCompletionShowing(false);
+    handleFixProblem(BOSS_PARENT_ID);
+  }, [handleFixProblem]);
 
   const dismissProblemDialog = useCallback(() => {
     setActiveProblem(null);

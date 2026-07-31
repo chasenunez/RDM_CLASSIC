@@ -15,32 +15,14 @@ interface SheetData {
 
 const MISSING_VALUES = new Set(['-999', 'NA', 'n/a', '??']);
 
-// The single explicit missing-value code the fixed file uses everywhere, so the
-// spreadsheet matches the written advice ("use one explicit code such as NA").
-const MISSING_CODE = 'NA';
-
 // A number written with a comma decimal separator and stored as text, e.g.
 // "42,1". These read as strings (not numbers) and break analysis silently.
 const COMMA_DECIMAL = /^-?\d+,\d+$/;
 
-/**
- * Ambiguous headers renamed to self-descriptive names (with units) when the
- * file is shown in its fixed state.
- *
- * This is the canonical cleaned schema for the sample project. Three other
- * files quote it and must be kept in step:
- *   - the dq-col-names fix table in src/data/problems.json
- *   - the data dictionary in public/files/sample_project/README.md
- *   - the column names used by 20260410_AlpineSoil_Analysis_v1.0.py
- * `pH` and `notes` are already clear and pass through unchanged.
- */
-const HEADER_RENAME: Record<string, string> = {
-  id:   'site_id',
-  col1: 'soil_moisture_pct',
-  col2: 'organic_carbon_g_per_kg',
-  col3: 'bulk_density_g_per_cm3',
-  temp: 'air_temperature_degC',
-};
+// The cleaned schema is no longer reconstructed here. It lives in the real
+// file the fix hands the player, 20260315_AlpineSoil_Chem_v1.0.xlsx, and is
+// documented in the sample project's README data dictionary and in the
+// dq-col-names fix table in src/data/problems.json.
 
 // Columns holding free-form prose rather than measurements. A blank here means
 // "nothing to say about this sample", which is not a data-quality defect, so
@@ -103,23 +85,12 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
   const isBoss = filePath === BOSS_FILE;
   const errorsRemaining = bossTotalErrors - bossFoundCount;
 
-  // Fixed mode: skip the two meta rows, then clean up the data so the file
-  // reflects the advice the game gives — one explicit missing-value code,
-  // consistent decimals, and self-descriptive column headers. Row 0 of the
-  // sliced rows is the header (was row 2 in the original).
-  const displayRows = isBoss && bossFileFixed
-    ? current.rows.slice(2).map((row, rowIdx) =>
-        row.map(cell => {
-          const v = String(cell ?? '').trim();
-          if (rowIdx === 0) return HEADER_RENAME[v] ?? cell;   // header row
-          if (MISSING_VALUES.has(v) || v === '') return MISSING_CODE;
-          const m = v.match(COMMA_DECIMAL);
-          if (m) return v.replace(',', '.');                    // 42,1 -> 42.1
-          return cell;
-        })
-      )
-    : current.rows;
-
+  // Winning the boss battle no longer re-renders this file as if it were clean.
+  // It archives the messy original and opens a real cleaned file
+  // (20260315_AlpineSoil_Chem_v1.0.xlsx) in its place, so what the player sees
+  // here is always the genuine bytes on disk. Reached from the archive after
+  // the fix, this stays messy on purpose: the preserved original is the point.
+  const displayRows = current.rows;
   const maxCols = Math.max(...displayRows.map(r => r.length));
 
   // Header row is row 2 in the messy file (rows 0 and 1 are the stray title
@@ -166,7 +137,8 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
 
       {isBoss && bossFileFixed && (
         <div className="xlsx-fixed-banner">
-          Fixed! All data quality issues have been corrected.
+          Archived original, kept exactly as collected. The cleaned copy is
+          20260315_AlpineSoil_Chem_v1.0.xlsx.
         </div>
       )}
 
@@ -174,17 +146,20 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
         <table>
           <tbody>
             {displayRows.map((row, rowIdx) => {
-              // In fixed mode, row 0 is the header (was row 2 in original)
-              const isHeaderRow = bossFileFixed ? rowIdx === 0 : (isBoss ? rowIdx === 2 : rowIdx === 0);
-              const isMetaRow = !bossFileFixed && isBoss && (rowIdx === 0 || rowIdx === 1);
+              // The messy file buries its header under two stray rows; every
+              // other spreadsheet starts with its header, as it should.
+              const isHeaderRow = isBoss ? rowIdx === 2 : rowIdx === 0;
+              const isMetaRow = isBoss && (rowIdx === 0 || rowIdx === 1);
 
               return (
                 <tr key={rowIdx} className={isMetaRow ? 'meta-row' : ''}>
-                  {!bossFileFixed && <td className="row-num">{rowIdx}</td>}
+                  <td className="row-num">{rowIdx}</td>
                   {Array.from({ length: maxCols }, (_, colIdx) => {
                     const cell = String(row[colIdx] ?? '');
                     const Tag = isHeaderRow ? 'th' : 'td';
-                    const extraClass = isBoss && !bossFileFixed
+                    // Tinting stays on after the win: the archived original is
+                    // a record of what was wrong, even though it is read-only.
+                    const extraClass = isBoss
                       ? cellClass(rowIdx, colIdx, cell, freeTextCols)
                       : '';
 

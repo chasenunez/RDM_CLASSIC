@@ -18,7 +18,7 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
   const total = problems.length;
   const rating =
     wrongGuesses === 0
-      ? 'Flawless! You are a RDM legend.'
+      ? 'Flawless! You are an RDM legend.'
       : wrongGuesses <= 3
       ? 'RDM expert. Way to go!'
       : wrongGuesses <= 8

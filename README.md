@@ -3,7 +3,7 @@
 A browser-based educational game teaching Research Data Management (RDM) best practices through a System 7 Finder desktop (with some artistic liberties taken). A project folder window is already open, showing the files of a fictional alpine soil study — most of them violating at least one RDM principle.
 
 - **Right-click** (or long-press on touch) any file icon to open a context menu.
-- Choose **Report a RDM problem** to flag the file. If correct, a dialog explains what is wrong, why it matters, and how to fix it.
+- Choose **Report an RDM problem** to flag the file. If correct, a dialog explains what is wrong, why it matters, and how to fix it.
 - **Double-click** a file to open it in a viewer (CSV table, code with line numbers, hex dump for binaries, etc.) and right-click individual cells or lines to find subtler violations.
 - Right-click **empty space** in the folder or on the desktop, then choose **Report missing artifact** to flag things that should be there but aren't — a README, a license, a DOI, a backup plan.
 - A sticky-note checklist in the corner tracks your finds across the 8 problem categories. Wrong guesses increment a counter but never block you.
@@ -123,7 +123,7 @@ All viewers share one hook, `lib/useFileContent.ts`, which fetches from `public/
 
 This is where it becomes a game, in four small pieces:
 
-1. `ContextMenu.tsx`: a positioned `<div>` that appears at the click coordinates, closes on Escape or an outside click, and offers "Report a RDM problem…".
+1. `ContextMenu.tsx`: a positioned `<div>` that appears at the click coordinates, closes on Escape or an outside click, and offers "Report an RDM problem…".
 2. `lib/matchTrigger.ts`: the referee, and the only genuinely game-specific algorithm. `matchTrigger(target, mapping)` walks the mapping and returns the problem id whose trigger matches; `matchSelectedProblem()` grades the player's guess as `correct`, `wrong_problem` (real problem, wrong label), or `no_problem`. It is pure, with no React in it, and therefore trivially testable.
 3. `ProblemSelectionDialog` (pick a category), which dispatches `FIND_PROBLEM` on success and hands off to `WrongGuessDialog` otherwise; `ProblemReportDialog` shows the what/why/fix Markdown.
 4. `StickyNote.tsx`: reads `foundProblems` and renders checkboxes. Pure derived state: it computes, it never dispatches.

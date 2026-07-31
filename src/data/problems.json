@@ -27,19 +27,11 @@
     "fullTitle": "Ad-hoc File Versioning",
     "what": "The file `manuscript_draft_v2_JK comments.docx` shows how *not* to track versions:\n\n| Problem | Why it trips things up |\n|------|----------|\n| Ad-hoc version tag (`v2`) | `v2` of what? There's no `v1` in sight, and no record of what changed |\n| A person's name baked in (`JK comments`) | Names track *who touched it*, not *which version it is* — and they pile up: `_JK_then_AB_final_final` |\n| A space in the name | Spaces break scripts and command-line tools |\n\nThis is how projects end up with `final`, `final_v2`, and `final_REALLY_final`, and no idea which one is current.",
     "why": "Without a real versioning system you can't tell what changed between drafts, when, or why; you can't cleanly undo a mistake; and you risk sharing or building on the wrong copy. Filename tags like `v2` and `JK comments` record none of that.",
-    "fix": "For **documents and data**: use clear, semantic version numbers in the name (`v1.0`, `v1.1`, `v2.0`) and keep a short changelog (in the README or a separate `CHANGELOG` file) that notes what changed in each version.\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v1.1.docx` |\n\nFor **code**: use Git. It records every change, who made it, and why, so you never need `_final_v2` again.",
+    "fix": "Use clear, semantic version numbers in the name (`v1.0`, `v1.1`, `v2.0`) and keep a short changelog (in the README, or a separate `CHANGELOG` file) noting what changed in each version and why.\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v1.1.docx` |\n\nBump the **minor** number for revisions within a draft (`v1.0` → `v1.1`), and the **major** number when the document changes substantially (`v1.x` → `v2.0`). Reviewer initials never belong in a filename; track who commented in the changelog, or in the document's own review history.\n\nThis is the manual approach, and it is the right one for documents that live outside a repository. For anything text-based, proper version control does all of it for you automatically. That is a separate problem in this project, and it is worth finding.",
     "resources": [
       {
-        "title": "Git",
-        "url": "https://git-scm.com/"
-      },
-      {
-        "title": "Git GUIs",
-        "url": "https://git-scm.com/downloads/guis"
-      },
-      {
-        "title": "Software Carpentry Git lesson",
-        "url": "https://swcarpentry.github.io/git-novice/"
+        "title": "Keep a Changelog",
+        "url": "https://keepachangelog.com/"
       }
     ]
   },
@@ -269,18 +261,40 @@
   {
     "id": "folder-organization",
     "name": "File/folder organization",
-    "fullTitle": "No Project Organization or Version Control",
-    "what": "The whole project is one flat pile of files with no organisation and no version control:\n\n- Raw data, processed data, code, figures, and manuscripts all sit in the same folder, with no way to tell inputs from outputs.\n- There is no Git repository, so nothing records the history of the project as a whole.",
-    "why": "Without a logical folder structure, no one can tell at a glance what a file is for, or what depends on what, and it only gets worse as the project grows. Without version control (Git), there is no history of how the project reached its current state, and no safe way to undo a change across the whole project.",
-    "fix": "1. **Organise the folder** so each kind of file has a home, for example:\n```\n20260301_AlpineSurvey/\n  data/\n    raw/\n    processed/\n  code/\n  results/\n  README.md\n```\nKeep raw data separate from processed, code in its own folder, and documentation at the top.\n\n2. **Put the project under version control** with Git so every change is tracked. Host it on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.",
+    "fullTitle": "No Project Organization",
+    "what": "The whole project is one flat pile of files. Raw data, cleaned data, code, figures, and manuscripts all sit in the same folder, with no way to tell inputs from outputs, or to see what depends on what.",
+    "why": "With everything in one heap, no one can tell at a glance what a file is for. You cannot point a collaborator at \"the data\" or \"the code\", scripts end up with fragile paths, and it only gets worse as the project grows. A folder layout is the cheapest documentation there is: it explains the project before anyone opens a single file.",
+    "fix": "Give each kind of file a home:\n```\n20260301_AlpineSurvey/\n  data/\n    raw/          ← original files, never touched\n    processed/    ← output of your scripts\n  code/\n  manuscripts/\n  README.md\n  LICENSE.md\n```\n\nKeep raw data separate from processed, code in its own folder, and documentation at the top level where people look first. This also makes the README easier to write: you describe each folder in a sentence instead of listing every file.",
     "resources": [
       {
         "title": "The Turing Way — Research Data Management",
         "url": "https://the-turing-way.netlify.app/reproducible-research/rdm"
       },
       {
+        "title": "Good Enough Practices in Scientific Computing (Wilson et al. 2017)",
+        "url": "https://doi.org/10.1371/journal.pcbi.1005510"
+      }
+    ]
+  },
+  {
+    "id": "no-version-control",
+    "name": "Version control",
+    "fullTitle": "No Version Control",
+    "what": "There is no Git repository here. Nothing records the history of the project as a whole: who changed what, when, or why. The only trace of history is in the filenames themselves (`v2`, `JK comments`), which is exactly the problem the versioning issue describes.",
+    "why": "Without version control there is no reliable way to see what changed between two points in time, no safe way to undo a change across the whole project, and no record of which state of the code produced a published result. Renaming files to `_final_v2` is an attempt to do version control by hand, and it fails in every way real version control succeeds.",
+    "fix": "1. **Initialise a repository** in the project folder:\n```\ngit init\ngit add .\ngit commit -m \"Initial commit of alpine soil survey\"\n```\n\n2. **Commit as you work**, with messages that say *why* rather than *what*. Every commit is a restore point.\n\n3. **Push to a host** so the history survives your laptop: GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.\n\n4. **Add a `.gitignore`** so generated output, caches, and OS clutter stay out of the history. Track your sources, not your build artefacts.\n\nGit is designed for text (code, scripts, README files), where it can show you a line-by-line diff. Large binary data belongs in a data repository with a DOI, not in Git.",
+    "resources": [
+      {
         "title": "Software Carpentry Git lesson",
         "url": "https://swcarpentry.github.io/git-novice/"
+      },
+      {
+        "title": "Git",
+        "url": "https://git-scm.com/"
+      },
+      {
+        "title": "Git GUIs",
+        "url": "https://git-scm.com/downloads/guis"
       }
     ]
   }

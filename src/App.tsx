@@ -11,7 +11,6 @@ import { WrongGuessDialog } from './components/WrongGuessDialog';
 import { CompletionDialog } from './components/CompletionDialog';
 import { BossBattleIntro } from './components/BossBattleIntro';
 import { BossBattleComplete } from './components/BossBattleComplete';
-import { FileStructureDialog } from './components/FileStructureDialog';
 import { computeProjectFolderLayout } from './lib/layout';
 import { LABELS } from './theme';
 
@@ -21,7 +20,7 @@ import './styles/mac.css';
 
 // One modal dialog at a time, shown in this order. Several can become
 // eligible on the same tick — e.g. finishing the boss battle (the minigame)
-// as the final task fires boss-complete, file-structure, and completion
+// as the final task fires both boss-complete and completion
 // together. Instead of stacking them, we surface them one at a time in this
 // order; a newer dialog waits until the older one above it is dismissed. The
 // list is chronological, so "higher priority" also means "triggered earlier".
@@ -33,7 +32,6 @@ const MODAL_ORDER = [
   'wrongGuess',
   'bossIntro',
   'bossComplete',
-  'fileStructure',
   'completion',
 ] as const;
 
@@ -42,7 +40,7 @@ const MODAL_ORDER = [
 // so they don't flash in on top of one another. Everything else — problem
 // selection and the problem/wrong-guess feedback answering a user's guess —
 // appears instantly.
-const AUTO_MODALS = new Set<string>(['fileStructure', 'completion']);
+const AUTO_MODALS = new Set<string>(['completion']);
 
 function GameUI() {
   const {
@@ -58,20 +56,33 @@ function GameUI() {
   } = useGame();
   const { foundProblems, hasSeenTitle, hasSeenWelcome } = gameState;
 
-  const [showFileStructure, setShowFileStructure] = useState(false);
-  const [fileStructureDone, setFileStructureDone] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [completionQueued, setCompletionQueued] = useState(false);
 
   // Only count main problems (not sub-problems) toward completion
   const mainProblemIds = problems.map(p => p.id);
   const foundMainCount = foundProblems.filter(id => mainProblemIds.includes(id)).length;
   const allFound = problems.length > 0 && foundMainCount >= problems.length;
 
-  // Show file structure dialog once all problems are found, before the win screen
-  const shouldShowFileStructure = allFound && !fileStructureDone && !showFileStructure;
-  if (shouldShowFileStructure) {
-    setShowFileStructure(true);
-  }
+  // Finding the last problem opens the project folder, so the player sees the
+  // finished project before the win screen arrives (the completion dialog's 1s
+  // AUTO_MODALS delay is what gives them that beat). Reorganizing the folders
+  // is no longer a step here: fixing "File/folder organization" does it at the
+  // moment the player earns it, like every other fix.
+  useEffect(() => {
+    if (!allFound || completionQueued) return;
+    setCompletionQueued(true);
+    dispatch({
+      type: 'OPEN_WINDOW',
+      window: {
+        id: 'project-folder',
+        title: LABELS.projectWindowTitle,
+        viewerType: 'folder',
+        ...computeProjectFolderLayout(),
+      },
+    });
+    setShowCompletion(true);
+  }, [allFound, completionQueued, dispatch]);
 
   // Decide which single modal is allowed on screen right now. Each dialog's
   // underlying "wants to show" state persists while it's suppressed, so it
@@ -84,7 +95,6 @@ function GameUI() {
     wrongGuess: showWrong || alreadyFoundName != null,
     bossIntro: bossIntroShowing,
     bossComplete: bossCompletionShowing,
-    fileStructure: showFileStructure,
     completion: showCompletion,
   };
   const activeModal = MODAL_ORDER.find(id => modalWants[id]) ?? null;
@@ -104,26 +114,6 @@ function GameUI() {
     }
     setVisibleModal(activeModal);
   }, [activeModal, visibleModal]);
-
-  const handleFileStructureDone = () => {
-    setShowFileStructure(false);
-    setFileStructureDone(true);
-
-    // Open the project folder so the player can see the new folder structure
-    dispatch({
-      type: 'OPEN_WINDOW',
-      window: {
-        id: 'project-folder',
-        title: LABELS.projectWindowTitle,
-        viewerType: 'folder',
-        ...computeProjectFolderLayout(),
-      },
-    });
-
-    // Queue the win screen. Its 1s AUTO_MODALS delay gives the player a beat to
-    // see the reorganized folder before the completion dialog appears.
-    setShowCompletion(true);
-  };
 
   const handleLookAtWork = () => {
     setShowCompletion(false);
@@ -145,9 +135,6 @@ function GameUI() {
       {visibleModal === 'wrongGuess' && <WrongGuessDialog />}
       {visibleModal === 'bossIntro' && <BossBattleIntro />}
       {visibleModal === 'bossComplete' && <BossBattleComplete />}
-      {visibleModal === 'fileStructure' && (
-        <FileStructureDialog onDone={handleFileStructureDone} />
-      )}
       {visibleModal === 'completion' && (
         <CompletionDialog onLookAtWork={handleLookAtWork} />
       )}

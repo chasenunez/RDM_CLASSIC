@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useGame, BOSS_FILE } from '../GameContext';
+import { getMissingArtifacts } from '../lib/matchTrigger';
+import { LABELS } from '../theme';
 
 export function ContextMenu() {
   const {
@@ -8,6 +10,7 @@ export function ContextMenu() {
     openProblemSelection,
     openFile,
     fileTree,
+    mapping,
     isBossBattleActive,
     reportBossError,
   } = useGame();
@@ -63,6 +66,28 @@ export function ContextMenu() {
     );
   }
 
+  // Empty space holds no file to inspect, so the only thing worth reporting
+  // there is something that *should* be present and isn't. Naming the artifact
+  // is the first half of the guess; the problem dialog asks for the second.
+  if (target.kind === 'desktop') {
+    const missing = getMissingArtifacts(mapping);
+    return (
+      <div className="context-menu" style={style} ref={menuRef} role="menu">
+        <div className="context-menu__heading">{LABELS.reportMissing}</div>
+        {missing.map(item => (
+          <div
+            key={item.name}
+            className="context-menu__item"
+            role="menuitem"
+            onClick={() => openProblemSelection({ kind: 'absence', name: item.name })}
+          >
+            {item.label}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   const isFile = target.kind === 'file';
 
   return (
@@ -90,7 +115,7 @@ export function ContextMenu() {
         role="menuitem"
         onClick={() => openProblemSelection(target)}
       >
-        Report a RDM problem…
+        {LABELS.reportProblem}
       </div>
     </div>
   );

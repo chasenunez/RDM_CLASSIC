@@ -27,7 +27,7 @@ export function ImageViewer({ filePath }: ImageViewerProps) {
       <img
         src={asset(`/files/sample_project/${encodeURIComponent(filePath)}`)}
         alt={filePath}
-        title="Right-click to report a RDM problem"
+        title="Right-click to report an RDM problem"
       />
     </div>
   );

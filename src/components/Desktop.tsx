@@ -13,7 +13,7 @@ import { MarkdownViewer } from './viewers/MarkdownViewer';
 import { FixViewer } from './viewers/FixViewer';
 import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
-import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS } from '../lib/fixActions';
+import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS, ORGANIZING_PROBLEM_ID } from '../lib/fixActions';
 import { centeredAt, computeProjectFolderLayout } from '../lib/layout';
 import { asset } from '../lib/asset';
 import { WINDOWS, ASSETS, LABELS, TRASH_GIFS } from '../theme';
@@ -179,7 +179,7 @@ function FolderView() {
   const folders = displayFiles.filter(e => e.type === 'folder');
 
   // Subfolder names that contain organized files (double-click opens them)
-  const organizeMap = FIX_ACTIONS['file-structure']?.organize ?? {};
+  const organizeMap = FIX_ACTIONS[ORGANIZING_PROBLEM_ID]?.organize ?? {};
   const openableFolders = new Set(Object.keys(organizeMap));
 
   return (

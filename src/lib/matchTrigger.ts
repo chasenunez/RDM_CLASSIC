@@ -33,14 +33,18 @@ export function matchSelectedProblem(
 ): MatchResult {
   const selectedEntry = mapping.problems.find(p => p.id === selectedId);
 
-  // Direct trigger match for the selected problem
+  // Direct trigger match for the selected problem.
+  //
+  // There used to be a fallback here accepting *any* absence-triggered problem
+  // whenever the player right-clicked empty space, because nothing in the UI
+  // could produce an 'absence' target. That made a third of the game free: you
+  // could claim the missing README, licence, and version control without ever
+  // working out which was which. The context menu now names the missing
+  // artifact (see getMissingArtifacts), so the ordinary trigger match below
+  // does the grading and the player has to pair artifact with problem.
   if (selectedEntry) {
     const direct = selectedEntry.triggers.some(t => matches(target, t));
     if (direct) return 'correct';
-
-    // Absence-triggered problems can be correctly reported from the desktop context
-    const hasAbsenceTrigger = selectedEntry.triggers.some(t => t.type === 'project-absence');
-    if (hasAbsenceTrigger && target.kind === 'desktop') return 'correct';
   }
 
   // Boss battle: check if the actual match is a sub-problem of the selected parent
@@ -55,6 +59,23 @@ export function matchSelectedProblem(
   }
 
   return 'no_problem';
+}
+
+/**
+ * Every artifact the project is missing, gathered from the `project-absence`
+ * triggers. Drives the "Report something missing" menu, so the menu and the
+ * grading rules always come from the same place in mapping.json.
+ */
+export function getMissingArtifacts(mapping: Mapping): { name: string; label: string }[] {
+  const seen = new Map<string, string>();
+  for (const problem of mapping.problems) {
+    for (const trigger of problem.triggers) {
+      if (trigger.type === 'project-absence' && !seen.has(trigger.name)) {
+        seen.set(trigger.name, trigger.label);
+      }
+    }
+  }
+  return [...seen].map(([name, label]) => ({ name, label }));
 }
 
 /**

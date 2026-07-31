@@ -64,7 +64,7 @@ export function BinaryViewer({ filePath }: BinaryViewerProps) {
       <div className="binary-viewer__meta">
         File: {filePath} | Size: {size} bytes
         <br />
-        Right-click to report a RDM problem (format issue, proprietary format, etc.)
+        Right-click to report an RDM problem (format issue, proprietary format, etc.)
       </div>
 
       {/* Text preview when readable — .dat files are actually ASCII */}

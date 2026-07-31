@@ -25,7 +25,7 @@
     {
       "id": "no-readme",
       "triggers": [
-        { "type": "project-absence", "name": "README" }
+        { "type": "project-absence", "name": "README.md", "label": "A README" }
       ],
       "matchRule": "any"
     },
@@ -155,14 +155,22 @@
     {
       "id": "no-license",
       "triggers": [
-        { "type": "project-absence", "name": "LICENSE.md" }
+        { "type": "project-absence", "name": "LICENSE.md", "label": "A licence" }
       ],
       "matchRule": "any"
     },
     {
       "id": "folder-organization",
+      "comment": "The absent artifact here is the structure itself, not a file. Named 'folders' so the missing-artifact menu can offer it alongside the real files.",
       "triggers": [
-        { "type": "project-absence", "name": ".git" }
+        { "type": "project-absence", "name": "folders", "label": "A folder structure" }
+      ],
+      "matchRule": "any"
+    },
+    {
+      "id": "no-version-control",
+      "triggers": [
+        { "type": "project-absence", "name": ".git", "label": "Version history (a Git repository)" }
       ],
       "matchRule": "any"
     }

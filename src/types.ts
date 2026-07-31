@@ -58,7 +58,8 @@ export interface LineTrigger {
 
 export interface AbsenceTrigger {
   type: 'project-absence';
-  name: string; // e.g. "README", "LICENSE", ".git"
+  name: string;   // stable id for the missing thing, e.g. "README.md", ".git", "folders"
+  label: string;  // how it reads in the "Report something missing" menu
 }
 
 export interface DesktopTrigger {

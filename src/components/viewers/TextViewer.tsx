@@ -39,7 +39,7 @@ export function TextViewer({ filePath }: TextViewerProps) {
                 target: { kind: 'line', path: filePath, line: lineNum },
               });
             }}
-            title="Right-click to report a RDM problem on this line"
+            title="Right-click to report an RDM problem on this line"
           >
             <span className="text-viewer__line-num">{lineNum}</span>
             <span className="text-viewer__line-text">{line}</span>

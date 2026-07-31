@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../GameContext';
+import { LABELS } from '../theme';
 
 /**
  * The game instructions, styled as a period-appropriate (mid-90s) AOL Instant
  * Messenger conversation from your past self. Lines appear one by one on a
- * short interval — the full conversation is on screen in under 5 seconds —
- * and the dialog is modal until the player clicks "Let's go!" (the Send
- * button; the × in the chrome bar is decorative, like a real IM you can't
- * escape).
+ * short interval, and the dialog is modal until the player dismisses it (the
+ * × in the chrome bar is decorative, like a real IM you can't escape).
+ *
+ * The button is never disabled. It used to wait for the last line, which meant
+ * a first-time player spent the opening of the game looking at a greyed-out
+ * button; now an impatient click brings the rest of the conversation in at
+ * once, and a second click starts the game.
  */
 
 const SCREEN_NAME = 'Lib4ri';
@@ -17,9 +21,10 @@ const CHAT_LINES: React.ReactNode[] = [
     and they&apos;re asking for the project files.</>,
   <><strong>YOUR MISSION:</strong> Use what you know about good research data
     management to find and fix every problem hiding in the project files.</>,
-  <><strong>HOW TO PLAY:</strong> Explore the file looking at (and within) files for any problems.</>,
-  <>To report a problem, right-click the file, data cell, or empty space where a file should be
-    and choose <em>"Report an RDM problem"</em>.</>,
+  <><strong>HOW TO PLAY:</strong> Explore the project. Look at the files, and inside them.</>,
+  <>Right-click a file, or a cell or line within one, and choose
+    <em> "{LABELS.reportProblem}"</em>. Right-click empty space to report something
+    the project is <em>missing</em>.</>,
   <>Each correct find reveals an explanation and checks it off the list in the
     upper left. Wrong guesses count against you, so be strategic!</>,
   <>Heads up: a messy data file is its own mini-game — you have to find
@@ -28,8 +33,10 @@ const CHAT_LINES: React.ReactNode[] = [
   <>Good luck. Your future self thanks you ;-)</>,
 ];
 
-// All lines are visible after CHAT_LINES.length * LINE_INTERVAL_MS ≈ 3.6s (< 5s).
-const LINE_INTERVAL_MS = 2500;
+// The first line shows immediately, so the whole conversation is up after
+// (CHAT_LINES.length - 1) * LINE_INTERVAL_MS, a little over five seconds.
+// Fast enough to read at a natural pace without stalling the start of play.
+const LINE_INTERVAL_MS = 900;
 
 export function WelcomeDialog() {
   const { dispatch } = useGame();
@@ -51,7 +58,11 @@ export function WelcomeDialog() {
     if (allShown) goRef.current?.focus();
   }, [shownCount, allShown]);
 
-  const dismiss = () => dispatch({ type: 'DISMISS_WELCOME' });
+  // One button, two jobs: catch up the conversation, then start the game.
+  const advance = () => {
+    if (allShown) dispatch({ type: 'DISMISS_WELCOME' });
+    else setShownCount(CHAT_LINES.length);
+  };
 
   return (
     <div className="dialog-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
@@ -78,11 +89,9 @@ export function WelcomeDialog() {
           <button
             ref={goRef}
             className="mac-button mac-button--default"
-            onClick={dismiss}
-            disabled={!allShown}
-            onKeyDown={e => { if (e.key === 'Enter') dismiss(); }}
+            onClick={advance}
           >
-            Let&apos;s go!
+            {allShown ? <>Let&apos;s go!</> : <>Skip ahead</>}
           </button>
         </div>
       </div>

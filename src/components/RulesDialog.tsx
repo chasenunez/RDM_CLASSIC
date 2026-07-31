@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { LABELS } from '../theme';
 
 interface RulesDialogProps {
   onClose: () => void;
@@ -28,16 +29,17 @@ export function RulesDialog({ onClose }: RulesDialogProps) {
             <ul style={{ lineHeight: 2.2, paddingLeft: '16px', marginBottom: '10px' }}>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 When you find a problem, <strong>Right-click</strong> (or long-press on touch) any file icon,
-                then choose <em>Report a RDM problem</em>.
+                then choose <em>{LABELS.reportProblem}</em>.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 <strong>Double-click</strong> a file to open it and inspect the contents.
                 Right-click individual lines or cells inside the viewer to report a problem in the file.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
-                To report items that are <em>missing</em> from the project,
-                right-click on the empty space in the folder, then choose
-                <em> Report missing artifact</em>.
+                Some problems are things that <em>aren't there</em>. Right-click the empty
+                space in the folder to get a list of what a good project should have,
+                and pick the one you think is missing. You still have to say which RDM
+                problem it is, so pick carefully.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 Each correct find reveals the explanation and marks it off on the checklist in the upper left of your screen.

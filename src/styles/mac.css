@@ -319,6 +319,16 @@
   margin: 2px 0;
 }
 
+/* Non-clickable caption above the list of missing artifacts, so the menu reads
+   as one question ("what's missing?") rather than a row of unrelated commands. */
+.context-menu__heading {
+  padding: 4px 12px;
+  color: #666666;
+  border-bottom: 1px solid #000000;
+  margin-bottom: 2px;
+  cursor: default;
+}
+
 .context-menu__arrow {
   font-size: 8px;
 }

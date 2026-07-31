@@ -60,10 +60,40 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     ],
   },
 
-  // File/folder organization is the whole-project fix: it drops in a Git repo so
-  // the project gains version control. The folder restructure itself is applied
-  // separately by the end-of-game file-structure step.
+  // Organising the project sorts the files the moment the player earns it,
+  // rather than deferring to a separate end-of-game step that re-taught the
+  // same lesson. Files land in subfolders by name via `organize` below.
   'folder-organization': {
+    remove: [],
+    archive: [],
+    add: [
+      { ...FOLDER, path: '_fix/data', name: 'data/', size: 0 },
+      { ...FOLDER, path: '_fix/manuscripts', name: 'manuscripts/', size: 0 },
+      { ...FOLDER, path: '_fix/code', name: 'code/', size: 0 },
+    ],
+    organize: {
+      // Matched *before* the file-formats csv conversion, so list the .xlsx
+      // names here even though they may render as .csv afterwards. README.md
+      // and LICENSE.md stay at the top level on purpose: that is where anyone
+      // opening the project looks first.
+      'data': [
+        'raw_alpine_soil_data.xlsx',
+        'soil samples.xlsx',
+        '20260315_AlpineSoil_Chem_v1.0.xlsx',
+        'fig1.png',
+        'microscopy_sample_12.png',
+      ],
+      'manuscripts': [
+        '20260501_AlpineSoil_Manuscript_v1.0.docx',
+        '20260501_AlpineSoil_Manuscript_v1.1.docx',
+      ],
+      'code': ['20260410_AlpineSoil_Analysis_v1.0.py'],
+    },
+  },
+
+  // Version control is its own lesson with its own payoff: the project gains a
+  // repository, so its history starts being recorded.
+  'no-version-control': {
     remove: [],
     archive: [],
     add: [
@@ -99,11 +129,14 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     ],
   },
 
+  // Applied when the player wins the boss battle. The messy spreadsheet is
+  // archived rather than deleted (raw data is never destroyed) and the cleaned,
+  // properly named copy takes its place in the project.
   'data-quality': {
     remove: ['soil samples.xlsx'],
     archive: ['soil samples.xlsx'],
     add: [
-      { ...XLSX_FILE, path: '_fix/20260315_AlpineSoil_Chem_v1.0.xlsx', name: '20260315_AlpineSoil_Chem_v1.0.xlsx', size: 6200 },
+      { ...XLSX_FILE, path: 'sample_project/20260315_AlpineSoil_Chem_v1.0.xlsx', name: '20260315_AlpineSoil_Chem_v1.0.xlsx', size: 18127 },
     ],
   },
 
@@ -132,26 +165,11 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     ],
   },
 
-  'file-structure': {
-    remove: [],
-    archive: [],
-    add: [
-      { ...FOLDER, path: '_fix/data', name: 'data/', size: 0 },
-      { ...FOLDER, path: '_fix/manuscripts', name: 'manuscripts/', size: 0 },
-      { ...FOLDER, path: '_fix/code', name: 'code/', size: 0 },
-    ],
-    organize: {
-      // Names are matched *before* the file-formats csv conversion, so list the
-      // .xlsx names here even though they may render as .csv afterwards.
-      'data': ['raw_alpine_soil_data.xlsx', 'soil samples.xlsx', 'fig1.png', 'microscopy_sample_12.png', '20260315_AlpineSoil_Chem_v1.0.xlsx'],
-      'manuscripts': [
-        '20260501_AlpineSoil_Manuscript_v1.0.docx',
-        '20260501_AlpineSoil_Manuscript_v1.1.docx',
-      ],
-      'code': ['20260410_AlpineSoil_Analysis_v1.0.py'],
-    },
-  },
 };
+
+// The problem whose fix sorts files into subfolders. Named once here so the
+// display logic and the folder-view double-click handler agree.
+export const ORGANIZING_PROBLEM_ID = 'folder-organization';
 
 // The interactive boss-battle spreadsheet keeps its .xlsx grid + viewer even
 // after the file-formats fix — converting it to CSV would break the minigame
@@ -186,10 +204,10 @@ export function computeDisplayFiles(
     ...uniqueAdd,
   ];
 
-  // If file-structure is fixed, reassign files into subfolder paths so they
+  // Once the project is organised, reassign files into subfolder paths so they
   // disappear from the root view and appear inside the subfolder windows.
-  if (fixedProblems.includes('file-structure')) {
-    const organizeMap = FIX_ACTIONS['file-structure']?.organize ?? {};
+  if (fixedProblems.includes(ORGANIZING_PROBLEM_ID)) {
+    const organizeMap = FIX_ACTIONS[ORGANIZING_PROBLEM_ID]?.organize ?? {};
     const nameToFolder: Record<string, string> = {};
     for (const [folder, names] of Object.entries(organizeMap)) {
       for (const name of names) nameToFolder[name] = folder;
