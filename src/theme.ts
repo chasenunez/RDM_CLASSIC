@@ -1,10 +1,10 @@
 /**
- * theme.ts — central place for AESTHETIC / LAYOUT choices.
+ * theme.ts: central place for AESTHETIC / LAYOUT choices.
  *
  * Change things here to re-skin the game without hunting through components:
- *   • WINDOWS  — default size of each kind of window
- *   • ASSETS   — image paths for the desktop background and desktop icons
- *   • LABELS   — the project's display name
+ *   • WINDOWS: default size of each kind of window
+ *   • ASSETS: image paths for the desktop background and desktop icons
+ *   • LABELS: the project's display name and UI command names
  *
  * Other aesthetics live in dedicated files:
  *   • Colours / chrome → src/styles/mac.css  (see the :root palette at the top)
@@ -16,7 +16,7 @@ import { asset } from './lib/asset';
 
 /**
  * Default width/height for each window type, in px. The project-folder
- * window is sized dynamically instead — see computeProjectFolderLayout().
+ * window is sized dynamically instead; see computeProjectFolderLayout().
  */
 export const WINDOWS = {
   fileViewer:      { width: 540, height: 360 },
@@ -39,7 +39,7 @@ export const TRASH_GIFS = [
 /** Image paths (served from public/). Swap these to change the logo / icons. */
 export const ASSETS = {
   desktopBackgroundLogo: asset('/assets/LDW_DIGITAL_LIB4RI.png'),
-  // Hero art for the opening title slide (click-to-start). Placeholder for now —
+  // Hero art for the opening title slide (click-to-start). Placeholder for now:
   // swap public/assets/title_hero.png for the final artwork.
   titleHero:             asset('/assets/title_hero.png'),
   // Desktop project icon: "on fire" while problems remain, calms down to a

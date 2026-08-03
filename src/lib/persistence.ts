@@ -11,7 +11,7 @@ export function loadState(): PersistedState | null {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    // Validate minimum shape — reject states from incompatible older versions
+    // Validate minimum shape: reject states from incompatible older versions
     if (
       !Array.isArray(parsed.foundProblems) ||
       !Array.isArray(parsed.openWindows) ||
@@ -32,7 +32,7 @@ export function saveState(state: PersistedState): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
-    // Storage quota exceeded or private mode — ignore
+    // Storage quota exceeded or private mode, ignore
   }
 }
 

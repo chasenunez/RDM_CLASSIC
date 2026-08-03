@@ -25,7 +25,7 @@ function toHexRows(buf: Uint8Array, bytesPerRow = 16) {
   return rows;
 }
 
-// Preview limit — show first 64 bytes as hex + first 20 lines as text (if ASCII)
+// Preview limit: show first 64 bytes as hex + first 20 lines as text (if ASCII)
 const PREVIEW_BYTES = 64;
 
 export function BinaryViewer({ filePath }: BinaryViewerProps) {
@@ -40,7 +40,7 @@ export function BinaryViewer({ filePath }: BinaryViewerProps) {
     try {
       textPreview = new TextDecoder('utf-8', { fatal: true }).decode(bytes).split('\n').slice(0, 20);
     } catch {
-      // Not valid UTF-8 — hex only
+      // Not valid UTF-8, hex only
     }
     return { hexRows: toHexRows(bytes.slice(0, PREVIEW_BYTES)), textPreview, size: bytes.length };
   }, [buf]);
@@ -67,7 +67,7 @@ export function BinaryViewer({ filePath }: BinaryViewerProps) {
         Right-click to report an RDM problem (format issue, proprietary format, etc.)
       </div>
 
-      {/* Text preview when readable — .dat files are actually ASCII */}
+      {/* Text preview when readable: .dat files are actually ASCII */}
       {textPreview.length > 0 && (
         <>
           <div className="binary-viewer__meta" style={{ color: '#ffaa00', marginTop: '8px' }}>

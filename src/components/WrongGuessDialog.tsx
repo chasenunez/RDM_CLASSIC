@@ -34,11 +34,11 @@ export function WrongGuessDialog() {
   } else if (wrongKind === 'wrong_problem') {
     icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'Something IS wrong here…';
-    body = 'You\'ve spotted a real RDM problem — but you\'ve labeled it incorrectly. Take another look and try a different category.';
+    body = 'You\'ve spotted a real RDM problem, but you\'ve labeled it incorrectly. Take another look and try a different category.';
   } else {
     icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'Looks fine here.';
-    body = 'This one checks out. Not everything in the project is broken — some files (a well-named script, say) are perfectly good. Keep exploring: open files and right-click the cells or lines inside them.';
+    body = 'This one checks out. Not everything in the project is broken; some files (a well-named script, say) are perfectly good. Keep exploring: open files and right-click the cells or lines inside them.';
   }
 
   return (

@@ -172,7 +172,7 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
 export const ORGANIZING_PROBLEM_ID = 'folder-organization';
 
 // The interactive boss-battle spreadsheet keeps its .xlsx grid + viewer even
-// after the file-formats fix — converting it to CSV would break the minigame
+// after the file-formats fix; converting it to CSV would break the minigame
 // (its cell coordinates in mapping.json and the XlsxViewer boss handling both
 // key off the "soil samples.xlsx" name). Every other .xlsx is converted.
 const CSV_CONVERSION_EXEMPT = new Set(['soil samples.xlsx']);

@@ -28,7 +28,7 @@ export function CsvViewer({ filePath }: CsvViewerProps) {
         <tbody>
           {rows.map((row, rowIdx) => {
             // Rows 0 and 1 in soil_samples_preview.csv are project metadata
-            // (title + note), not actual data rows — styled differently so
+            // (title + note), not actual data rows, styled differently so
             // players notice the structural violation.
             const isMeta = filePath === 'soil_samples_preview.csv' && rowIdx < 2;
 
@@ -48,7 +48,7 @@ export function CsvViewer({ filePath }: CsvViewerProps) {
                           target: { kind: 'cell', path: filePath, row: rowIdx, col: colIdx },
                         });
                       }}
-                      title={`Row ${rowIdx}, Col ${colIdx} — right-click to report`}
+                      title={`Row ${rowIdx}, Col ${colIdx}: right-click to report`}
                     >
                       {cell}
                     </td>

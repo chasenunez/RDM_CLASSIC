@@ -54,7 +54,7 @@ export function ProblemReportDialog() {
         </h2>
         {!showFix && activeParentId && (
           <p style={{ fontFamily: 'var(--font-pixel)', fontSize: '7px', color: '#666', marginBottom: 8 }}>
-            Boss Battle: Data Quality issue — find all {bossTotalErrors} to complete!
+            Boss Battle: Data Quality issue. Find all {bossTotalErrors} to complete!
           </p>
         )}
 

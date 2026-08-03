@@ -1,5 +1,5 @@
 /**
- * Procedural sounds via Web Audio API — no external WAV files needed.
+ * Procedural sounds via Web Audio API; no external WAV files needed.
  * All sounds are generated at runtime so the game ships self-contained.
  *
  * To replace with real samples: drop .wav files in /public/sounds/ and
@@ -11,7 +11,7 @@ function ctx(): AudioContext {
   return new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
 }
 
-/** Short ascending chime — correct find */
+/** Short ascending chime: correct find */
 export function playChime(): void {
   try {
     const ac = ctx();
@@ -32,11 +32,11 @@ export function playChime(): void {
       osc.stop(t + 0.3);
     });
   } catch {
-    // AudioContext blocked or unsupported — silent fallback
+    // AudioContext blocked or unsupported: silent fallback
   }
 }
 
-/** Low thud — wrong guess */
+/** Low thud: wrong guess */
 export function playBonk(): void {
   try {
     const ac = ctx();
@@ -57,7 +57,7 @@ export function playBonk(): void {
   }
 }
 
-/** Sosumi — boss battle triggered */
+/** Sosumi: boss battle triggered */
 export function playSosumi(): void {
   try {
     const ac = ctx();
@@ -80,7 +80,7 @@ export function playSosumi(): void {
   }
 }
 
-/** Victory fanfare — all problems found */
+/** Victory fanfare: all problems found */
 export function playFanfare(): void {
   try {
     const ac = ctx();

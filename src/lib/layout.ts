@@ -2,7 +2,7 @@
 // centering and drag-clamping agree.
 export const MENU_BAR_H = 30;
 
-// .desktop is `position: fixed; inset: 20px 0 0 0` (mac.css) — windows are
+// .desktop is `position: fixed; inset: 20px 0 0 0` (mac.css). Windows are
 // absolutely positioned inside it, so a window's `top` is relative to that
 // 20px inset, not the viewport. Anything computing a *viewport*-relative Y
 // (e.g. "N px below the menu bar") must subtract this before storing it as
@@ -38,7 +38,7 @@ const CHROME_GAP = 24;
  * Size and position the project-folder window so it fills the space
  * between the sticky-note checklist (top-left) and the desktop icons
  * (top-right) without overlapping either, with equal top/bottom margins so
- * the desktop wallpaper stays visible above and below it — except height is
+ * the desktop wallpaper stays visible above and below it, except height is
  * capped at width (never a taller-than-wide window), which only eats into
  * the bottom margin; x, y, and width are unaffected by that cap.
  */
@@ -52,7 +52,7 @@ export function computeProjectFolderLayout(): { x: number; y: number; width: num
 
   // Available space below the menu bar, in viewport coordinates. `y` is
   // derived from the equal-margins height so the top position doesn't shift
-  // when the height cap below kicks in — any space the cap frees up is left
+  // when the height cap below kicks in; any space the cap frees up is left
   // for the bottom margin only.
   const availableH = viewH - MENU_BAR_H;
   const equalMarginsHeight = Math.max(MIN_WINDOW_HEIGHT, availableH - CHROME_GAP * 2);

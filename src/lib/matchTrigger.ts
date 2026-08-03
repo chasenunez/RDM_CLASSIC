@@ -20,9 +20,9 @@ export function matchTrigger(target: ContextTarget, mapping: Mapping): string | 
  * determine whether the selection is correct, wrong, or the target has no problem.
  *
  * Returns:
- *  'correct'       — selectedId matches the actual trigger for this target
- *  'wrong_problem' — target DOES have a problem, but a different one than selected
- *  'no_problem'    — target has no associated problem
+ *  'correct':       selectedId matches the actual trigger for this target
+ *  'wrong_problem': target DOES have a problem, but a different one than selected
+ *  'no_problem':    target has no associated problem
  */
 export type MatchResult = 'correct' | 'wrong_problem' | 'no_problem';
 

@@ -3,7 +3,7 @@ import { asset } from '../lib/asset';
 import { ASSETS, LABELS } from '../theme';
 
 /**
- * Opening title slide — a large windowed "click anywhere to start" screen that
+ * Opening title slide: a large windowed "click anywhere to start" screen that
  * appears before the WelcomeDialog instructions. Mirrors the boss-battle intro
  * in structure/behaviour: a centered window (not full-screen) that dismisses on
  * any click, revealing the intro slide underneath.
@@ -17,7 +17,7 @@ export function TitleSlide() {
       className="title-slide-overlay"
       role="button"
       tabIndex={0}
-      aria-label={`${LABELS.projectWindowTitle} — click to start`}
+      aria-label={`${LABELS.projectWindowTitle}: click to start`}
       onClick={start}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') start(); }}
     >

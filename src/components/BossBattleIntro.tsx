@@ -10,7 +10,7 @@ export function BossBattleIntro() {
   return (
     <div className="boss-intro-overlay" onClick={dismissBossIntro} role="button" tabIndex={0}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') dismissBossIntro(); }}
-      aria-label="Boss Battle intro — click to start"
+      aria-label="Boss Battle intro: click to start"
     >
       <div className="boss-intro-window">
         <div className="dialog__chrome-bar">

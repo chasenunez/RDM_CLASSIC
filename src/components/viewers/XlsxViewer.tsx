@@ -119,7 +119,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
 
-      {/* Error counter — upper right, only during active boss battle */}
+      {/* Error counter, upper right, only during active boss battle */}
       {isBoss && !bossFileFixed && (
         <div className="boss-error-counter">
           {errorsRemaining > 0
@@ -147,7 +147,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
       {isBoss && !bossFileFixed && (
         <div className="xlsx-boss-hint">
           <img src={asset('/assets/dead_mac.png')} alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
-          Boss Battle — find all {bossTotalErrors} data quality issues! Right-click
+          Boss Battle: find all {bossTotalErrors} data quality issues! Right-click
           (or long-press) suspicious cells.
         </div>
       )}
@@ -201,7 +201,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
                             target: { kind: 'cell', path: filePath, row: rowIdx, col: colIdx },
                           });
                         }}
-                        title={canRightClick ? `Row ${rowIdx}, Col ${colIdx} — right-click or long-press to report` : undefined}
+                        title={canRightClick ? `Row ${rowIdx}, Col ${colIdx}: right-click or long-press to report` : undefined}
                       >
                         {cell}
                       </Tag>

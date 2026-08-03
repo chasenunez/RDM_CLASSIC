@@ -268,7 +268,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const dismissBossIntro = useCallback(() => setBossIntroShowing(false), []);
 
-  // Direct boss error report — skips the problem selection dialog
+  // Direct boss error report: skips the problem selection dialog
   const reportBossError = useCallback(
     (target: ContextTarget) => {
       setContextMenu(null);
@@ -498,7 +498,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       // Apply the file-system side effects of the fix. A fix replaces messy
       // files with improved ones (see FIX_ACTIONS). If the user was reading one
       // of the replaced files, its window would otherwise linger showing stale
-      // content — so close it and surface the improved replacement in its place.
+      // content, so close it and surface the improved replacement in its place.
       // If the file wasn't open, we leave the desktop alone: don't pop open a
       // window the user never asked for.
       const action = FIX_ACTIONS[fixProblemId];

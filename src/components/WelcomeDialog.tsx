@@ -28,7 +28,7 @@ const CHAT_LINES: React.ReactNode[] = [
     is actually gone.</>,
   <>Each correct find reveals an explanation and checks it off the list in the
     upper left. Wrong guesses count against you, so be strategic!</>,
-  <>Heads up: a messy data file is its own mini-game — you have to find
+  <>Heads up: a messy data file is its own mini-game. You have to find
     <em> every</em> problem inside it before it gets cleaned up. (Files and folders
     out in the project get sorted one at a time as you find them.)</>,
   <>Good luck. Your future self thanks you ;-)</>,
@@ -56,10 +56,14 @@ export function WelcomeDialog() {
   // focus on mount: Enter skips ahead, then Enter again starts the game.
   useEffect(() => { goRef.current?.focus(); }, []);
 
-  // Keep the newest message in view as the conversation fills in.
+  // Normally the whole conversation fits and there is nothing to scroll. Only
+  // on a viewport short enough to hit the log's max-height do we follow the
+  // newest line down, and even then we never scroll past it.
   useEffect(() => {
     const log = logRef.current;
-    if (log) log.scrollTop = log.scrollHeight;
+    if (!log || log.scrollHeight <= log.clientHeight) return;
+    const newest = log.children[shownCount - 1] as HTMLElement | undefined;
+    newest?.scrollIntoView({ block: 'nearest' });
   }, [shownCount]);
 
   // One button, two jobs: catch up the conversation, then start the game.
@@ -75,13 +79,21 @@ export function WelcomeDialog() {
         <div className="dialog__chrome-bar">
           <button className="window__close" aria-hidden="true" tabIndex={-1}>×</button>
           <span className="window__title" id="welcome-title">
-            Instant Message — {SCREEN_NAME}
+            Instant Message from {SCREEN_NAME}
           </span>
         </div>
 
         <div className="aim-chat__log" ref={logRef} aria-live="polite">
-          {CHAT_LINES.slice(0, shownCount).map((line, i) => (
-            <p className="aim-chat__line" key={i}>
+          {/* Every line is rendered from the start; the ones not yet said are
+              invisible but still take up their space, so the window opens at
+              its full height and the whole conversation is readable at once
+              without the box growing or scrolling as lines arrive. */}
+          {CHAT_LINES.map((line, i) => (
+            <p
+              className={`aim-chat__line${i < shownCount ? '' : ' aim-chat__line--pending'}`}
+              key={i}
+              aria-hidden={i < shownCount ? undefined : true}
+            >
               <span className="aim-chat__screenname">{SCREEN_NAME}: </span>
               {line}
             </p>

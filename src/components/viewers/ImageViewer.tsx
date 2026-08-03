@@ -15,7 +15,7 @@ export function ImageViewer({ filePath }: ImageViewerProps) {
       showContextMenu({
         x: e.clientX,
         y: e.clientY,
-        // Image files are file-level triggers (format violation — lossy jpeg, etc.)
+        // Image files are file-level triggers (format violation: lossy jpeg, etc.)
         target: { kind: 'file', path: filePath },
       });
     },
