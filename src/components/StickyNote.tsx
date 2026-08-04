@@ -22,7 +22,9 @@ export function StickyNote() {
               className={`sticky-note__checkbox${found ? ' checked' : partiallyFound ? ' partial' : ''}`}
               aria-hidden="true"
             >
-              {found ? '✓' : partiallyFound ? '…' : ''}
+              {/* A found item's tick is drawn by CSS, since the pixel font has
+                  no check-mark glyph. Only the part-done marker is text. */}
+              {partiallyFound ? '…' : ''}
             </div>
             <span className={`sticky-note__label${found ? ' found' : ''}`}>
               {p.name}

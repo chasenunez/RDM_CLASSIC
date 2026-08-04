@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useGame } from '../GameContext';
 import { Window } from './Window';
 import { FileIcon } from './FileIcon';
 import { BreakableLabel } from './BreakableLabel';
 import { StickyNote } from './StickyNote';
+import { GitFolderDialog } from './GitFolderDialog';
 import { TextViewer } from './viewers/TextViewer';
 import { CsvViewer } from './viewers/CsvViewer';
 import { XlsxViewer } from './viewers/XlsxViewer';
@@ -12,7 +13,7 @@ import { BinaryViewer } from './viewers/BinaryViewer';
 import { MarkdownViewer } from './viewers/MarkdownViewer';
 import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
-import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS, ORGANIZING_PROBLEM_ID } from '../lib/fixActions';
+import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS, ORGANIZING_PROBLEM_ID, GIT_FOLDER_NAME } from '../lib/fixActions';
 import { centeredAt, computeProjectFolderLayout } from '../lib/layout';
 import { asset } from '../lib/asset';
 import { WINDOWS, ASSETS, LABELS, TRASH_GIFS } from '../theme';
@@ -142,6 +143,10 @@ function ViewerForWindow({ win }: { win: WindowState }) {
 
 function FolderView() {
   const { gameState, fileTree, dispatch } = useGame();
+  // Clicking .git explains itself rather than opening. Local state, like the
+  // Rules dialog: it answers a click on the folder and never competes with the
+  // game's own modal sequence, which blocks the desktop while it is up.
+  const [showGitInfo, setShowGitInfo] = useState(false);
   const displayFiles = computeDisplayFiles(fileTree, gameState.fixedProblems);
   const archiveFiles = computeArchiveFiles(fileTree, gameState.fixedProblems);
   const showArchive = archiveFiles.length > 0;
@@ -189,15 +194,29 @@ function FolderView() {
       {folders.map(entry => {
         const folderKey = entry.name.replace(/\/$/, '');
         const isOpenable = openableFolders.has(folderKey);
+        const isGit = entry.name === GIT_FOLDER_NAME;
+        // .git answers a single click as well as a double, because it is the one
+        // folder here that does not open, and a dead icon invites clicking twice
+        // and concluding it is broken.
+        const activate = isGit
+          ? () => setShowGitInfo(true)
+          : isOpenable
+            ? () => openSubfolder(folderKey)
+            : undefined;
         return (
           <div
             key={entry.path}
             className="file-icon"
             role="button"
             tabIndex={0}
-            aria-label={`Folder: ${entry.name}${isOpenable ? ' (double-click to open)' : ''}`}
-            onDoubleClick={isOpenable ? () => openSubfolder(folderKey) : undefined}
-            onKeyDown={isOpenable ? e => { if (e.key === 'Enter') openSubfolder(folderKey); } : undefined}
+            aria-label={
+              isGit
+                ? 'Folder: .git (click to find out what is in it)'
+                : `Folder: ${entry.name}${isOpenable ? ' (double-click to open)' : ''}`
+            }
+            onClick={isGit ? activate : undefined}
+            onDoubleClick={activate}
+            onKeyDown={activate ? e => { if (e.key === 'Enter') activate(); } : undefined}
           >
             <img
               className="file-icon__image"
@@ -213,6 +232,8 @@ function FolderView() {
       {direct.map(entry => (
         <FileIcon key={entry.path} entry={entry} />
       ))}
+
+      {showGitInfo && <GitFolderDialog onClose={() => setShowGitInfo(false)} />}
 
       {showArchive && (
         <div

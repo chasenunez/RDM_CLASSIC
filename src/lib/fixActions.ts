@@ -171,6 +171,10 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
 // display logic and the folder-view double-click handler agree.
 export const ORGANIZING_PROBLEM_ID = 'folder-organization';
 
+// The repository folder added by the no-version-control fix. Named here so the
+// folder view can recognise it and explain itself when clicked.
+export const GIT_FOLDER_NAME = '.git/';
+
 // The interactive boss-battle spreadsheet keeps its .xlsx grid + viewer even
 // after the file-formats fix; converting it to CSV would break the minigame
 // (its cell coordinates in mapping.json and the XlsxViewer boss handling both

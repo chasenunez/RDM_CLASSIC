@@ -3,7 +3,6 @@ import * as XLSX from 'xlsx';
 import { useGame, BOSS_FILE } from '../../GameContext';
 import { useFileContent } from '../../lib/useFileContent';
 import { useLongPressWithin } from '../../lib/longPress';
-import { asset } from '../../lib/asset';
 
 interface XlsxViewerProps {
   filePath: string;
@@ -146,8 +145,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
 
       {isBoss && !bossFileFixed && (
         <div className="xlsx-boss-hint">
-          <img src={asset('/assets/dead_mac.png')} alt="" style={{ width: 12, height: 12, imageRendering: 'pixelated', verticalAlign: 'middle', marginRight: 4 }} />
-          Boss Battle: find all {bossTotalErrors} data quality issues! Right-click
+          Minigame: find all {bossTotalErrors} data quality issues! Right-click
           (or long-press) suspicious cells.
         </div>
       )}

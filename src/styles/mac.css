@@ -738,8 +738,11 @@
 }
 
 .sticky-note__checkbox {
-  width: 10px;
-  height: 10px;
+  /* 12px with border-box leaves a 10px interior, enough for the tick below to
+     sit clear of the border. At 10px the interior was only 8px and the mark
+     was drawn over its own frame. */
+  width: 12px;
+  height: 12px;
   border: 1px solid #333333;
   background: #ffffff;
   flex-shrink: 0;
@@ -747,8 +750,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 8px;
   line-height: 1;
+}
+
+/* The tick is drawn, not typed. Press Start 2P has no U+2713, so a literal ✓
+   fell back to whatever monospace the OS offers: a different weight to the rest
+   of the UI, and sized to a line box taller than the box holding it. A rotated
+   border is always the right size and always the right style. */
+.sticky-note__checkbox.checked::after {
+  content: '';
+  width: 3px;
+  height: 6px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
 }
 
 .sticky-note__checkbox.checked {
@@ -1192,7 +1208,9 @@
 .sticky-note__checkbox.partial {
   background: #ffaa00;
   color: #000000;
-  font-size: 10px;
+  /* Inherits the 8px set on .sticky-note__checkbox. This rule used to restate
+     10px, which filled the box edge to edge and left the ellipsis touching
+     the frame. */
 }
 
 .sticky-note__sub-progress {
