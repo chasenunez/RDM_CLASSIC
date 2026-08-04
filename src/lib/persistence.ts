@@ -22,6 +22,7 @@ export function loadState(): PersistedState | null {
     }
     // Default fields added in later versions so older saves stay valid.
     if (typeof parsed.hasSeenTitle !== 'boolean') parsed.hasSeenTitle = false;
+    if (typeof parsed.hasOpenedTrash !== 'boolean') parsed.hasOpenedTrash = false;
     return parsed as PersistedState;
   } catch {
     return null;

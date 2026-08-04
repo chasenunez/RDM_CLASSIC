@@ -57,6 +57,25 @@
   background: rgba(0, 0, 0, 0.12);
 }
 
+/* A nudge for the Trash when it holds the last unfound problem. The rattle sits
+   at the start of a 10s cycle and the whole animation is delayed 5s, so the
+   first shake lands five seconds after the class is applied and every ten
+   seconds after that. No timer in JS: add the class and it starts, remove it
+   and it stops. */
+@keyframes trash-nudge {
+  0%, 9%, 100% { transform: translateX(0); }
+  1.5%, 4.5%, 7.5% { transform: translateX(-3px); }
+  3%, 6% { transform: translateX(3px); }
+}
+
+.desktop-icon--nudge {
+  animation: trash-nudge 10s ease-in-out 5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-icon--nudge { animation: none; }
+}
+
 .desktop-icon__image {
   width: 84px;
   height: 84px;
@@ -201,7 +220,7 @@
 
 /* Title bar — active: fine horizontal stripes; inactive: plain white */
 .window__title-bar {
-  height: 18px;
+  height: 25px;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -234,7 +253,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 15px;
   line-height: 1;
 }
 
@@ -286,6 +305,10 @@
   border: 1px solid #000000;
   box-shadow: 2px 2px 0 #000000;
   min-width: 160px;
+  /* Last resort on a viewport too narrow for the widest label. The corner
+     anchoring in ContextMenu.tsx keeps the menu on screen everywhere else. */
+  max-width: calc(100vw - 16px);
+  overflow-x: auto;
   z-index: 800;
   user-select: none;
 }
@@ -322,15 +345,19 @@
 /* Non-clickable caption above the list of missing artifacts, so the menu reads
    as one question ("what's missing?") rather than a row of unrelated commands. */
 .context-menu__heading {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  line-height: 1.4;
   padding: 4px 12px;
   color: #666666;
   border-bottom: 1px solid #000000;
   margin-bottom: 2px;
   cursor: default;
+  white-space: nowrap;
 }
 
 .context-menu__arrow {
-  font-size: 8px;
+  font-size: 10px;
 }
 
 /* Submenu container */
@@ -383,7 +410,7 @@
 
 .dialog__title {
   font-family: var(--font-pixel);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: normal;
   margin-bottom: 16px;
   padding-bottom: 8px;
@@ -434,7 +461,7 @@
 
 .dialog__body {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   line-height: 2;
   margin-bottom: 16px;
 }
@@ -457,10 +484,10 @@
    game's pixel font, so the chat text does too. */
 .aim-chat__log {
   background: #ffffff;
-  font-family: Geneva, Verdana, Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  line-height: 1.5;
-  padding: 10px 12px;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  line-height: 1.6;
+  padding: 12px 12px;
   max-height: calc(100vh - 200px);
   overflow-y: auto;
 }
@@ -498,9 +525,20 @@
   min-height: 34px;
 }
 
-.aim-chat__compose .mac-button:disabled {
-  opacity: 0.4;
-  cursor: default;
+/* A slow pulse on the Next button, so it reads as the thing to click while the
+   conversation is still going. Animating the shadow and not the geometry keeps
+   the button from nudging the compose row as it breathes. */
+@keyframes button-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.30); }
+  50%      { box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.16); }
+}
+
+.mac-button--pulse {
+  animation: button-pulse 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mac-button--pulse { animation: none; }
 }
 
 /* Rendered markdown inside dialogs */
@@ -515,7 +553,7 @@
 .dialog__markdown p {
   margin-bottom: 8px;
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   line-height: 2;
 }
 
@@ -527,7 +565,7 @@
 
 .dialog__markdown li {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   line-height: 2;
   list-style: disc;
   margin-bottom: 2px;
@@ -571,7 +609,7 @@
 .dialog__markdown table {
   border-collapse: collapse;
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   margin-bottom: 8px;
   width: 100%;
 }
@@ -590,7 +628,7 @@
 /* Dialog section headings (What's wrong / Why / Fix) */
 .dialog__section-label {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: bold;
   margin-top: 12px;
   margin-bottom: 4px;
@@ -610,14 +648,14 @@
 
 .dialog__resources-title {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: bold;
   margin-bottom: 6px;
 }
 
 .dialog__resource-link {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   display: block;
   margin-bottom: 3px;
   color: #0000cc;
@@ -672,7 +710,7 @@
   top: 16px;
   left: 16px;
   width: 300px;
-  background: #ffffcc;
+  background: #e7e1c5;
   border: 1px solid #888888;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
   padding: 10px;
@@ -682,7 +720,7 @@
 
 .sticky-note__title {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: bold;
   margin-bottom: 8px;
   padding-bottom: 4px;
@@ -695,7 +733,7 @@
   gap: 6px;
   margin-bottom: 5px;
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   line-height: 1.6;
 }
 
@@ -709,7 +747,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1;
 }
 
@@ -729,7 +767,7 @@
 
 .sticky-note__counter {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   margin-top: 8px;
   padding-top: 6px;
   border-top: 1px solid #888888;
@@ -799,7 +837,7 @@
 
 .file-icon__label {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   text-align: center;
   margin-top: 4px;
   /* Break at underscores/spaces (see <wbr> in BreakableLabel) rather than
@@ -834,7 +872,7 @@
 
 .text-viewer {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1.5;
   padding: 0;
   height: 100%;
@@ -859,12 +897,12 @@
   min-width: 28px;
   text-align: right;
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .text-viewer__line-text {
   flex: 1;
-  font-size: 13px;
+  font-size: 10px;
 }
 
 /* Highlight specific lines that are right-click targets for game triggers */
@@ -884,7 +922,7 @@
 .table-viewer table {
   border-collapse: collapse;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 15px;
   white-space: nowrap;
 }
 
@@ -902,7 +940,7 @@
 .table-viewer th {
   background: #eeeeee;
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -942,7 +980,7 @@
 
 .sheet-tab {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   padding: 4px 10px;
   border: 1px solid #000000;
   border-bottom: none;
@@ -978,7 +1016,7 @@
 
 .binary-viewer {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 10px;
   padding: 8px;
   height: 100%;
   overflow: auto;
@@ -989,7 +1027,7 @@
 .binary-viewer__meta {
   color: #aaaaaa;
   margin-bottom: 8px;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .binary-viewer__row {
@@ -1045,7 +1083,7 @@
 
 .right-click-hint {
   font-family: var(--font-pixel);
-  font-size: 6px;
+  font-size: 10px;
   color: rgba(0, 0, 0, 0.5);
   position: absolute;
   bottom: 2px;
@@ -1058,7 +1096,7 @@
 .score-chip {
   display: inline-block;
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   padding: 3px 8px;
   border: 1px solid #000000;
   margin: 4px 2px;
@@ -1092,7 +1130,7 @@
 
 .problem-tab {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   padding: 4px 8px;
   border: 1px solid #000000;
   border-bottom: none;
@@ -1131,7 +1169,7 @@
   justify-content: space-between;
   text-align: left;
   padding: 5px 10px;
-  font-size: 9px;
+  font-size: 10px;
   cursor: pointer;
 }
 
@@ -1141,7 +1179,7 @@
 
 .problem-selection-item__badge {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   background: #ffaa00;
   color: #000;
   padding: 1px 5px;
@@ -1154,11 +1192,11 @@
 .sticky-note__checkbox.partial {
   background: #ffaa00;
   color: #000000;
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .sticky-note__sub-progress {
-  font-size: 7px;
+  font-size: 8px;
   color: #888888;
   margin-left: 2px;
 }
@@ -1170,7 +1208,7 @@
   height: 100%;
   overflow-y: auto;
   font-family: Georgia, serif;
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1.6;
   color: #111111;
   cursor: default;
@@ -1178,7 +1216,7 @@
 
 .markdown-viewer h1 {
   font-family: var(--font-pixel);
-  font-size: 11px;
+  font-size: 10px;
   border-bottom: 2px solid #000000;
   padding-bottom: 6px;
   margin: 0 0 12px;
@@ -1186,7 +1224,7 @@
 
 .markdown-viewer h2 {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   margin: 16px 0 6px;
   border-left: 3px solid #000000;
   padding-left: 8px;
@@ -1194,7 +1232,7 @@
 
 .markdown-viewer h3 {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   margin: 12px 0 4px;
 }
 
@@ -1209,7 +1247,7 @@
 
 .markdown-viewer table {
   border-collapse: collapse;
-  font-size: 11px;
+  font-size: 10px;
   margin: 8px 0;
   width: 100%;
 }
@@ -1226,7 +1264,7 @@
 
 .markdown-viewer code {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   background: #f0f0f0;
   padding: 1px 3px;
 }
@@ -1236,7 +1274,7 @@
   border: 1px solid #cccccc;
   padding: 8px;
   overflow-x: auto;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .markdown-viewer del {
@@ -1322,7 +1360,7 @@
 
 .boss-intro__subtitle {
   font-family: var(--font-pixel);
-  font-size: 11px;
+  font-size: 10px;
   color: #000000;
   margin-top: 24px;
   text-align: center;
@@ -1330,7 +1368,7 @@
 
 .boss-intro__click-hint {
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   color: #444444;
   margin-top: 12px;
   animation: boss-blink 1s step-start infinite;
@@ -1396,10 +1434,10 @@
 
 .boss-error-counter {
   position: absolute;
-  top: 4px;
+  bottom: 8px;
   right: 8px;
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 10px;
   background: #000000;
   color: #ffffff;
   padding: 3px 8px;
@@ -1412,7 +1450,7 @@
 
 .xlsx-fixed-banner {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   background: #e8f5e9;
   border: 1px solid #4caf50;
   color: #1b5e20;
@@ -1424,7 +1462,7 @@
 
 .xlsx-boss-hint {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: 10px;
   background: #fff3cd;
   border: 1px solid #ffc107;
   padding: 4px 8px;

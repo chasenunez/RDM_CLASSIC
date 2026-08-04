@@ -17,9 +17,13 @@ import { centeredAt, computeProjectFolderLayout } from '../lib/layout';
 import { asset } from '../lib/asset';
 import { WINDOWS, ASSETS, LABELS, TRASH_GIFS } from '../theme';
 
+// The problem whose evidence lives in the Trash. Shared by the Trash view and
+// the desktop icon's nudge so they cannot disagree about which one it is.
+export const TRASH_PROBLEM_ID = 'no-backup';
+
 function TrashView() {
   const { showContextMenu, gameState, dispatch } = useGame();
-  const isFixed = gameState.fixedProblems.includes('no-backup');
+  const isFixed = gameState.fixedProblems.includes(TRASH_PROBLEM_ID);
 
   const onContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -258,6 +262,7 @@ export function Desktop() {
   );
 
   const openTrash = useCallback(() => {
+    dispatch({ type: 'OPEN_TRASH' });
     dispatch({
       type: 'OPEN_WINDOW',
       window: {
@@ -269,6 +274,14 @@ export function Desktop() {
       },
     });
   }, [dispatch]);
+
+  // The raw data sits in the Trash, which is easy to finish the game without
+  // ever opening. Once it holds the only problem left, the icon rattles every
+  // 30 seconds until the player either looks inside or reports the problem.
+  const nudgeTrash =
+    !gameState.hasOpenedTrash &&
+    !gameState.foundProblems.includes(TRASH_PROBLEM_ID) &&
+    problems.every(p => p.id === TRASH_PROBLEM_ID || gameState.foundProblems.includes(p.id));
 
   const openProjectFolder = useCallback(() => {
     dispatch({
@@ -313,7 +326,7 @@ export function Desktop() {
 
       {/* Trash icon */}
       <div
-        className="desktop-icon"
+        className={`desktop-icon${nudgeTrash ? ' desktop-icon--nudge' : ''}`}
         style={{ right: 16, bottom: 8 }}
         onDoubleClick={openTrash}
         role="button"

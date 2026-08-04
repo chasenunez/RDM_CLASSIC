@@ -135,6 +135,7 @@ export interface PersistedState {
   wrongGuesses: number;
   hasSeenTitle: boolean;     // dismissed the title slide (click-to-start)
   hasSeenWelcome: boolean;
+  hasOpenedTrash: boolean;   // stops the Trash nudging once the player has looked
   isMuted: boolean;
   openWindows: WindowState[];
   nextZIndex: number;

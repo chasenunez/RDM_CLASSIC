@@ -48,9 +48,19 @@ export function ContextMenu() {
     if (!isBossCell) return null;
   }
 
+  // Anchor the menu to whichever corner keeps it on screen, the way a real
+  // menu opens away from the edge you clicked near. Anchoring by the far edge
+  // means the browser never has to know how wide the menu is, which matters
+  // because the missing-artifact list is roughly twice the width of the
+  // two-item file menu. The old fixed 200px guess let the wide one run off
+  // the right of the screen.
   const style: React.CSSProperties = {
-    left: Math.min(x, window.innerWidth - 200),
-    top: Math.min(y, window.innerHeight - 120),
+    ...(x > window.innerWidth / 2
+      ? { right: window.innerWidth - x }
+      : { left: x }),
+    ...(y > window.innerHeight / 2
+      ? { bottom: window.innerHeight - y }
+      : { top: y }),
   };
 
   // Boss battle: simplified single-action menu

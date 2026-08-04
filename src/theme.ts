@@ -57,5 +57,8 @@ export const LABELS = {
   // dialog, and the README all quote them; when they drifted apart, the
   // instructions ended up naming a command the menu didn't have.
   reportProblem:      'Report an RDM problem…',
-  reportMissing:      'Report something missing…',
+  // Heading over the missing-artifact list. Mirrors the problem-selection
+  // dialog's "What's the problem here?", and takes no ellipsis because it names
+  // the question being asked rather than a command that opens something.
+  reportMissing:      "What's missing here?",
 } as const;

@@ -40,9 +40,10 @@ function getSubProblemIds(parentId: string): string[] {
     .map(sp => sp.id);
 }
 
-// The three ways a guess can be wrong. 'not_missing' is specific to the
-// missing-artifact menu: the named thing is already in the project.
-export type WrongKind = 'no_problem' | 'wrong_problem' | 'not_missing';
+// The ways a guess can be wrong. 'not_missing' belongs to the missing-artifact
+// menu (the named thing is already in the project); 'look_inside' means the
+// file does hide a problem, but only somewhere in its contents.
+export type WrongKind = 'no_problem' | 'wrong_problem' | 'not_missing' | 'look_inside';
 
 // ── Boss battle constants ─────────────────────────────────────────────────────
 
@@ -63,6 +64,7 @@ function getDefaultState(): PersistedState {
     wrongGuesses: 0,
     hasSeenTitle: false,
     hasSeenWelcome: false,
+    hasOpenedTrash: false,
     isMuted: false,
     openWindows: [
       {
@@ -85,6 +87,7 @@ type Action =
   | { type: 'WRONG_GUESS' }
   | { type: 'DISMISS_TITLE' }
   | { type: 'DISMISS_WELCOME' }
+  | { type: 'OPEN_TRASH' }
   | { type: 'OPEN_WINDOW'; window: Omit<WindowState, 'zIndex'> }
   | { type: 'CLOSE_WINDOW'; id: string }
   | { type: 'FOCUS_WINDOW'; id: string }
@@ -110,6 +113,10 @@ function reducer(state: PersistedState, action: Action): PersistedState {
 
     case 'DISMISS_WELCOME':
       return { ...state, hasSeenWelcome: true };
+
+    case 'OPEN_TRASH':
+      if (state.hasOpenedTrash) return state;
+      return { ...state, hasOpenedTrash: true };
 
     case 'OPEN_WINDOW': {
       const exists = state.openWindows.find(w => w.id === action.window.id);
@@ -402,17 +409,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
       const result = matchSelectedProblem(selectedProblemId, pendingTarget, mapping);
 
-      if (result === 'no_problem') {
+      // Every non-'correct' verdict is reported the same way; only the wording
+      // in WrongGuessDialog differs.
+      if (result !== 'correct') {
         dispatch({ type: 'WRONG_GUESS' });
-        setWrongKind('no_problem');
-        setShowWrong(true);
-        if (!gameState.isMuted) playBonk();
-        return;
-      }
-
-      if (result === 'wrong_problem') {
-        dispatch({ type: 'WRONG_GUESS' });
-        setWrongKind('wrong_problem');
+        setWrongKind(result);
         setShowWrong(true);
         if (!gameState.isMuted) playBonk();
         return;

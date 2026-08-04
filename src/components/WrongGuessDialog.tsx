@@ -31,6 +31,10 @@ export function WrongGuessDialog() {
     body = notMissingReason
       ? `${notMissingReason} Check what the project has before reporting it missing.`
       : 'That one is already in the project. Check what the project has before reporting it missing.';
+  } else if (wrongKind === 'look_inside') {
+    icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
+    title = 'Have you opened it?';
+    body = "Something in this file is a problem, but not the file itself. You can't tell what from the icon alone. Double-click to open it, then right-click the line or cell that looks wrong.";
   } else if (wrongKind === 'wrong_problem') {
     icon = <img src={asset('/assets/uhoh_mac.png')} className="dialog__icon" alt="Alert" style={{ imageRendering: 'pixelated' }} />;
     title = 'Something IS wrong here…';

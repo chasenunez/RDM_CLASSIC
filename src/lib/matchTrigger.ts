@@ -24,7 +24,20 @@ export function matchTrigger(target: ContextTarget, mapping: Mapping): string | 
  *  'wrong_problem': target DOES have a problem, but a different one than selected
  *  'no_problem':    target has no associated problem
  */
-export type MatchResult = 'correct' | 'wrong_problem' | 'no_problem';
+export type MatchResult = 'correct' | 'wrong_problem' | 'no_problem' | 'look_inside';
+
+/**
+ * True when the file itself is clean but something inside it isn't, i.e. every
+ * trigger naming this file is a cell or a line. Reporting such a file from its
+ * icon used to answer "Looks fine here", which is misleading: there is a real
+ * problem, the player just hasn't opened the file yet.
+ */
+function hasOnlyInnerTriggers(path: string, mapping: Mapping): boolean {
+  const forFile = mapping.problems.flatMap(p =>
+    p.triggers.filter(t => (t.type === 'file' || t.type === 'cell' || t.type === 'line') && t.path === path),
+  );
+  return forFile.length > 0 && forFile.every(t => t.type !== 'file');
+}
 
 export function matchSelectedProblem(
   selectedId: string,
@@ -50,6 +63,10 @@ export function matchSelectedProblem(
     }
     // Target has a problem but user selected the wrong one
     return 'wrong_problem';
+  }
+
+  if (target.kind === 'file' && hasOnlyInnerTriggers(target.path, mapping)) {
+    return 'look_inside';
   }
 
   return 'no_problem';

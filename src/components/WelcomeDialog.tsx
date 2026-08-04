@@ -4,17 +4,17 @@ import { LABELS } from '../theme';
 
 /**
  * The game instructions, styled as a period-appropriate (mid-90s) AOL Instant
- * Messenger conversation from your past self. Lines appear one by one on a
- * short interval, and the dialog is modal until the player dismisses it (the
- * × in the chrome bar is decorative, like a real IM you can't escape).
+ * Messenger conversation from your past self. The dialog is modal until the
+ * player dismisses it (the × in the chrome bar is decorative, like a real IM
+ * you can't escape).
  *
- * The button is never disabled. It used to wait for the last line, which meant
- * a first-time player spent the opening of the game looking at a greyed-out
- * button; now an impatient click brings the rest of the conversation in at
- * once, and a second click starts the game.
+ * The player advances the conversation themselves with the Next button, which
+ * pulses so it reads as the thing to click. Lines used to arrive on a timer,
+ * which meant reading at the game's pace rather than your own. On the last
+ * line the same button becomes "Let's go!" and starts the game.
  */
 
-const SCREEN_NAME = 'Lib4ri';
+const SCREEN_NAME = 'Lib4RI';
 
 const CHAT_LINES: React.ReactNode[] = [
   <>Remember that side project that went nowhere? A new colleague wants to pick it up,
@@ -34,11 +34,6 @@ const CHAT_LINES: React.ReactNode[] = [
   <>Good luck. Your future self thanks you ;-)</>,
 ];
 
-// The first line shows immediately, so the whole conversation is up after
-// (CHAT_LINES.length - 1) * LINE_INTERVAL_MS, a little over five seconds.
-// Fast enough to read at a natural pace without stalling the start of play.
-const LINE_INTERVAL_MS = 900;
-
 export function WelcomeDialog() {
   const { dispatch } = useGame();
   const goRef = useRef<HTMLButtonElement>(null);
@@ -46,14 +41,8 @@ export function WelcomeDialog() {
   const [shownCount, setShownCount] = useState(1);
   const allShown = shownCount >= CHAT_LINES.length;
 
-  useEffect(() => {
-    if (allShown) return;
-    const t = setInterval(() => setShownCount(n => n + 1), LINE_INTERVAL_MS);
-    return () => clearInterval(t);
-  }, [allShown]);
-
-  // The button is the only control here and is live from the start, so it takes
-  // focus on mount: Enter skips ahead, then Enter again starts the game.
+  // The button is the only control here, so it takes focus on mount and Enter
+  // walks through the whole conversation.
   useEffect(() => { goRef.current?.focus(); }, []);
 
   // Normally the whole conversation fits and there is nothing to scroll. Only
@@ -66,10 +55,10 @@ export function WelcomeDialog() {
     newest?.scrollIntoView({ block: 'nearest' });
   }, [shownCount]);
 
-  // One button, two jobs: catch up the conversation, then start the game.
+  // One button, two jobs: step through the conversation, then start the game.
   const advance = () => {
     if (allShown) dispatch({ type: 'DISMISS_WELCOME' });
-    else setShownCount(CHAT_LINES.length);
+    else setShownCount(n => n + 1);
   };
 
   return (
@@ -104,10 +93,10 @@ export function WelcomeDialog() {
           <div className="aim-chat__input" aria-hidden="true" />
           <button
             ref={goRef}
-            className="mac-button mac-button--default"
+            className={`mac-button mac-button--default${allShown ? '' : ' mac-button--pulse'}`}
             onClick={advance}
           >
-            {allShown ? <>Let&apos;s go!</> : <>Skip ahead</>}
+            {allShown ? <>Let&apos;s go!</> : <>Next</>}
           </button>
         </div>
       </div>
