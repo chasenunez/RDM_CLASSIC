@@ -3,11 +3,13 @@ import { useGame } from '../GameContext';
 import { clearState } from '../lib/persistence';
 import { asset } from '../lib/asset';
 import { RulesDialog } from './RulesDialog';
+import { AboutDialog } from './AboutDialog';
 
 export function MenuBar() {
   const { gameState, dispatch } = useGame();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [showRules, setShowRules] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,8 +49,19 @@ export function MenuBar() {
             style={{ width: 16, height: 16, objectFit: 'contain', imageRendering: 'pixelated', pointerEvents: 'none' }}
           />
           {openMenu === 'apple' && (
-            <div className="dropdown" role="menu">
-              <div className="dropdown__item disabled">About RDM Classic</div>
+            /* Swallow the click so it doesn't reach the parent's toggle, which
+               would re-open the menu an item had just closed. */
+            <div className="dropdown" role="menu" onClick={e => e.stopPropagation()}>
+              <div
+                className="dropdown__item"
+                role="menuitem"
+                onClick={() => {
+                  setOpenMenu(null);
+                  setShowAbout(true);
+                }}
+              >
+                About RDM Classic
+              </div>
               <div className="dropdown__separator" />
               <div
                 className="dropdown__item"
@@ -82,6 +95,7 @@ export function MenuBar() {
       </div>
 
       {showRules && <RulesDialog onClose={() => setShowRules(false)} />}
+      {showAbout && <AboutDialog onClose={() => setShowAbout(false)} />}
     </>
   );
 }

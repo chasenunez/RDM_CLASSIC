@@ -541,6 +541,59 @@
   .mac-button--pulse { animation: none; }
 }
 
+/* ── About / credits ─────────────────────────────────────────────────────── */
+
+.about__logo {
+  display: block;
+  margin: 0 auto 10px;
+  max-width: 180px;
+  height: auto;
+}
+
+.about__title {
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.about__section-title {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #000000;
+}
+
+.about__licences {
+  margin: 0 0 14px;
+}
+
+/* Two columns that stay readable when a licence name wraps: the label keeps a
+   fixed column, the terms take whatever is left. */
+.about__licence-row {
+  display: flex;
+  gap: 8px;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1.9;
+}
+
+.about__licence-what {
+  flex: 0 0 42%;
+  color: #666666;
+}
+
+.about__licence-terms {
+  flex: 1;
+  margin: 0;
+}
+
+.about__licence-terms a {
+  color: #0000cc;
+}
+
 /* Rendered markdown inside dialogs */
 .dialog__markdown h1,
 .dialog__markdown h2,
