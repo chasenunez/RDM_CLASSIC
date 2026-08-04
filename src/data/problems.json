@@ -30,6 +30,10 @@
     "fix": "Use clear, semantic version numbers in the name (`v1.0`, `v1.1`, `v2.0`) and keep a short changelog (in the README, or a separate `CHANGELOG` file) noting what changed in each version and why.\n\n| Original | Fixed |\n|----------|-------|\n| `manuscript_draft_v2_JK comments.docx` | `20260501_AlpineSoil_Manuscript_v1.1.docx` |\n\nBump the **minor** number for revisions within a draft (`v1.0` → `v1.1`), and the **major** number when the document changes substantially (`v1.x` → `v2.0`). Reviewer initials never belong in a filename; track who commented in the changelog, or in the document's own review history.\n\nThis is the manual approach, and it is the right one for documents that live outside a repository. For anything text-based, proper version control does all of it for you automatically. That is a separate problem in this project, and it is worth finding.",
     "resources": [
       {
+        "title": "Lib4RI: version control",
+        "url": "https://www.lib4ri.ch/version-control"
+      },
+      {
         "title": "Keep a Changelog",
         "url": "https://keepachangelog.com/"
       }
@@ -80,6 +84,10 @@
     "fix": "Follow these raw-data rules:\n\n1. **Never delete raw data.** Archive it in a read-only location.\n2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.\n3. **Follow the 3-2-1 rule**: keep at least **3** copies of your data, on **2** different types of media (for example your computer and an institutional server), with **1** copy kept off-site (a repository or cloud backup).\n4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.\n\nA clean project layout separates concerns:\n```\ndata/\n  raw/          ← original files, never touched\n  processed/    ← output of your scripts\n```",
     "resources": [
       {
+        "title": "Lib4RI: cloud data storage",
+        "url": "https://www.lib4ri.ch/cloud-data-storage"
+      },
+      {
         "title": "UKRN Primer: Research Data Management",
         "url": "https://www.ukrn.org/primers/"
       },
@@ -97,6 +105,10 @@
     "why": "These issues cause scripts to break, statistics to be wrong (e.g., `-999` would distort a mean if not excluded), and other researchers to misinterpret the data.",
     "fix": "1. **Remove non-data rows** from the data file. Put titles and notes in the README instead.\n2. **Use descriptive column headers** with units: `soil_moisture_pct`, `air_temperature_degC`.\n3. **Use one explicit missing-value code** (the R/Python convention is `NA`) and document it in the README. Don't leave cells blank: a blank is ambiguous (not collected? below detection? forgotten?), while `NA` is unmistakable.\n4. **Keep types and formats consistent**: numbers stored as numbers, one decimal separator (the dot `.`), no stray text in numeric columns.\n5. **Follow tidy data principles**: each variable in a column, each observation in a row, each value in a cell.",
     "resources": [
+      {
+        "title": "Lib4RI: electronic lab notebooks",
+        "url": "https://www.lib4ri.ch/electronic-lab-notebooks"
+      },
       {
         "title": "Broman & Woo (2018), \"Data Organization in Spreadsheets\" (The American Statistician)",
         "url": "https://doi.org/10.1080/00031305.2017.1375989"
@@ -235,6 +247,10 @@
     "fix": "1. **Add clear comments** explaining the purpose of each section, the meaning of parameters, and the rationale for decisions.\n2. **Use meaningful variable names**: `soil_chemistry_df` not `df`, `temperature_df` not `df2`.\n3. **Use relative file paths** or configuration files instead of hardcoded filenames.\n4. **Include a requirements file** (`requirements.txt` or `environment.yml`) so others can recreate your environment.",
     "resources": [
       {
+        "title": "Lib4RI: publishing code",
+        "url": "https://www.lib4ri.ch/publishing-code"
+      },
+      {
         "title": "Software Carpentry Python lesson",
         "url": "https://swcarpentry.github.io/python-novice-inflammation/"
       }
@@ -248,6 +264,10 @@
     "why": "A missing licence effectively prevents reuse, which defeats the purpose of sharing data. It violates the \"reusable\" FAIR principle.",
     "fix": "For **data**, use a Creative Commons licence:\n- **CC0** (public domain dedication) (most open, recommended when you want maximum reuse.\n- **CC BY 4.0** (attribution required)) most funders recommend this.\n\nFor **code**, use an open-source licence:\n- **MIT** (very permissive, widely used.\n- **Apache 2.0**) permissive with patent protection.\n\nPlace a `LICENSE.md` file at the root of your project.",
     "resources": [
+      {
+        "title": "Lib4RI: publishing code",
+        "url": "https://www.lib4ri.ch/publishing-code"
+      },
       {
         "title": "Creative Commons license chooser",
         "url": "https://chooser-beta.creativecommons.org/"
@@ -273,6 +293,10 @@
       {
         "title": "Good Enough Practices in Scientific Computing (Wilson et al. 2017)",
         "url": "https://doi.org/10.1371/journal.pcbi.1005510"
+      },
+      {
+        "title": "CESSDA Data Management Expert Guide",
+        "url": "https://dmeg.cessda.eu/"
       }
     ]
   },
@@ -284,6 +308,10 @@
     "why": "Without version control there is no reliable way to see what changed between two points in time, no safe way to undo a change across the whole project, and no record of which state of the code produced a published result. Renaming files to `_final_v2` is an attempt to do version control by hand, and it fails in every way real version control succeeds.",
     "fix": "1. **Initialise a repository** in the project folder:\n```\ngit init\ngit add .\ngit commit -m \"Initial commit of alpine soil survey\"\n```\n\n2. **Commit as you work**, with messages that say *why* rather than *what*. Every commit is a restore point.\n\n3. **Push to a host** so the history survives your laptop: GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.\n\n4. **Add a `.gitignore`** so generated output, caches, and OS clutter stay out of the history. Track your sources, not your build artefacts.\n\nGit is designed for text (code, scripts, README files), where it can show you a line-by-line diff. Large binary data belongs in a data repository with a DOI, not in Git.",
     "resources": [
+      {
+        "title": "Lib4RI: version control",
+        "url": "https://www.lib4ri.ch/version-control"
+      },
       {
         "title": "Software Carpentry Git lesson",
         "url": "https://swcarpentry.github.io/git-novice/"

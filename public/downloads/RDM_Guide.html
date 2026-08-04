@@ -73,9 +73,8 @@
 <p>For <strong>code</strong>: use Git. It records every change, who made it, and why, so you never need <code>_final_v2</code> again. Host on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.</p>
 <p><strong>Resources:</strong></p>
 <ul>
-<li>Git: <a href="https://git-scm.com/">https://git-scm.com/</a></li>
-<li>Git GUIs: <a href="https://git-scm.com/downloads/guis">https://git-scm.com/downloads/guis</a></li>
-<li>Software Carpentry Git lesson: <a href="https://swcarpentry.github.io/git-novice/">https://swcarpentry.github.io/git-novice/</a></li>
+<li>Lib4RI: version control: <a href="https://www.lib4ri.ch/version-control">https://www.lib4ri.ch/version-control</a></li>
+<li>Keep a Changelog: <a href="https://keepachangelog.com/">https://keepachangelog.com/</a></li>
 </ul>
 <p>---</p>
 <h2>Problem 3: Proprietary and Inappropriate File Formats</h2>
@@ -131,6 +130,7 @@
   processed/    ← output of your scripts</code></pre>
 <p><strong>Resources:</strong></p>
 <ul>
+<li>Lib4RI: cloud data storage: <a href="https://www.lib4ri.ch/cloud-data-storage">https://www.lib4ri.ch/cloud-data-storage</a></li>
 <li>UKRN Primer: Research Data Management: <a href="https://www.ukrn.org/primers/">https://www.ukrn.org/primers/</a></li>
 <li>DataONE Best Practice: Preserve information rich data: <a href="https://dataoneorg.github.io/Education/bestpractices/preserve-information-keep">https://dataoneorg.github.io/Education/bestpractices/preserve-information-keep</a></li>
 </ul>
@@ -173,7 +173,8 @@
 <p>Cell (row 4, col2) holds <strong>"42,1"</strong>, a number written with a comma decimal separator and stored as text, while the rest of that column are ordinary numbers written with a dot (e.g. <code>45.6</code>). Analysis tools misread it; they may drop it, treat it as zero, or refuse to compute statistics for the whole column, and the error is silent. <em>Fix:</em> use one decimal separator throughout (the dot <code>.</code> is safest for software) and store numbers as numbers, not text; change <code>42,1</code> to <code>42.1</code> and document the convention in the data dictionary.</p>
 <p><strong>Resources:</strong></p>
 <ul>
-<li>Broman &amp; Woo (2018), "Data Organization in Spreadsheets" (The American Statistician): <a href="https://doi.org/10.1080/00031305.2017.1375989">https://doi.org/10.1080/00031305.2017.1375989</a></li>
+<li>Lib4RI: electronic lab notebooks: <a href="https://www.lib4ri.ch/electronic-lab-notebooks">https://www.lib4ri.ch/electronic-lab-notebooks</a></li>
+<li>Broman &amp; Woo (2018), &quot;Data Organization in Spreadsheets&quot; (The American Statistician): <a href="https://doi.org/10.1080/00031305.2017.1375989">https://doi.org/10.1080/00031305.2017.1375989</a></li>
 <li>Tidy Data (Hadley Wickham): <a href="https://vita.had.co.nz/papers/tidy-data.html">https://vita.had.co.nz/papers/tidy-data.html</a></li>
 </ul>
 <p>---</p>
@@ -190,6 +191,7 @@
 </ol>
 <p><strong>Resources:</strong></p>
 <ul>
+<li>Lib4RI: publishing code: <a href="https://www.lib4ri.ch/publishing-code">https://www.lib4ri.ch/publishing-code</a></li>
 <li>Software Carpentry Python lesson: <a href="https://swcarpentry.github.io/python-novice-inflammation/">https://swcarpentry.github.io/python-novice-inflammation/</a></li>
 </ul>
 <p>---</p>
@@ -215,6 +217,7 @@
 <p>Place a <code>LICENSE.md</code> file at the root of your project.</p>
 <p><strong>Resources:</strong></p>
 <ul>
+<li>Lib4RI: publishing code: <a href="https://www.lib4ri.ch/publishing-code">https://www.lib4ri.ch/publishing-code</a></li>
 <li>Creative Commons license chooser: <a href="https://chooser-beta.creativecommons.org/">https://chooser-beta.creativecommons.org/</a></li>
 <li>Choose an open source license: <a href="https://choosealicense.com/">https://choosealicense.com/</a></li>
 </ul>
@@ -240,8 +243,9 @@
 <p>Key principles: separate raw from processed data, keep code in its own folder, isolate outputs (figures, results) from inputs, and put documentation (README, LICENSE) at the root where people look first.</p>
 <p><strong>Resources:</strong></p>
 <ul>
-<li>The Turing Way &mdash; Research Data Management: <a href="https://the-turing-way.netlify.app/reproducible-research/rdm">https://the-turing-way.netlify.app/reproducible-research/rdm</a></li>
-<li>CESSDA Data Management Guide: <a href="https://dmeg.cessda.eu/">https://dmeg.cessda.eu/</a></li>
+<li>The Turing Way, Research Data Management: <a href="https://the-turing-way.netlify.app/reproducible-research/rdm">https://the-turing-way.netlify.app/reproducible-research/rdm</a></li>
+<li>Good Enough Practices in Scientific Computing (Wilson et al. 2017): <a href="https://doi.org/10.1371/journal.pcbi.1005510">https://doi.org/10.1371/journal.pcbi.1005510</a></li>
+<li>CESSDA Data Management Expert Guide: <a href="https://dmeg.cessda.eu/">https://dmeg.cessda.eu/</a></li>
 </ul>
 <p>---</p>
 <h2>Problem 10: No Version Control</h2>
@@ -257,6 +261,7 @@
 <p>Git tracks the <em>project</em>; the semantic version numbers in Problem 2 track individual <em>files</em>. Together they give you a complete history. Git is designed for text, where it can show a line-by-line diff; large binary data belongs in a data repository with a DOI, not in Git.</p>
 <p><strong>Resources:</strong></p>
 <ul>
+<li>Lib4RI: version control: <a href="https://www.lib4ri.ch/version-control">https://www.lib4ri.ch/version-control</a></li>
 <li>Software Carpentry Git lesson: <a href="https://swcarpentry.github.io/git-novice/">https://swcarpentry.github.io/git-novice/</a></li>
 <li>Git: <a href="https://git-scm.com/">https://git-scm.com/</a></li>
 <li>Git GUIs: <a href="https://git-scm.com/downloads/guis">https://git-scm.com/downloads/guis</a></li>
@@ -333,17 +338,18 @@
 <p>Clean structure. Consistent naming. Open formats. Versioned. Documented. Licensed. Raw data preserved. FAIR.</p>
 <p>---</p>
 <h2>Lib4RI resources</h2>
-<p>Alongside the general references above, point players to our own material. The exact links and files still need to be added.</p>
+<p>Several problems above link to Lib4RI's own guidance on the specific topic. These are the places to start for everything else.</p>
 <ul>
-<li>Lib4RI RDM trainings <!-- TODO(add asset): link the current Lib4RI RDM training schedule / registration page --></li>
-<li>Lib4RI OER (open educational resources) on RDM <!-- TODO(add asset): link the OER landing page --></li>
-<li>The RDM infosheet and the poster produced with Estelle <!-- TODO(add asset): add the PDF(s); one of these can double as the downloadable end-of-game handout --></li>
+<li>Research data management at Lib4RI: <a href="https://www.lib4ri.ch/research-data-management">https://www.lib4ri.ch/research-data-management</a></li>
+<li>RDM training and courses: <a href="https://www.lib4ri.ch/research-data-management-training">https://www.lib4ri.ch/research-data-management-training</a></li>
+<li>Data management plans: <a href="https://www.lib4ri.ch/data-management-plans-dmps">https://www.lib4ri.ch/data-management-plans-dmps</a></li>
+<li>Publishing data: <a href="https://www.lib4ri.ch/publishing-data">https://www.lib4ri.ch/publishing-data</a></li>
+<li>Sensitive data: <a href="https://www.lib4ri.ch/sensitive-data">https://www.lib4ri.ch/sensitive-data</a></li>
 </ul>
-<p><strong>Training (separate from the reference links above)</strong></p>
-<ul>
-<li>Carpentries lessons (via Clemens Lange) <!-- TODO(add asset): confirm which Carpentries lessons to feature and add the link --></li>
-</ul>
-<p><strong>Handout:</strong> a version of all this task text will be combined into a single downloadable handout offered at the end of the game. <!-- TODO(add asset): decide whether the handout is the Lib4RI RDM infosheet, the poster made with Estelle, or a purpose-built compilation, and wire up the download. --></p>
+<!-- TODO(add asset): the Lib4RI OER landing page, the RDM infosheet, and the poster
+     produced with Estelle are not linked here because no URL or PDF was available.
+     Add them to this list when they exist. -->
+<p>Your institution's data steward or librarian will also review a data management plan with you before you write it, which is considerably cheaper than fixing any of the ten problems above after the fact.</p>
 <footer style="margin-top:3rem;padding-top:1rem;border-top:1px solid #ccc;font-size:0.75em;color:#666;">
   Generated by the RDM Scavenger Hunt, Lib4RI Basics of Research Data Management workshop.
 </footer>

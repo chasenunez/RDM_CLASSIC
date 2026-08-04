@@ -47,6 +47,7 @@ export const ASSETS = {
   projectIconActive:     asset('/assets/folder_fire.png'),
   projectIconComplete:   asset('/assets/folder.png'),
   trashIcon:             asset('/assets/trash.png'),
+  lib4rilogo:            asset('/assets/lib4riblank.png'),
 } as const;
 
 export const LABELS = {

@@ -67,7 +67,7 @@ export function AboutDialog({ onClose }: AboutDialogProps) {
 
           <img
             className="about__logo"
-            src={ASSETS.desktopBackgroundLogo}
+            src={ASSETS.lib4rilogo}
             alt="Lib4RI"
           />
 
