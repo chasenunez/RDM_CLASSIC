@@ -469,20 +469,142 @@
 /* ── AIM-style instant message window (WelcomeDialog instructions) ────────── */
 
 .aim-window {
-  max-width: 520px;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
+}
+
+/* Three columns, the layout every messenger of the era used: buddy list, the
+   conversation, then portraits of both parties. The middle column is the only
+   one that flexes, so the list and the portraits keep their width and the
+   conversation absorbs whatever is left. */
+.aim-body {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.aim-conversation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Buddy list ──────────────────────────────────────────────────────────── */
+
+.aim-list {
+  flex: 0 0 212px;
+  background: #ffffff;
+  border-right: 2px solid #000000;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1.5;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.aim-list__group {
+  font-weight: bold;
+  padding: 6px 8px 3px;
+  border-bottom: 1px solid #cccccc;
+  margin-bottom: 3px;
+}
+
+.aim-list__contact {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px 2px 14px;
+}
+
+.aim-list__name {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Offline buddies are greyed the way they were, which is also what makes the
+   two groups readable at a glance. */
+.aim-list__contact--offline {
+  color: #999999;
+}
+
+.aim-list__bullet {
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  background: #2e8b2e;
+  border: 1px solid #1a5c1a;
+}
+
+.aim-list__contact--offline .aim-list__bullet {
+  background: #dddddd;
+  border-color: #aaaaaa;
+}
+
+/* Your own status line, pinned to the bottom of the list like the real thing. */
+.aim-list__status {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px 0;
+  border-top: 1px solid #cccccc;
+}
+
+/* ── Portraits ───────────────────────────────────────────────────────────── */
+
+.aim-portraits {
+  flex: 0 0 104px;
+  background: #eeeeee;
+  border-left: 2px solid #000000;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aim-portrait {
+  margin: 0;
+  text-align: center;
+}
+
+.aim-portrait img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #ffffff;
+  border: 1px solid #000000;
+  image-rendering: pixelated;
+}
+
+.aim-portrait figcaption {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  line-height: 1.6;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .aim-list,
+  .aim-portraits { display: none; }
 }
 
 /* Chat log. Sized to hold the whole conversation at once: every line is laid
    out from the start and the not-yet-said ones are merely invisible (see
    .aim-chat__line--pending), so the box is full height immediately, doesn't
    jump as lines arrive, and never scrolls the opening lines out of view. The
-   max-height is only a safety valve for short viewports.
-
-   Period IM clients used a proportional system font (Geneva/Arial), not the
-   game's pixel font, so the chat text does too. */
+   max-height is only a safety valve for short viewports. */
 .aim-chat__log {
+  flex: 1;
   background: #ffffff;
   font-family: var(--font-pixel);
   font-size: 10px;
@@ -530,7 +652,7 @@
    the button from nudging the compose row as it breathes. */
 @keyframes button-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.30); }
-  50%      { box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.16); }
+  50%      { box-shadow: 0 0 0 4px rgba(250, 0, 0, 0.33); }
 }
 
 .mac-button--pulse {

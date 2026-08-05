@@ -1,20 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../GameContext';
-import { LABELS } from '../theme';
+import { ASSETS, CHAT_CONTACTS, LABELS } from '../theme';
 
 /**
- * The game instructions, styled as a period-appropriate (mid-90s) AOL Instant
- * Messenger conversation from your past self. The dialog is modal until the
- * player dismisses it (the × in the chrome bar is decorative, like a real IM
- * you can't escape).
+ * The game instructions, dressed as an instant-messenger window from the era the
+ * rest of the desktop is pretending to be: buddy list down the left, the
+ * conversation in the middle, portraits of both parties on the right. The dialog
+ * is modal until the player dismisses it (the × in the chrome bar is decorative,
+ * like a real IM you can't escape).
  *
  * The player advances the conversation themselves with the Next button, which
  * pulses so it reads as the thing to click. Lines used to arrive on a timer,
- * which meant reading at the game's pace rather than your own. On the last
- * line the same button becomes "Let's go!" and starts the game.
+ * which meant reading at the game's pace rather than your own. On the last line
+ * the same button becomes "Let's go!" and starts the game.
  */
 
 const SCREEN_NAME = 'Lib4RI';
+const PLAYER_NAME = 'you_1997';
 
 const CHAT_LINES: React.ReactNode[] = [
   <>Remember that side project that went nowhere? A new colleague wants to pick it up,
@@ -33,6 +35,21 @@ const CHAT_LINES: React.ReactNode[] = [
     out in the project get sorted one at a time as you find them.)</>,
   <>Good luck. Your future self thanks you ;-)</>,
 ];
+
+/** One buddy-list group: a header, then the names under it. */
+function ContactGroup({ title, names, online }: { title: string; names: readonly string[]; online: boolean }) {
+  return (
+    <>
+      <div className="aim-list__group">{title}</div>
+      {names.map(name => (
+        <div className={`aim-list__contact${online ? '' : ' aim-list__contact--offline'}`} key={name}>
+          <span className="aim-list__bullet" aria-hidden="true" />
+          <span className="aim-list__name">{name}</span>
+        </div>
+      ))}
+    </>
+  );
+}
 
 export function WelcomeDialog() {
   const { dispatch } = useGame();
@@ -72,32 +89,61 @@ export function WelcomeDialog() {
           </span>
         </div>
 
-        <div className="aim-chat__log" ref={logRef} aria-live="polite">
-          {/* Every line is rendered from the start; the ones not yet said are
-              invisible but still take up their space, so the window opens at
-              its full height and the whole conversation is readable at once
-              without the box growing or scrolling as lines arrive. */}
-          {CHAT_LINES.map((line, i) => (
-            <p
-              className={`aim-chat__line${i < shownCount ? '' : ' aim-chat__line--pending'}`}
-              key={i}
-              aria-hidden={i < shownCount ? undefined : true}
-            >
-              <span className="aim-chat__screenname">{SCREEN_NAME}: </span>
-              {line}
-            </p>
-          ))}
-        </div>
+        <div className="aim-body">
 
-        <div className="aim-chat__compose">
-          <div className="aim-chat__input" aria-hidden="true" />
-          <button
-            ref={goRef}
-            className={`mac-button mac-button--default${allShown ? '' : ' mac-button--pulse'}`}
-            onClick={advance}
-          >
-            {allShown ? <>Let&apos;s go!</> : <>Next</>}
-          </button>
+          {/* Buddy list. Decorative set dressing, so it is hidden from screen
+              readers rather than read out as seven meaningless screen names. */}
+          <div className="aim-list" aria-hidden="true">
+            <ContactGroup title="Online" names={CHAT_CONTACTS.online} online />
+            <ContactGroup title="Offline" names={CHAT_CONTACTS.offline} online={false} />
+            <div className="aim-list__status">
+              <span className="aim-list__bullet" />
+              <span className="aim-list__name">{PLAYER_NAME} (Online)</span>
+            </div>
+          </div>
+
+          <div className="aim-conversation">
+            <div className="aim-chat__log" ref={logRef} aria-live="polite">
+              {/* Every line is rendered from the start; the ones not yet said are
+                  invisible but still take up their space, so the window opens at
+                  its full height and the whole conversation is readable at once
+                  without the box growing or scrolling as lines arrive. */}
+              {CHAT_LINES.map((line, i) => (
+                <p
+                  className={`aim-chat__line${i < shownCount ? '' : ' aim-chat__line--pending'}`}
+                  key={i}
+                  aria-hidden={i < shownCount ? undefined : true}
+                >
+                  <span className="aim-chat__screenname">{SCREEN_NAME}: </span>
+                  {line}
+                </p>
+              ))}
+            </div>
+
+            <div className="aim-chat__compose">
+              <div className="aim-chat__input" aria-hidden="true" />
+              <button
+                ref={goRef}
+                className={`mac-button mac-button--default${allShown ? '' : ' mac-button--pulse'}`}
+                onClick={advance}
+              >
+                {allShown ? <>Let&apos;s go!</> : <>Next</>}
+              </button>
+            </div>
+          </div>
+
+          {/* Portraits: whoever is talking on top, you underneath, as the
+              messengers of the day laid them out. */}
+          <div className="aim-portraits" aria-hidden="true">
+            <figure className="aim-portrait">
+              <img src={ASSETS.chatAvatarSender} alt="" />
+              <figcaption>{SCREEN_NAME}</figcaption>
+            </figure>
+            <figure className="aim-portrait">
+              <img src={ASSETS.chatAvatarPlayer} alt="" />
+              <figcaption>{PLAYER_NAME}</figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </div>

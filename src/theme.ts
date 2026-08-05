@@ -48,6 +48,29 @@ export const ASSETS = {
   projectIconComplete:   asset('/assets/folder.png'),
   trashIcon:             asset('/assets/trash.png'),
   lib4rilogo:            asset('/assets/lib4riblank.png'),
+  // Buddy-list portraits for the welcome chat. The player's is original pixel
+  // art rather than a stock image, so it ships under the project's own licence.
+  chatAvatarSender:      asset('/assets/lib4riblank.png'),
+  chatAvatarPlayer:      asset('/assets/pixel_avatar.svg'),
+} as const;
+
+/**
+ * The buddy list in the welcome chat. Decorative, so the names are the joke:
+ * period screen-name punctuation, and most of them are an RDM sin the player is
+ * about to go and find. Edit freely, nothing reads these but the chat window.
+ */
+export const CHAT_CONTACTS = {
+  online: [
+    'Lib4RI',
+    '~*LUV_D4t4*~',
+  ],
+  offline: [
+    'xXx_DARK_UNICORN_xXx',
+    'Reviewer_two_much',
+    'ctrl_alt_defeat',
+    'iLL_b4ckup_2moro',
+    'Dr_Keller_PI',
+  ],
 } as const;
 
 export const LABELS = {
