@@ -21,7 +21,7 @@ import { asset } from './lib/asset';
 export const WINDOWS = {
   fileViewer:      { width: 540, height: 360 },
   fileViewerImage: { width: 400, height: 360 },
-  trash:           { width: 360, height: 280 },
+  trash:           { width: 540, height: 360 },
   subfolder:       { width: 600, height: 400 },
   archive:         { width: 600, height: 400 },
   gif:             { width: 420, height: 340 },
@@ -34,6 +34,7 @@ export const WINDOWS = {
 export const TRASH_GIFS = [
   { id: 'flying-toasters', label: 'FlyingToasters.gif', src: asset('/assets/FlyingToasters.gif') },
   { id: 'surf',            label: 'surf.gif',           src: asset('/assets/seal.gif') },
+  { id: 'scan',            label: 'scan.png',           src: asset('/assets/scan.png') },
 ] as const;
 
 /** Image paths (served from public/). Swap these to change the logo / icons. */
