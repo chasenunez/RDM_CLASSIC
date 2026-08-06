@@ -63,13 +63,14 @@ export const ASSETS = {
 export const CHAT_CONTACTS = {
   online: [
     'Lib4RI',
-    '~*LUV_D4t4*~',
+    'LUV_D4t4_H8_MS_EXCEL',
   ],
   offline: [
     'xXx_DARK_UNICORN_xXx',
     'Reviewer_two_much',
     'ctrl_alt_defeat',
     'iLL_b4ckup_2moro',
+    'indelirium_24_7',
     'Dr_Keller_PI',
   ],
 } as const;

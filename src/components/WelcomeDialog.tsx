@@ -19,21 +19,16 @@ const SCREEN_NAME = 'Lib4RI';
 const PLAYER_NAME = 'you_1997';
 
 const CHAT_LINES: React.ReactNode[] = [
-  <>Remember that side project that went nowhere? A new colleague wants to pick it up,
-    and they&apos;re asking for the project files.</>,
-  <><strong>YOUR MISSION:</strong> Use what you know about good research data
-    management to find and fix every problem hiding in the project files.</>,
-  <><strong>HOW TO PLAY:</strong> Explore the project. Look at the files, and inside them.</>,
-  <>Right-click a file, or a cell or line within one, and choose
-    <em> "{LABELS.reportProblem}"</em>. Right-click empty space to report something
-    the project is <em>missing</em>, but check first: not everything on that list
-    is actually gone.</>,
-  <>Each correct find reveals an explanation and checks it off the list in the
-    upper left. Wrong guesses count against you, so be strategic!</>,
-  <>Heads up: a messy data file is its own mini-game. You have to find
-    <em> every</em> problem inside it before it gets cleaned up. (Files and folders
-    out in the project get sorted one at a time as you find them.)</>,
-  <>Good luck. Your future self thanks you ;-)</>,
+  <>Remember that side project that went nowhere? A new colleague is ready to work on it,
+    but the project files are ... somewhat less ready to go.</>,
+  <><strong>YOUR MISSION:</strong> Using what you now know about good research data
+    management, explore the old project file, identifying every problem you find.</>,
+  <> Some problems will be in the files, some will be missing files, and some will be the files themselves.</>,
+  <>To identify a found problem, right-click on the <em>file, cell, or line</em>, and choose
+    <em> "{LABELS.reportProblem}"</em>. </>,
+  <>To identify a missing file, right-click on any <em>empty space</em> within the window and choose from the drop-down menu.</>,
+  <>Each corrected problem is checked off on the list in the upper left. Wrong guesses count against you, so be strategic!</>,
+  <>Good luck. Your future self thanks you (^‿^)</>,
 ];
 
 /** One buddy-list group: a header, then the names under it. */
