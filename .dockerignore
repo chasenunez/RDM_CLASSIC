@@ -1,0 +1,30 @@
+# Keep the build context small and predictable. Without this, ~1000 files of
+# node_modules and a 32MB dist/ are uploaded to the daemon on every build, and
+# a stale dist/ could be copied in ahead of the one we actually build.
+
+node_modules
+dist
+.vite
+
+# Version control and CI: the build does not read them.
+.git
+.gitignore
+.github
+
+# Editor, tooling and OS clutter.
+.claude
+.DS_Store
+**/.DS_Store
+*.local
+*.log
+
+# Top-level docs only. The leading slash matters: a bare *.md would also
+# exclude public/files/sample_project/README.md and LICENSE.md, which are game
+# content the player opens, not documentation.
+/README.md
+/DOCKER.md
+/LICENSE-GRAPHICS.md
+/RDM_All_Task_Text.md
+
+# Note: docker/ and Dockerfile are deliberately NOT excluded. The build copies
+# docker/nginx.conf into the runtime stage, so it has to be in the context.

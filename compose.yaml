@@ -1,0 +1,27 @@
+# One-command entry point: `docker compose up --build`, then open
+# http://localhost:8080/
+#
+# This is a convenience wrapper. Everything it does can be done with plain
+# `docker build` and `docker run`; see DOCKER.md.
+
+services:
+  rdm-classic:
+    build:
+      context: .
+      args:
+        # "/" suits a container. Set /RDM_CLASSIC/ to mirror GitHub Pages.
+        BASE_PATH: /
+    image: rdm-classic:local
+    container_name: rdm-classic
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    # The image serves read-only files and writes nothing outside its own
+    # scratch dirs, so it can run with the filesystem locked down.
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true

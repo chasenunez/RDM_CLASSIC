@@ -68,6 +68,19 @@ The other scripts:
 | `npm run build` | Bundles everything into `dist/` |
 | `npm run preview` | Serves the built `dist/` so you can check it before deploying |
 
+## Running it in a container
+
+For long-term maintenance there is a Docker image that packages the toolchain,
+the build, and a web server together, so the game runs without a Node install:
+
+```bash
+docker build -t rdm-classic . && docker run --rm -p 8080:8080 rdm-classic
+```
+
+See [DOCKER.md](DOCKER.md) for the full instructions, including what to do when
+the code changes. The container is independent of the GitHub Pages deploy below;
+both work, and neither affects the other.
+
 ## Deploying
 
 **The repo deploys itself.** Pushing to `main` runs
