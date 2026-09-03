@@ -1,0 +1,170 @@
+{
+  "comment": "Learn-mode curriculum. Order and framing only; the what/why/fix for each step comes from problems.json so the two modes cannot disagree on the facts.",
+  "tiers": [
+    {
+      "id": "quick-wins",
+      "title": "Quick wins",
+      "intro": "Start here. These are small, mechanical changes: renaming a file, re-saving it in a different format, recovering something from the Trash. Each takes a minute or two, needs no tools you do not already have, and every one of them saves your collaborator real time.",
+      "steps": [
+        {
+          "problemId": "file-naming",
+          "instruction": "Open manuscript draft.docx and look at its name.",
+          "target": {
+            "kind": "file",
+            "path": "manuscript draft.docx"
+          }
+        },
+        {
+          "problemId": "versioning",
+          "instruction": "Now open manuscript_draft_v2_JK comments.docx.",
+          "target": {
+            "kind": "file",
+            "path": "manuscript_draft_v2_JK comments.docx"
+          }
+        },
+        {
+          "problemId": "file-formats",
+          "instruction": "Open fig1.jpg.",
+          "target": {
+            "kind": "file",
+            "path": "fig1.jpg"
+          }
+        },
+        {
+          "problemId": "no-backup",
+          "instruction": "Open the Trash. Something important is in there.",
+          "target": {
+            "kind": "trash"
+          }
+        },
+        {
+          "problemId": "no-version-control",
+          "instruction": "Nothing to open for this one. Have a read.",
+          "note": "One caveat worth knowing before you do this everywhere.\n\nGit was built to track **text that humans edit**: code, scripts, README files. It stores a complete copy of the history, so it handles large binary data badly. GitHub warns above **50 MiB** per file, refuses files over **100 MiB**, and recommends repositories stay under **1 GB**, with under 5 GB a firm ceiling.\n\nThis project is a few hundred kilobytes, so none of that applies here and Git is simply the right tool. A multi-gigabyte imaging dataset is a different question: that belongs in a data repository that issues a DOI, with the code in Git referring to it.\n\nSetting up a repository is a short, well-documented process, and there is no point retyping it here. The links below do it properly.",
+          "resources": [
+            {
+              "title": "GitHub: about large files",
+              "url": "https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "the-big-two",
+      "title": "The contents of the files",
+      "intro": "These two take longer, because the problems are inside the files rather than in their names. We will go through each one together before changing anything.",
+      "steps": [
+        {
+          "problemId": "data-quality",
+          "instruction": "Open soil samples.xlsx. We will walk the spreadsheet together.",
+          "target": {
+            "kind": "file",
+            "path": "soil samples.xlsx"
+          },
+          "tour": "subProblems"
+        },
+        {
+          "problemId": "code-quality",
+          "instruction": "Open script.py. Same again, line by line.",
+          "target": {
+            "kind": "file",
+            "path": "script.py"
+          },
+          "tour": [
+            {
+              "id": "cq-no-comments",
+              "name": "Nothing explains itself",
+              "lines": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11
+              ],
+              "what": "Eleven lines, not one word of explanation. Nothing says what this script is for, what it expects, or what it produces.",
+              "why": "You wrote it, so it is obvious to you today. It will not be obvious to you in six months, and it is not obvious to your collaborator now. Uncommented code is a black box that only one person can open, and only for a while."
+            },
+            {
+              "id": "cq-variable-names",
+              "name": "df, df2, merged",
+              "lines": [
+                3,
+                4,
+                8
+              ],
+              "what": "Every table is called `df` or `df2`. Nothing in the name says which is the soil chemistry and which is the temperature log.",
+              "why": "Names are free documentation. `soil_df` and `temperature_df` would tell a reader what line 8 is joining without them having to scroll up and work it out. With `df` and `df2`, every reader re-derives it, and eventually someone gets it backwards."
+            },
+            {
+              "id": "cq-hardcoded-paths",
+              "name": "Filenames written into the code",
+              "lines": [
+                3,
+                4,
+                9,
+                11
+              ],
+              "what": "The filenames are typed directly into the script, and one of them (`temp&humidity_data_FINAL.xlsx`) is not even in this project.",
+              "why": "The script only runs in the exact folder it was written in, on the machine it was written on. Move it, or hand it to a colleague, and it fails on line 3. A relative path into a `data/` folder runs anywhere, for anyone."
+            },
+            {
+              "id": "cq-ambiguous-columns",
+              "name": "col3 divided by col1",
+              "lines": [
+                6,
+                7
+              ],
+              "what": "Line 6 computes a ratio from `col3` and `col1`. Line 7 filters on `val`. None of those names say what is being measured.",
+              "why": "This is the spreadsheet's ambiguous headers leaking into the analysis. A reviewer cannot check whether the ratio is the right way up, and neither can you. Fixing the column names in the data fixes the code for free."
+            },
+            {
+              "id": "cq-silent-dropna",
+              "name": "Rows vanish without a trace",
+              "lines": [
+                5
+              ],
+              "what": "`df.dropna()` quietly removes every row with a missing value. The script never records how many rows that was.",
+              "why": "If a sensor failed for a fortnight, this line deletes the evidence and says nothing. Your results are then computed on a subset nobody chose deliberately. Dropping rows is often correct; dropping them silently never is."
+            },
+            {
+              "id": "cq-no-requirements",
+              "name": "No record of what it needs",
+              "lines": [
+                1,
+                2
+              ],
+              "what": "The script imports pandas and numpy, but nothing in the project says which versions, or that it needs them at all.",
+              "why": "Your collaborator runs it, gets a different pandas, and the results differ in the third decimal place. A `requirements.txt` turns a guess into an instruction."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "describe-it",
+      "title": "Describing it for someone else",
+      "intro": "These three describe the project rather than change it: where things live, what they are, and what someone else may do with them.\n\nThey come last on purpose. A README that lists your filenames is wasted work if you are about to rename everything, and a folder structure is easier to design once you know what is actually going in it. Do the renaming and the cleaning first, then write it all down once.",
+      "steps": [
+        {
+          "problemId": "folder-organization",
+          "instruction": "Nothing to open. Look at the project window as it stands."
+        },
+        {
+          "problemId": "no-readme",
+          "instruction": "Notice what the project still does not have."
+        },
+        {
+          "problemId": "no-license",
+          "instruction": "One more missing piece, and the most consequential."
+        }
+      ]
+    }
+  ]
+}

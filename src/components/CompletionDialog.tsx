@@ -7,7 +7,7 @@ interface CompletionDialogProps {
 }
 
 export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
-  const { gameState, problems } = useGame();
+  const { gameState, problems, isLearnMode } = useGame();
   const { wrongGuesses } = gameState;
   const lookRef = useRef<HTMLButtonElement>(null);
 
@@ -16,8 +16,12 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
   }, []);
 
   const total = problems.length;
-  const rating =
-    wrongGuesses === 0
+  // Learn mode is not scored, so it gets a closing note rather than a rating.
+  // Praising a beginner for "0 wrong guesses" when nothing could be guessed
+  // wrongly would ring hollow, and would misdescribe what they just did.
+  const rating = isLearnMode
+    ? 'That project is now something you could hand to anyone.'
+    : wrongGuesses === 0
       ? 'Flawless! You are an RDM legend.'
       : wrongGuesses <= 3
       ? 'RDM expert. Way to go!'
@@ -36,7 +40,9 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
       <div className="dialog">
         <span className="dialog__icon"></span>
         <h2 className="dialog__title" id="completion-title">
-          Congratulations! All {total} problems found!
+          {isLearnMode
+            ? `All ${total} fixed. Nice work.`
+            : `Congratulations! All ${total} problems found!`}
         </h2>
 
         <img
@@ -50,10 +56,16 @@ export function CompletionDialog({ onLookAtWork }: CompletionDialogProps) {
             {rating}
           </p>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px', }}>
-            <span className="score-chip good">{total}/{total} found</span>
-            <span className="score-chip">
-              {wrongGuesses} wrong guess{wrongGuesses !== 1 ? 'es' : ''}
+            <span className="score-chip good">
+              {total}/{total} {isLearnMode ? 'fixed' : 'found'}
             </span>
+            {/* The wrong-guess tally is a scoring concept, so learn mode has
+                nothing to put here. */}
+            {!isLearnMode && (
+              <span className="score-chip">
+                {wrongGuesses} wrong guess{wrongGuesses !== 1 ? 'es' : ''}
+              </span>
+            )}
           </div>
           <p style={{ fontFamily: 'var(--font-pixel)', fontSize: '7px', lineHeight: 2, marginBottom: '10px' }}>
             Download the full RDM guide with all explanations and resources

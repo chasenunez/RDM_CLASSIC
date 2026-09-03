@@ -1691,3 +1691,197 @@
   color: #999999;
   font-style: italic;
 }
+
+/* ── Learn mode ──────────────────────────────────────────────────────────── */
+
+/* The Learn/Test fork on the title screen. Two large targets rather than
+   click-anywhere, because this choice should not be made by accident. */
+.mode-choice {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.mode-choice__button {
+  flex: 1 1 220px;
+  max-width: 280px;
+  text-align: left;
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 6px;
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mode-choice__button:hover,
+.mode-choice__button:focus {
+  background: #eeeeee;
+}
+
+.mode-choice__label {
+  font-family: var(--font-pixel);
+  font-size: 14px;
+}
+
+.mode-choice__blurb {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1.9;
+  color: #444444;
+}
+
+/* The coach strip: what to do next, pinned along the bottom of the desktop.
+   Above the desktop icons but below every dialog. */
+.learn-coach {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 12px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffcc;
+  border: 1px solid #000000;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  padding: 8px 12px;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.learn-coach__step {
+  flex: 0 0 auto;
+  background: #000000;
+  color: #ffffff;
+  padding: 2px 6px;
+}
+
+.learn-coach__tier {
+  flex: 0 0 auto;
+  color: #666666;
+}
+
+.learn-coach__instruction {
+  flex: 1;
+  min-width: 0;
+}
+
+.learn-coach__button {
+  flex: 0 0 auto;
+}
+
+.learn-coach--done {
+  background: #d9f2d9;
+}
+
+/* The lesson window. Taller than the report dialog it replaces, because a
+   tour stop shows what, why and how at once. */
+.learn-lesson {
+  padding: 0;
+  overflow: hidden;
+}
+
+.learn-lesson__body {
+  padding: 18px 22px;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
+.learn-lesson__heading {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  margin: 0 0 10px;
+}
+
+/* Why this group of changes sits where it does in the order. */
+.learn-lesson__tier-intro {
+  background: #eef4ff;
+  border: 1px solid #99b8e8;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 2;
+}
+
+.learn-lesson__tier-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.learn-lesson__why,
+.learn-lesson__fix,
+.learn-lesson__note {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #cccccc;
+}
+
+.learn-lesson__note {
+  background: #fff8e1;
+  border: 1px solid #ffc107;
+  padding: 10px 12px;
+}
+
+.learn-lesson__why-title {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.learn-lesson__tour-done {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  line-height: 1.9;
+  margin-bottom: 12px;
+}
+
+/* Learn-mode checklist: grouped by tier, with the current step called out and
+   everything after it dimmed, so the order reads as a path rather than a list. */
+.sticky-note--learn .sticky-note__tier {
+  margin-bottom: 8px;
+}
+
+.sticky-note__tier-title {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: #666666;
+  margin: 6px 0 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #c9c3a8;
+}
+
+.sticky-note__item.upcoming {
+  opacity: 0.45;
+}
+
+.sticky-note__item.current .sticky-note__label {
+  font-weight: bold;
+}
+
+/* Whatever the current learn-mode tour stop is talking about. Deliberately
+   loud: the lesson window sits over the file, so the highlight has to be
+   findable the moment the player moves the dialog aside. */
+.tour-spotlight {
+  background: #ffe680 !important;
+  outline: 2px solid #e6a700;
+  outline-offset: -2px;
+}
+
+/* The lesson docks against the right edge rather than centring, so the file it
+   is discussing (opened on the left) and its highlighted lines stay visible. */
+.dialog-overlay:has(.learn-lesson) {
+  justify-content: flex-end;
+  padding-right: 20px;
+}
+
+.learn-lesson {
+  max-width: 480px;
+}

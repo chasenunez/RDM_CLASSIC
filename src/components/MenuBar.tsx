@@ -6,7 +6,7 @@ import { RulesDialog } from './RulesDialog';
 import { AboutDialog } from './AboutDialog';
 
 export function MenuBar() {
-  const { gameState, dispatch } = useGame();
+  const { gameState, dispatch, mode } = useGame();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [showRules, setShowRules] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
@@ -27,6 +27,19 @@ export function MenuBar() {
     setOpenMenu(prev => (prev === name ? null : name));
 
   const resetGame = () => {
+    clearState();
+    window.location.reload();
+  };
+
+  // The two modes share one save, so switching restarts. Confirm first: losing
+  // half an hour of progress to a mis-click would be a poor trade.
+  const switchMode = () => {
+    const other = mode === 'learn' ? 'Test' : 'Learn';
+    const ok = window.confirm(
+      `Switch to ${other} mode?\n\nThis starts the project over from the beginning. ` +
+      'Your current progress will be lost.',
+    );
+    if (!ok) return;
     clearState();
     window.location.reload();
   };
@@ -69,6 +82,17 @@ export function MenuBar() {
                 onClick={resetGame}
               >
                 Reset Game
+              </div>
+              <div className="dropdown__separator" />
+              {/* Learn and Test keep one save between them, so changing your
+                  mind means starting over. Saying so avoids surprising anyone
+                  who is halfway through. */}
+              <div
+                className="dropdown__item"
+                role="menuitem"
+                onClick={switchMode}
+              >
+                Switch to {mode === 'learn' ? 'Test' : 'Learn'} mode…
               </div>
               <div className="dropdown__separator" />
               <div

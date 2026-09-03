@@ -7,7 +7,13 @@ interface TextViewerProps {
 }
 
 export function TextViewer({ filePath }: TextViewerProps) {
-  const { showContextMenu, mapping } = useGame();
+  const { showContextMenu, mapping, learnHighlight } = useGame();
+
+  // In a learn-mode tour, the lines the current stop is about. Empty
+  // otherwise, so test mode renders exactly as before.
+  const spotlit = new Set(
+    learnHighlight?.file === filePath ? learnHighlight.lines : [],
+  );
   const { data: text, error } = useFileContent(filePath, 'text');
 
   const report = (line: number, x: number, y: number) =>
@@ -44,7 +50,7 @@ export function TextViewer({ filePath }: TextViewerProps) {
           <div
             key={i}
             data-line={lineNum}
-            className={`text-viewer__line${isHint ? ' trigger-hint' : ''}`}
+            className={`text-viewer__line${isHint ? ' trigger-hint' : ''}${spotlit.has(lineNum) ? ' tour-spotlight' : ''}`}
             onContextMenu={e => {
               e.preventDefault();
               report(lineNum, e.clientX, e.clientY);

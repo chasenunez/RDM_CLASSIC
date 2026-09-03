@@ -94,6 +94,58 @@ export interface Mapping {
   missingArtifactDecoys?: MissingArtifactDecoy[];
 }
 
+// ── Learn mode ────────────────────────────────────────────────────────────────
+
+/**
+ * Which half of the app the player chose at startup. "test" is the original
+ * scavenger hunt: find the problems yourself and get scored. "learn" walks a
+ * beginner through the same ten problems in a deliberate order, explaining each
+ * before fixing it, with nothing to guess and nothing to get wrong.
+ */
+export type GameMode = 'learn' | 'test';
+
+/** What the player has to click to reach a step's lesson. */
+export type LearnTarget =
+  | { kind: 'file'; path: string }
+  | { kind: 'trash' };
+
+/**
+ * One stop on a guided tour through a file. Either it carries its own text, or
+ * it `ref`s a sub-problem in problems.json so the wording is not duplicated.
+ * `cells` and `lines` say what to highlight while the stop is on screen.
+ */
+export interface TourStop {
+  id: string;
+  ref?: string;                 // sub-problem id in problems.json
+  name?: string;
+  what?: string;
+  why?: string;
+  cells?: [number, number][];   // [row, col] pairs, for spreadsheets
+  lines?: number[];             // 1-indexed, for code
+}
+
+export interface LearnStep {
+  problemId: string;            // the problem in problems.json this teaches
+  instruction: string;          // what the coach tells the player to do
+  target?: LearnTarget;         // what they click; absent means "just read"
+  note?: string;                // learn-only framing, markdown
+  resources?: Resource[];       // learn-only links, added to the problem's own
+  /** "subProblems" reuses the problem's sub-problems; an array is explicit. */
+  tour?: 'subProblems' | TourStop[];
+}
+
+export interface LearnTier {
+  id: string;
+  title: string;
+  intro: string;                // why this group comes where it does
+  steps: LearnStep[];
+}
+
+export interface LearnPath {
+  comment?: string;
+  tiers: LearnTier[];
+}
+
 // ── Context menu target ───────────────────────────────────────────────────────
 
 // What a right-click landed on. Empty space is 'desktop'; the missing-artifact
@@ -130,6 +182,10 @@ export interface WindowState {
 // ── Persisted game state ──────────────────────────────────────────────────────
 
 export interface PersistedState {
+  /** null until the player picks Learn or Test on the title screen. */
+  mode: GameMode | null;
+  /** How far through the learn-mode curriculum they are. Ignored in test mode. */
+  learnStep: number;
   foundProblems: string[];   // main problem IDs + sub-problem IDs
   fixedProblems: string[];   // problem IDs where "Let's fix it" was clicked
   wrongGuesses: number;

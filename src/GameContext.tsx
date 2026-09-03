@@ -3,6 +3,7 @@ import type {
   Problem,
   SubProblem,
   FileEntry,
+  GameMode,
   Mapping,
   PersistedState,
   WindowState,
@@ -16,8 +17,10 @@ import mappingData from './data/mapping.json';
 import { loadState, saveState } from './lib/persistence';
 import { matchTrigger, matchSelectedProblem, getParentId, matchMissingArtifact } from './lib/matchTrigger';
 import { playChime, playBonk, playFanfare, playSosumi } from './lib/sounds';
-import { centeredAt, computeProjectFolderLayout } from './lib/layout';
+import { centeredAt, computeLearnFileLayout, computeProjectFolderLayout } from './lib/layout';
 import { FIX_ACTIONS } from './lib/fixActions';
+import { TOTAL_STEPS, resolveTour, stepAt, targetMatchesFile } from './lib/learnPath';
+import type { ResolvedStop } from './lib/learnPath';
 import { WINDOWS, LABELS } from './theme';
 
 // ── Typed data ────────────────────────────────────────────────────────────────
@@ -59,6 +62,9 @@ export const BOSS_SUB_IDS = getSubProblemIds(BOSS_PARENT_ID);
 
 function getDefaultState(): PersistedState {
   return {
+    // No mode until the player picks one on the title screen.
+    mode: null,
+    learnStep: 0,
     foundProblems: [],
     fixedProblems: [],
     wrongGuesses: 0,
@@ -93,7 +99,9 @@ type Action =
   | { type: 'FOCUS_WINDOW'; id: string }
   | { type: 'MOVE_WINDOW'; id: string; x: number; y: number }
   | { type: 'RESIZE_WINDOW'; id: string; x: number; y: number; width: number; height: number }
-  | { type: 'TOGGLE_MUTE' };
+  | { type: 'TOGGLE_MUTE' }
+  | { type: 'SET_MODE'; mode: GameMode }
+  | { type: 'ADVANCE_LEARN_STEP' };
 
 function reducer(state: PersistedState, action: Action): PersistedState {
   switch (action.type) {
@@ -172,6 +180,14 @@ function reducer(state: PersistedState, action: Action): PersistedState {
     case 'TOGGLE_MUTE':
       return { ...state, isMuted: !state.isMuted };
 
+    case 'SET_MODE':
+      return { ...state, mode: action.mode };
+
+    // Learn mode only moves forward, and never past the end of the
+    // curriculum, so the coach can treat "index === TOTAL_STEPS" as done.
+    case 'ADVANCE_LEARN_STEP':
+      return { ...state, learnStep: Math.min(state.learnStep + 1, TOTAL_STEPS) };
+
     default:
       return state;
   }
@@ -220,6 +236,22 @@ interface GameContextType {
   dismissAlreadyFound: () => void;
   getSubProgress: (parentId: string) => { found: number; total: number };
   isMainProblemSolved: (id: string) => boolean;
+
+  // Learn mode
+  mode: GameMode | null;
+  chooseMode: (mode: GameMode) => void;
+  isLearnMode: boolean;
+  learnStepIndex: number;
+  learnTotalSteps: number;
+  learnCurrent: ReturnType<typeof stepAt>;
+  learnLessonOpen: boolean;
+  learnTourStops: ResolvedStop[];
+  learnTourIndex: number;
+  learnHighlight: { file: string; lines: number[]; cells: [number, number][] } | null;
+  openLearnLesson: () => void;
+  advanceLearnTour: () => void;
+  completeLearnStep: () => void;
+  dismissLearnLesson: () => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -248,6 +280,102 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [notMissingReason, setNotMissingReason] = useState<string | null>(null);
   const [alreadyFoundName, setAlreadyFoundName] = useState<string | null>(null);
   const [pendingTarget, setPendingTarget] = useState<ContextTarget | null>(null);
+
+  // ── Learn mode ─────────────────────────────────────────────────────────────
+  //
+  // Learn mode is guided but hands-on. The coach names a file, the player opens
+  // it, and the lesson appears. Nothing is scored and nothing can be answered
+  // wrongly; the only forward control is finishing the current step.
+
+  const mode = gameState.mode;
+  const isLearnMode = mode === 'learn';
+  const learnStepIndex = gameState.learnStep;
+  const learnCurrent = stepAt(learnStepIndex);
+
+  // Whether the lesson window is up, and how far through its tour we are. Both
+  // are ephemeral: reopening the file restarts the lesson from the top, which
+  // is the behaviour you want from a teaching aid.
+  const [learnLessonOpen, setLearnLessonOpen] = useState(false);
+  const [learnTourIndex, setLearnTourIndex] = useState(0);
+
+  const learnProblem = problems.find(p => p.id === learnCurrent?.step.problemId);
+  const learnTourStops = learnCurrent
+    ? resolveTour(learnCurrent.step, learnProblem)
+    : [];
+
+  const chooseMode = useCallback((next: GameMode) => {
+    dispatch({ type: 'SET_MODE', mode: next });
+  }, []);
+
+  const openLearnLesson = useCallback(() => {
+    setLearnTourIndex(0);
+    setLearnLessonOpen(true);
+  }, []);
+
+  const dismissLearnLesson = useCallback(() => setLearnLessonOpen(false), []);
+
+  /** Next stop on the tour, or stay put once we are on the last one. */
+  const advanceLearnTour = useCallback(() => {
+    setLearnTourIndex(i => i + 1);
+  }, []);
+
+  const closeStepWindows = useCallback((names: string[]) => {
+    names.forEach(name => dispatch({ type: 'CLOSE_WINDOW', id: `file:${name}` }));
+  }, []);
+
+  /**
+   * Finish the current step: mark the problem found and fixed, apply the same
+   * FIX_ACTIONS the test mode uses so the desktop visibly changes, and move on.
+   * Reusing the fix pipeline is the point; learn mode teaches the same repairs,
+   * it just explains them first instead of asking the player to spot them.
+   */
+  const completeLearnStep = useCallback(() => {
+    const current = stepAt(gameState.learnStep);
+    if (!current) return;
+    const { problemId } = current.step;
+
+    dispatch({ type: 'FIND_PROBLEM', id: problemId });
+    // Sub-problems count as found too, so the checklist and any progress
+    // readout agree with what the player was just walked through.
+    getSubProblemIds(problemId).forEach(id =>
+      dispatch({ type: 'FIND_PROBLEM', id }),
+    );
+    dispatch({ type: 'FIX_PROBLEM', id: problemId });
+
+    // A fix that replaces files would otherwise leave the old window showing
+    // stale contents behind the lesson.
+    const action = FIX_ACTIONS[problemId];
+    if (action) closeStepWindows(action.remove);
+
+    setLearnLessonOpen(false);
+    setLearnTourIndex(0);
+    dispatch({ type: 'ADVANCE_LEARN_STEP' });
+
+    if (!gameState.isMuted) {
+      gameState.learnStep + 1 >= TOTAL_STEPS ? playFanfare() : playChime();
+    }
+  }, [gameState.learnStep, gameState.isMuted, closeStepWindows]);
+
+  /**
+   * What the current tour stop is talking about, so the viewer underneath can
+   * highlight it. Explicit coordinates win; the spreadsheet tour reuses its
+   * sub-problems' cell triggers from mapping.json rather than restating them.
+   */
+  const learnHighlight = (() => {
+    if (!learnLessonOpen || !learnCurrent) return null;
+    const stop = learnTourStops[learnTourIndex];
+    const target = learnCurrent.step.target;
+    if (!stop || target?.kind !== 'file') return null;
+
+    const cells =
+      stop.cells ??
+      (mapping.problems
+        .find(p => p.id === stop.id)
+        ?.triggers.filter(t => t.type === 'cell')
+        .map(t => [(t as { row: number }).row, (t as { col: number }).col] as [number, number]) ?? []);
+
+    return { file: target.path, lines: stop.lines ?? [], cells };
+  })();
 
   // ── Boss battle state ──────────────────────────────────────────────────────
   const [bossIntroShowing, setBossIntroShowing] = useState(false);
@@ -370,6 +498,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const cascade = (gameState.openWindows.length % 5) * 20;
       const { width: w, height: h } =
         viewerType === 'image' ? WINDOWS.fileViewerImage : WINDOWS.fileViewer;
+      // Learn mode docks the lesson against the right edge, so the file it is
+      // talking about opens on the left, where it and its highlighted lines
+      // stay visible while the lesson is up.
+      const learnPlacement =
+        gameState.mode === 'learn' ? computeLearnFileLayout(h) : null;
       dispatch({
         type: 'OPEN_WINDOW',
         window: {
@@ -377,11 +510,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           title: entry.name,
           viewerType,
           filePath: entry.name,
-          ...centeredAt(w, h, cascade),
-          width: w,
-          height: h,
+          ...(learnPlacement ?? { ...centeredAt(w, h, cascade), width: w, height: h }),
         },
       });
+
+      // Learn mode: opening the file the coach asked for is what starts the
+      // lesson. This is the whole "guided but you still click" interaction,
+      // and it replaces the boss intro rather than stacking on top of it.
+      if (gameState.mode === 'learn') {
+        const current = stepAt(gameState.learnStep);
+        if (targetMatchesFile(current?.step, entry.name)) {
+          setLearnTourIndex(0);
+          setLearnLessonOpen(true);
+        }
+        return;
+      }
 
       // Trigger boss battle intro when opening the boss file for the first time
       if (entry.name === BOSS_FILE && !bossFileFixed) {
@@ -392,7 +535,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         }
       }
     },
-    [gameState.openWindows, gameState.isMuted, bossFileFixed],
+    [gameState.openWindows, gameState.isMuted, gameState.mode, gameState.learnStep, bossFileFixed],
   );
 
   // Open problem selection dialog
@@ -588,6 +731,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     dismissAlreadyFound,
     getSubProgress,
     isMainProblemSolved,
+
+    mode,
+    chooseMode,
+    isLearnMode,
+    learnStepIndex,
+    learnTotalSteps: TOTAL_STEPS,
+    learnCurrent,
+    learnLessonOpen,
+    learnTourStops,
+    learnTourIndex,
+    learnHighlight,
+    openLearnLesson,
+    advanceLearnTour,
+    completeLearnStep,
+    dismissLearnLesson,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

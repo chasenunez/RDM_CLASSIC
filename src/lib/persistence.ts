@@ -1,10 +1,9 @@
 import type { PersistedState } from '../types';
 
-// Bumped to v4 when "File/folder organization" was split into a folder-layout
-// problem and a separate "Version control" problem, and the end-of-game
-// file-structure step was retired. Older saves reference ids that no longer
-// mean the same thing, so they're discarded on load.
-const STORAGE_KEY = 'rdm-scavenger-hunt:v4';
+// Bumped to v5 when learn mode arrived and PersistedState gained `mode` and
+// `learnStep`. Older saves have neither and no idea which mode they belong
+// to, so they are discarded rather than guessed at.
+const STORAGE_KEY = 'rdm-scavenger-hunt:v5';
 
 export function loadState(): PersistedState | null {
   try {
@@ -23,6 +22,8 @@ export function loadState(): PersistedState | null {
     // Default fields added in later versions so older saves stay valid.
     if (typeof parsed.hasSeenTitle !== 'boolean') parsed.hasSeenTitle = false;
     if (typeof parsed.hasOpenedTrash !== 'boolean') parsed.hasOpenedTrash = false;
+    if (parsed.mode !== 'learn' && parsed.mode !== 'test') parsed.mode = null;
+    if (typeof parsed.learnStep !== 'number') parsed.learnStep = 0;
     return parsed as PersistedState;
   } catch {
     return null;

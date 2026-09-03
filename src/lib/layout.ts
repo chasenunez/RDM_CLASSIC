@@ -63,3 +63,18 @@ export function computeProjectFolderLayout(): { x: number; y: number; width: num
 
   return { x: Math.round(leftBound), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
 }
+
+/**
+ * Where a file opens in learn mode: the strip between the checklist on the left
+ * and the lesson docked on the right, so all three are visible at once. Falls
+ * back to a sensible minimum on a narrow screen, where windows overlap anyway
+ * and the player can drag them.
+ */
+export const LEARN_LESSON_DOCK_W = 500;
+
+export function computeLearnFileLayout(fallbackHeight: number) {
+  const left = STICKY_NOTE_LEFT + STICKY_NOTE_WIDTH + CHROME_GAP;
+  const width = Math.max(360, window.innerWidth - left - LEARN_LESSON_DOCK_W);
+  const height = Math.max(MIN_WINDOW_HEIGHT, Math.min(fallbackHeight, window.innerHeight - MENU_BAR_H - 90));
+  return { x: Math.round(left), y: MENU_BAR_H + 8, width: Math.round(width), height: Math.round(height) };
+}

@@ -64,7 +64,15 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
     bossFoundCount,
     bossTotalErrors,
     bossFileFixed,
+    learnHighlight,
+    isLearnMode,
   } = useGame();
+
+  // Cells the current learn-mode tour stop is about, as "row,col" keys.
+  const spotlit = new Set(
+    (learnHighlight?.file === filePath ? learnHighlight.cells : [])
+      .map(([r, c]) => `${r},${c}`),
+  );
 
   const [activeSheet, setActiveSheet] = useState(0);
   const { data: buf, error } = useFileContent(filePath, 'arrayBuffer');
@@ -119,7 +127,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
 
       {/* Error counter, upper right, only during active boss battle */}
-      {isBoss && !bossFileFixed && (
+      {isBoss && !bossFileFixed && !isLearnMode && (
         <div className="boss-error-counter">
           {errorsRemaining > 0
             ? `${errorsRemaining} error${errorsRemaining !== 1 ? 's' : ''} remaining`
@@ -143,7 +151,7 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
         </div>
       )}
 
-      {isBoss && !bossFileFixed && (
+      {isBoss && !bossFileFixed && !isLearnMode && (
         <div className="xlsx-boss-hint">
           Minigame: find all {bossTotalErrors} data quality issues! Right-click
           (or long-press) suspicious cells.
@@ -185,7 +193,10 @@ export function XlsxViewer({ filePath }: XlsxViewerProps) {
                     return (
                       <Tag
                         key={colIdx}
-                        className={extraClass || undefined}
+                        className={
+                          [extraClass, spotlit.has(`${rowIdx},${colIdx}`) ? 'tour-spotlight' : '']
+                            .filter(Boolean).join(' ') || undefined
+                        }
                         data-cell=""
                         data-row={rowIdx}
                         data-col={colIdx}

@@ -15,6 +15,7 @@ import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
 import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS, ORGANIZING_PROBLEM_ID, GIT_FOLDER_NAME } from '../lib/fixActions';
 import { centeredAt, computeProjectFolderLayout } from '../lib/layout';
+import { targetIsTrash } from '../lib/learnPath';
 import { asset } from '../lib/asset';
 import { WINDOWS, ASSETS, LABELS, TRASH_GIFS } from '../theme';
 
@@ -258,7 +259,10 @@ function FolderView() {
 }
 
 export function Desktop() {
-  const { gameState, dispatch, showContextMenu, problems } = useGame();
+  const {
+    gameState, dispatch, showContextMenu, problems,
+    isLearnMode, learnCurrent, openLearnLesson,
+  } = useGame();
   const { openWindows } = gameState;
 
   const maxZ = Math.max(0, ...openWindows.map(w => w.zIndex));
@@ -284,6 +288,9 @@ export function Desktop() {
 
   const openTrash = useCallback(() => {
     dispatch({ type: 'OPEN_TRASH' });
+    // The data-provenance step tells the player to open the Trash, so doing
+    // that has to start its lesson, exactly as opening a named file does.
+    if (isLearnMode && targetIsTrash(learnCurrent?.step)) openLearnLesson();
     dispatch({
       type: 'OPEN_WINDOW',
       window: {

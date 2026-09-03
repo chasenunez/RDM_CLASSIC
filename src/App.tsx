@@ -11,6 +11,9 @@ import { WrongGuessDialog } from './components/WrongGuessDialog';
 import { CompletionDialog } from './components/CompletionDialog';
 import { BossBattleIntro } from './components/BossBattleIntro';
 import { BossBattleComplete } from './components/BossBattleComplete';
+import { LearnWelcomeDialog } from './components/LearnWelcomeDialog';
+import { LearnLessonDialog } from './components/LearnLessonDialog';
+import { LearnCoach } from './components/LearnCoach';
 import { computeProjectFolderLayout } from './lib/layout';
 import { LABELS } from './theme';
 
@@ -32,6 +35,7 @@ const MODAL_ORDER = [
   'wrongGuess',
   'bossIntro',
   'bossComplete',
+  'learnLesson',
   'completion',
 ] as const;
 
@@ -53,16 +57,24 @@ function GameUI() {
     alreadyFoundName,
     bossIntroShowing,
     bossCompletionShowing,
+    isLearnMode,
+    learnLessonOpen,
+    learnStepIndex,
+    learnTotalSteps,
   } = useGame();
   const { foundProblems, hasSeenTitle, hasSeenWelcome } = gameState;
 
   const [showCompletion, setShowCompletion] = useState(false);
   const [completionQueued, setCompletionQueued] = useState(false);
 
-  // Only count main problems (not sub-problems) toward completion
+  // Only count main problems (not sub-problems) toward completion. Learn mode
+  // finishes by reaching the end of the curriculum instead, since every step
+  // there is completed rather than found.
   const mainProblemIds = problems.map(p => p.id);
   const foundMainCount = foundProblems.filter(id => mainProblemIds.includes(id)).length;
-  const allFound = problems.length > 0 && foundMainCount >= problems.length;
+  const allFound = isLearnMode
+    ? learnStepIndex >= learnTotalSteps
+    : problems.length > 0 && foundMainCount >= problems.length;
 
   // Finding the last problem opens the project folder, so the player sees the
   // finished project before the win screen arrives (the completion dialog's 1s
@@ -95,6 +107,7 @@ function GameUI() {
     wrongGuess: showWrong || alreadyFoundName != null,
     bossIntro: bossIntroShowing,
     bossComplete: bossCompletionShowing,
+    learnLesson: learnLessonOpen,
     completion: showCompletion,
   };
   const activeModal = MODAL_ORDER.find(id => modalWants[id]) ?? null;
@@ -125,16 +138,18 @@ function GameUI() {
       <MenuBar />
       <Desktop />
       <ContextMenu />
+      <LearnCoach />
 
       {/* At most one modal renders at a time, with a 1s gap between them;
           see MODAL_ORDER / activeModal / visibleModal. */}
       {visibleModal === 'problemSelection' && <ProblemSelectionDialog />}
       {visibleModal === 'title' && <TitleSlide />}
-      {visibleModal === 'welcome' && <WelcomeDialog />}
+      {visibleModal === 'welcome' && (isLearnMode ? <LearnWelcomeDialog /> : <WelcomeDialog />)}
       {visibleModal === 'problemReport' && <ProblemReportDialog />}
       {visibleModal === 'wrongGuess' && <WrongGuessDialog />}
       {visibleModal === 'bossIntro' && <BossBattleIntro />}
       {visibleModal === 'bossComplete' && <BossBattleComplete />}
+      {visibleModal === 'learnLesson' && <LearnLessonDialog />}
       {visibleModal === 'completion' && (
         <CompletionDialog onLookAtWork={handleLookAtWork} />
       )}
