@@ -1,0 +1,61 @@
+name: Type and data checks
+
+# Reports problems; never stops a deploy.
+#
+# Publishing lives in deploy.yml, and the two workflows run independently, so a
+# red mark here means something drifted while the site still goes out. That is
+# deliberate: a data rule should not be able to hold the game offline. To make
+# these checks blocking instead, add this workflow to the branch protection
+# rules for main rather than wiring it into deploy.yml.
+
+on:
+  # Every branch, because the point is to catch drift before it reaches main.
+  push:
+    branches: ['**']
+  # ...and allow manual runs from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Types and data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript
+        id: types
+        run: npm run typecheck
+
+      # `always()` so a TypeScript error doesn't hide a data error. One red
+      # mark that conceals the other costs a second round trip to find out.
+      - name: Data invariants
+        id: data
+        if: always()
+        run: npm run check-data
+
+      # The run page shows logs; this puts the verdict on the summary tab,
+      # where it is readable without opening a job.
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            echo "| TypeScript (\`npm run typecheck\`) | ${{ steps.types.outcome }} |"
+            echo "| Data invariants (\`npm run check-data\`) | ${{ steps.data.outcome }} |"
+            echo ""
+            echo "Deploys are not gated on this workflow. See \`.github/workflows/deploy.yml\`."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -87,4 +87,13 @@ export const LABELS = {
   // dialog's "What's the problem here?", and takes no ellipsis because it names
   // the question being asked rather than a command that opens something.
   reportMissing:      "What's missing here?",
+  // Label on the folder window's info strip. Players read the empty space as
+  // somewhere to add things, so the button uses their words; the menu it opens
+  // still asks the question it has always asked.
+  missingButton:      'Add a file',
+  // The button that applies a fix. A project with no README has nothing to
+  // repair, so being told to fix it reads as a mistake; those problems are
+  // solved by writing the missing file.
+  fixButton:          "Let's fix it!",
+  writeButton:        "Let's write one!",
 } as const;

@@ -1,10 +1,13 @@
 import type { PersistedState } from '../types';
 
-// Bumped to v4 when "File/folder organization" was split into a folder-layout
+// Bumped to v5 when the two figures were renamed to the project's own naming
+// convention. openWindows stores a file by name, so a v4 save could reopen a
+// window pointing at a name that is no longer on disk.
+//
+// Previously: v4 when "File/folder organization" was split into a folder-layout
 // problem and a separate "Version control" problem, and the end-of-game
-// file-structure step was retired. Older saves reference ids that no longer
-// mean the same thing, so they're discarded on load.
-const STORAGE_KEY = 'rdm-scavenger-hunt:v4';
+// file-structure step was retired.
+const STORAGE_KEY = 'rdm-scavenger-hunt:v5';
 
 export function loadState(): PersistedState | null {
   try {

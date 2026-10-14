@@ -26,7 +26,7 @@
 </head>
 <body>
 <h1>RDM Scavenger Hunt Problems and Solutions</h1>
-<p>Below is a catalogue of the <strong>12 problems</strong> hidden in the game (what's wrong, why it matters, and how to fix it) with resources for each.</p>
+<p>Below is a catalogue of the <strong>10 problems</strong> hidden in the game (what's wrong, why it matters, and how to fix it) with resources for each, followed by an appendix of further workshop topics that the game does not cover.</p>
 <p>---</p>
 <h2>The Sample Project at a Glance</h2>
 <p>The sample project simulates a soil science study that collected soil chemistry and sensor data from alpine sites. When the game begins, the project folder looks like this:</p>
@@ -51,6 +51,7 @@
 <table><tr><th>Original</th><th>Fixed</th></tr>
 <tr><td><code>manuscript draft.docx</code></td><td><code>20260501_AlpineSoil_Manuscript_v1.0.docx</code></td></tr></table>
 <p>Rules: no spaces (use underscores), no special characters, the date as YYYYMMDD, a descriptive project name, the document type, and a version number.</p>
+<p>Not every file takes the pattern. <code>README.md</code> and <code>LICENSE.md</code> keep their conventional names, because those exact words are what people and tools look for, and raw data keeps the name it arrived with, because that name is part of its provenance. Everything you produce yourself takes the pattern, figures included: a name like <code>fig1</code> records a position in a draft rather than what the figure shows, and positions move.</p>
 <p><strong>Resources:</strong></p>
 <ul>
 <li>Bulk Rename Utility (Windows): <a href="https://www.bulkrenameutility.co.uk/">https://www.bulkrenameutility.co.uk/</a></li>
@@ -87,10 +88,15 @@
 <p><strong>How to fix it:</strong></p>
 <p>Images:</p>
 <table><tr><th>Data type</th><th>Current format</th><th>Recommended format</th></tr>
-<tr><td>Microscopy images</td><td>.jpg</td><td>.tiff (uncompressed)</td></tr>
+<tr><td>Microscopy images</td><td>.jpg</td><td>.png or .tiff (both lossless; TIFF holds more per-pixel detail, PNG is readable anywhere)</td></tr>
 <tr><td>Figures for publication</td><td>.jpg</td><td>.png or .tiff</td></tr></table>
 <p>Spreadsheets: for sharing and long-term reuse, also export tabular data as <strong>CSV</strong> (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Researchers naturally reach for Excel because it matches day-to-day reality, but the archived, shareable copy should be an open format like CSV.</p>
-<p>Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing. (Figures can keep short descriptive names like <code>fig1.png</code>: the naming rules just mean no spaces or special characters, and a lossless format.)</p>
+<p>Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing.</p>
+<p><strong>Rename while you are in there.</strong> Re-saving a file is a free opportunity to fix its name, so both figures get the naming convention at the same time as the format:</p>
+<table><tr><th>Original</th><th>Fixed</th></tr>
+<tr><td><code>fig1.jpg</code></td><td><code>20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png</code></td></tr>
+<tr><td><code>microscopy_sample_12.jpg</code></td><td><code>20260322_AlpineSoil_Microscopy_Sample12_v1.0.png</code></td></tr></table>
+<p><code>fig1</code> says where the figure sits in one draft, not what it shows, and that position changes with the next revision.</p>
 <p><strong>Resources:</strong></p>
 <ul>
 <li>Library of Congress Recommended Formats: <a href="https://www.loc.gov/preservation/resources/rfs/">https://www.loc.gov/preservation/resources/rfs/</a></li>
@@ -119,7 +125,7 @@
 <p><strong>Why it matters:</strong> Raw data is the ground truth of your research. If something goes wrong downstream (a processing error, a bug in your script, a question from a reviewer) you must be able to go back to the original. Deleting or modifying raw data permanently destroys that ability and violates good scientific practice.</p>
 <p><strong>How to fix it:</strong> Follow these raw-data rules:</p>
 <ol>
-<li><strong>Never delete raw data.</strong> Archive it in a read-only location.</li>
+<li><strong>Never delete raw data.</strong> Archive it in a read-only location, under the name it arrived with: that name is part of the record of what you were given. The naming convention applies to the files you derive from it.</li>
 <li><strong>Never edit raw data directly.</strong> All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.</li>
 <li><strong>Follow the 3-2-1 rule</strong>: keep at least <strong>3</strong> copies of your data, on <strong>2</strong> different types of media (for example your computer and an institutional server), with <strong>1</strong> copy kept off-site (a repository or cloud backup). Two copies on the same laptop is not a backup.</li>
 <li><strong>Make raw files read-only</strong> (<code>chmod 444</code> on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.</li>
@@ -320,21 +326,20 @@
 <h2>Summary: What the Fixed Project Looks Like</h2>
 <p>After all 10 problems are fixed, the project is well-named, documented, licensed, uses lossless formats, keeps its raw data safe and read-only, and has clean, tidy, well-commented data and code:</p>
 <pre><code>AlpineSoil/
-├── README.md                                   ← Project documentation
-├── LICENSE.md                                  ← License for data and code
+├── README.md                                            ← Project documentation
+├── LICENSE.md                                           ← Licence for data and code
 ├── data/
-│   ├── raw/
-│   │   └── raw_alpine_soil_data.xlsx           ← Preserved, read-only original
-│   └── processed/
-│       └── 20260410_AlpineSoil_SoilChemistry_v1.0.csv
+│   ├── raw_alpine_soil_data.csv                         ← Recovered original, read-only
+│   └── 20260315_AlpineSoil_Chem_v1.0.csv                ← Cleaned, open format
 ├── code/
-│   └── 20260410_AlpineSoil_Analysis_v1.0.py    ← Commented, reproducible
+│   └── 20260410_AlpineSoil_Analysis_v1.0.py             ← Commented, reproducible
 ├── figures/
-│   ├── fig1.png                                ← Lossless format
-│   └── microscopy_sample_12.png                ← Lossless format
+│   ├── 20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png    ← Lossless, and the name says what it shows
+│   └── 20260322_AlpineSoil_Microscopy_Sample12_v1.0.png ← Lossless
 └── manuscripts/
     ├── 20260501_AlpineSoil_Manuscript_v1.0.docx
     └── 20260501_AlpineSoil_Manuscript_v1.1.docx</code></pre>
+<p>Raw data keeps the name it arrived with. Everything derived from it carries the naming convention, which is why the two figures are renamed when they are re-saved. A larger project would split <code>data/</code> into <code>raw/</code> and <code>processed/</code>; this one is small enough that the two files sit side by side, with the raw file read-only.</p>
 <p>Clean structure. Consistent naming. Open formats. Versioned. Documented. Licensed. Raw data preserved. FAIR.</p>
 <p>---</p>
 <h2>Lib4RI resources</h2>

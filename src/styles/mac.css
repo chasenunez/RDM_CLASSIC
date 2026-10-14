@@ -11,6 +11,7 @@
 :root {
   --brand-green: #ACDBAF;       /* dither foreground on the desktop */
   --brand-green-bg: #d4ecd5;    /* desktop base colour behind the dither */
+  --accent-amber: #fec33d;      /* the one call-to-action colour, on black */
 }
 
 /* ── Desktop ─────────────────────────────────────────────────────────────── */
@@ -1057,6 +1058,74 @@
   gap: 20px;
   padding: 8px;
   min-height: 100%;
+}
+
+/* The project-folder window: info strip above, scrolling icons below. Other
+   folder windows (Trash, archive, subfolders) render .folder-view on its own
+   and are unaffected. */
+.folder-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* System 7 showed "12 items  3.4 MB in disk" here. The right-hand button is
+   the liberty: without it nothing on screen says you can report an absence,
+   and players only found the right-click by accident.
+   Height must match FOLDER_HEADER_H in src/lib/layout.ts. */
+.folder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 24px;
+  padding: 0 6px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #000000;
+  background: #ffffff;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  user-select: none;
+}
+
+.folder-header__count {
+  color: #666666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-header__action {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  line-height: 1;
+  padding: 3px 8px;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  /* The one colour in an otherwise monochrome window, so the eye finds it.
+     Black on this amber clears WCAG AA comfortably. */
+  background: var(--accent-amber);
+  color: #000000;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.folder-header__action:hover {
+  background: #ffd560;
+}
+
+.folder-header__action:active {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* The icons scroll; the strip stays put. min-height:0 stops the flex item
+   from refusing to shrink below its content, which would hide the overflow. */
+.folder-pane > .folder-view {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 /* ── Text viewer ──────────────────────────────────────────────────────────── */

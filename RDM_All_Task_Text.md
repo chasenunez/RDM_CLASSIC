@@ -1,3 +1,8 @@
+# RDM Scavenger Hunt: all task text
+
+The ten problems the game hides, numbered as the downloadable guide numbers
+them, followed by an appendix of three further workshop topics that the game
+does not cover.
 
 ## Topic 1: Bad File Naming
 
@@ -26,6 +31,8 @@ Adopt the pattern: `YYYYMMDD_ProjectName_DocumentType_Version.extension`
 | `manuscript draft.docx` | `20260501_AlpineSoil_Manuscript_v1.0.docx` |
 
 Rules: no spaces (use underscores), no special characters, the date as YYYYMMDD, a descriptive project name, the document type, and a version number.
+
+Not every file takes the pattern. `README.md` and `LICENSE.md` keep their conventional names, because those exact words are what people and tools look for, and raw data keeps the name it arrived with, because that name is part of its provenance. Everything you produce yourself takes the pattern, figures included: a name like `fig1` records a position in a draft rather than what the figure shows, and positions move.
 
 **Resources**
 
@@ -92,12 +99,21 @@ Images:
 
 | Data type | Current format | Recommended format |
 |-----------|---------------|-------------------|
-| Microscopy images | .jpg | .tiff (uncompressed) |
+| Microscopy images | .jpg | .png or .tiff (both lossless; TIFF holds more per-pixel detail, PNG is readable anywhere) |
 | Figures for publication | .jpg | .png or .tiff |
 
 Spreadsheets: for sharing and long-term reuse, also export tabular data as **CSV** (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Researchers naturally reach for Excel because it matches day-to-day reality, but the archived, shareable copy should be an open format like CSV.
 
-Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing. (Figures can keep short descriptive names like `fig1.png`: the naming rules just mean no spaces or special characters, and a lossless format.)
+Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing.
+
+**Rename while you are in there.** Re-saving a file is a free opportunity to fix its name, so both figures get the naming convention at the same time as the format:
+
+| Original | Fixed |
+|----------|-------|
+| `fig1.jpg` | `20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png` |
+| `microscopy_sample_12.jpg` | `20260322_AlpineSoil_Microscopy_Sample12_v1.0.png` |
+
+`fig1` says where the figure sits in one draft, not what it shows, and that position changes with the next revision.
 
 **Resources**
 
@@ -145,7 +161,7 @@ Raw data is the ground truth of your research. If something goes wrong downstrea
 
 Follow these raw-data rules:
 
-1. **Never delete raw data.** Archive it in a read-only location.
+1. **Never delete raw data.** Archive it in a read-only location, under the name it arrived with: that name is part of the record of what you were given. The naming convention applies to the files you derive from it.
 2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.
 3. **Follow the 3-2-1 rule**: keep at least **3** copies of your data, on **2** different types of media (for example your computer and an institutional server), with **1** copy kept off-site (a repository or cloud backup). Two copies on the same laptop is not a backup.
 4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.
@@ -410,7 +426,7 @@ Uncommented code is a black box. No one (including you in six months) will know 
 
 Topics 1–7 are about keeping your *own* working copy of a project in good shape: how you name, version, format, document, back up, and organise the files on your machine.
 
-Topics 8–12 shift outward, to what has to be true before your data can leave your computer to be shared, published, and reused by others: a licence that says how it may be used, a structure others can navigate, rich metadata, a data availability statement, and a persistent identifier (DOI). Good local habits make this second step almost free; skipping them makes it painful.
+Topics 8–10 shift outward, to what has to be true before your data can leave your computer to be shared, published, and reused by others: a licence that says how it may be used, a structure others can navigate, and a recorded history of how the project got here. The appendix goes further still, to metadata, data availability statements, and persistent identifiers. Good local habits make this second step almost free; skipping them makes it painful.
 
 ---
 
@@ -443,11 +459,11 @@ Place a `LICENSE.md` file at the root of your project.
 
 ## Topic 9: File/folder organization (RDM Guide Problem 1)
 
-**What's wrong:** The whole project is one flat pile. All the files (raw data, processed data, code, figures, manuscripts, and personal notes) are dumped in a single directory, with no separation between data stages, no distinction between inputs and outputs, and no logical grouping. There is also no version control (no Git repository), so nothing records the history of the project as a whole.
+**What's wrong:** The whole project is one flat pile. All the files (raw data, processed data, code, figures, manuscripts, and personal notes) are dumped in a single directory, with no separation between data stages, no distinction between inputs and outputs, and no logical grouping.
 
-**Why it matters:** Without structure, it's impossible to tell at a glance what stage a file belongs to, whether it's an input or output, or what depends on what. This gets worse as projects grow, and a new team member would have no idea where to start. Without version control, there is no history of how the project reached its current state and no safe way to undo a change across the whole project.
+**Why it matters:** Without structure, it's impossible to tell at a glance what stage a file belongs to, whether it's an input or output, or what depends on what. This gets worse as projects grow, and a new team member would have no idea where to start.
 
-**How to fix it:** Do two things. **First, organise the folder** into a consistent hierarchy that separates concerns. For example:
+**How to fix it:** Organise the folder into a consistent hierarchy that separates concerns. For example:
 
 ```
 20260301_AlpineSoilSurvey/
@@ -468,14 +484,39 @@ Place a `LICENSE.md` file at the root of your project.
 
 Key principles: separate raw from processed data, keep code in its own folder, isolate outputs (figures, results) from inputs, and put documentation (README, LICENSE) at the root.
 
-**Second, put the project under version control** with Git so every change to the project as a whole is tracked. Host it on GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server. (Git tracks the *project*; the semantic version numbers in Topic 2 track individual *files*. Together they give you a complete history.)
-
 **Resources:**
 - The Turing Way, Research Data Management: https://the-turing-way.netlify.app/reproducible-research/rdm
 - CESSDA Data Management Guide: https://dmeg.cessda.eu/
-- Software Carpentry Git lesson: https://swcarpentry.github.io/git-novice/
+- Good Enough Practices in Scientific Computing (Wilson et al. 2017): https://doi.org/10.1371/journal.pcbi.1005510
 
-## Topic 10: No Metadata (RDM Guide Problem 6)
+## Topic 10: No Version Control
+
+**What's wrong:** There is no Git repository. Nothing records the history of the project as a whole: who changed what, when, or why. The only trace of history is in the filenames themselves (`v2`, `JK comments`), which is exactly the problem Topic 2 describes.
+
+**Why it matters:** Without version control there is no reliable way to see what changed between two points in time, no safe way to undo a change across the whole project, and no record of which state of the code produced a published result. Renaming files to `_final_v2` is an attempt to do version control by hand, and it fails in every way real version control succeeds.
+
+**How to fix it:**
+
+1. **Initialise a repository** in the project folder: `git init`, then `git add .` and `git commit`.
+2. **Commit as you work**, with messages that say *why* rather than *what*. Every commit is a restore point.
+3. **Push to a host** so the history survives your laptop: GitHub, GitLab, Codeberg, or an institutional Gitea/Forgejo server.
+4. **Add a `.gitignore`** so generated output, caches, and OS clutter stay out of the history. Track your sources, not your build artefacts.
+
+Git tracks the *project*; the semantic version numbers in Topic 2 track individual *files*. Together they give you a complete history. Git is designed for text, where it can show a line-by-line diff; large binary data belongs in a data repository with a DOI, not in Git.
+
+**Resources:**
+- Lib4RI: version control: https://www.lib4ri.ch/version-control
+- Software Carpentry Git lesson: https://swcarpentry.github.io/git-novice/
+- Git: https://git-scm.com/
+- Git GUIs: https://git-scm.com/downloads/guis
+
+## Appendix: further workshop topics
+
+The three topics below are part of the Basics of Research Data Management workshop but are not among the problems the game asks you to find. They matter once the project leaves your machine.
+
+---
+
+### A. No Metadata (RDM Guide Problem 6)
 
 **What's wrong:** There is no structured metadata associated with any data file. Column headers in the data are ambiguous (`col1`, `col2`, `col3`, `val`, `temp`) with no descriptions or units. There is no information about the instruments used, measurement protocols, or coordinate reference systems.
 
@@ -493,7 +534,7 @@ Key principles: separate raw from processed data, keep code in its own folder, i
 - RDA Metadata Standards Catalog: https://rdamsc.bath.ac.uk/
 - FAIRsharing: https://fairsharing.org/
 
-## Topic 11: No Data Availability Statement (RDM Guide Problem 11)
+### B. No Data Availability Statement (RDM Guide Problem 11)
 
 **What's wrong:** The manuscript drafts in this project presumably describe the analysis, but there is no data availability statement: no information about where the data will be deposited, under what DOI, with what license, or how others can access it.
 
@@ -509,7 +550,7 @@ This should specify: the repository name, the DOI, what the dataset contains, an
 - Springer Nature data availability statement examples: https://www.springernature.com/gp/authors/research-data-policy/data-availability-statements
 - re3data (find a repository): https://www.re3data.org/
 
-## Topic 12: No Persistent Identifier (DOI) (RDM Guide Problem 12)
+### C. No Persistent Identifier (DOI) (RDM Guide Problem 12)
 
 **What's wrong:** None of the data has been deposited in a repository, so none of it has a DOI or any other persistent identifier. The data exists only on local machines.
 

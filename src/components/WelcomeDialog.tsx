@@ -26,7 +26,8 @@ const CHAT_LINES: React.ReactNode[] = [
   <> Some problems will be in the files, some will be missing files, and some will be the files themselves.</>,
   <>To identify a found problem, right-click on the <em>file, cell, or line</em>, and choose
     <em> "{LABELS.reportProblem}"</em>. </>,
-  <>To identify a missing file, right-click on any <em>empty space</em> within the window and choose from the drop-down menu.</>,
+  <>To identify a missing file, click <em>"{LABELS.missingButton}"</em> at the top of the project
+    window, or right-click any <em>empty space</em> in it, and choose from the list.</>,
   <>Each corrected problem is checked off on the list in the upper left. Wrong guesses count against you, so be strategic!</>,
   <>Good luck. Your future self thanks you (^‿^)</>,
 ];

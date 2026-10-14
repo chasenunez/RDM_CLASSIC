@@ -36,10 +36,11 @@ export function RulesDialog({ onClose }: RulesDialogProps) {
                 Right-click individual lines or cells inside the viewer to report a problem in the file.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
-                Some problems are things that <em>aren't there</em>. Right-click the empty
-                space in the folder to get a list of what a good project should have, and
-                pick whatever you think is missing. Look before you pick: some of the
-                things on that list are already in the project.
+                Some problems are things that <em>aren't there</em>. Click
+                <strong> {LABELS.missingButton}</strong> at the top of the folder window
+                (or right-click the empty space) to get a list of what a good project
+                should have, and pick whatever you think is missing. Look before you
+                pick: some of the things on that list are already in the project.
               </li>
               <li style={{ listStyle: 'disc', marginBottom: '4px' }}>
                 Each correct find reveals the explanation and marks it off on the checklist in the upper left of your screen.

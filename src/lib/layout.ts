@@ -9,6 +9,11 @@ export const MENU_BAR_H = 30;
 // a window's y.
 const DESKTOP_TOP_INSET = 20;
 
+// Height of the folder window's info strip (.folder-header in mac.css).
+// The project-folder window grows by this much so adding the strip doesn't
+// cost the icon area a row.
+export const FOLDER_HEADER_H = 24;
+
 // Must match .window's min-width/min-height in mac.css.
 export const MIN_WINDOW_WIDTH = 200;
 export const MIN_WINDOW_HEIGHT = 100;
@@ -59,7 +64,9 @@ export function computeProjectFolderLayout(): { x: number; y: number; width: num
   const viewportY = MENU_BAR_H + Math.round((availableH - equalMarginsHeight) / 2);
   const y = viewportY - DESKTOP_TOP_INSET;
 
-  const height = Math.min(width, equalMarginsHeight);
+  // Square-ish icon area, plus the info strip, never taller than the margins
+  // allow.
+  const height = Math.min(width + FOLDER_HEADER_H, equalMarginsHeight);
 
   return { x: Math.round(leftBound), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
 }

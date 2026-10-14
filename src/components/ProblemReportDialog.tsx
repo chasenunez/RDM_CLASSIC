@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
 import { useGame } from '../GameContext';
 import { asset } from '../lib/asset';
+import { WRITTEN_FROM_SCRATCH } from '../lib/fixActions';
+import { LABELS } from '../theme';
 
 type Tab = 'what' | 'why';
 
@@ -153,7 +155,7 @@ export function ProblemReportDialog() {
                     setShowFix(true);
                   }}
                 >
-                  Let&apos;s fix it!
+                  {WRITTEN_FROM_SCRATCH.has(fixId) ? LABELS.writeButton : LABELS.fixButton}
                 </button>
               )}
             </div>
