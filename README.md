@@ -1,4 +1,4 @@
-![DOI](https://zenodo.org/badge/1280000862.svg)](https://doi.org/10.5281/zenodo.22206717)
+[![DOI](https://zenodo.org/badge/1280000862.svg)](https://doi.org/10.5281/zenodo.22206717)
 
 # RDM Classic
 
