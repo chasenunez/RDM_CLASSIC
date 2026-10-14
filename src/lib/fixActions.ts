@@ -68,6 +68,7 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     archive: [],
     add: [
       { ...FOLDER, path: '_fix/data', name: 'data/', size: 0 },
+      { ...FOLDER, path: '_fix/figures', name: 'figures/', size: 0 },
       { ...FOLDER, path: '_fix/manuscripts', name: 'manuscripts/', size: 0 },
       { ...FOLDER, path: '_fix/code', name: 'code/', size: 0 },
     ],
@@ -80,8 +81,12 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
         'raw_alpine_soil_data.xlsx',
         'soil samples.xlsx',
         '20260315_AlpineSoil_Chem_v1.0.xlsx',
-        'fig1.png',
-        'microscopy_sample_12.png',
+      ],
+      // Figures are outputs, not data. Keeping them in data/ taught the
+      // opposite, and the downloadable guide already showed a figures/ folder.
+      'figures': [
+        '20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png',
+        '20260322_AlpineSoil_Microscopy_Sample12_v1.0.png',
       ],
       'manuscripts': [
         '20260501_AlpineSoil_Manuscript_v1.0.docx',
@@ -101,12 +106,16 @@ export const FIX_ACTIONS: Record<string, FixAction> = {
     ],
   },
 
+  // Re-saving a figure is the moment you get to rename it for free, so the
+  // replacements carry the project's naming convention as well as the lossless
+  // format. `fig1.png` would still have been a name that only means anything
+  // to whoever made it, and only until the figures are reordered.
   'file-formats': {
     remove: ['fig1.jpg', 'microscopy_sample_12.jpg'],
     archive: ['fig1.jpg', 'microscopy_sample_12.jpg'],
     add: [
-      { ...TEXT, path: 'sample_project/fig1.png', name: 'fig1.png', size: 18313, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/image.png' },
-      { ...TEXT, path: 'sample_project/microscopy_sample_12.png', name: 'microscopy_sample_12.png', size: 22275, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/microscope.png' },
+      { ...TEXT, path: 'sample_project/20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png', name: '20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png', size: 18313, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/image.png' },
+      { ...TEXT, path: 'sample_project/20260322_AlpineSoil_Microscopy_Sample12_v1.0.png', name: '20260322_AlpineSoil_Microscopy_Sample12_v1.0.png', size: 22275, mimeGuess: 'image/png', viewerType: 'image', icon: '/assets/microscope.png' },
     ],
   },
 
@@ -180,6 +189,16 @@ export const GIT_FOLDER_NAME = '.git/';
 // (its cell coordinates in mapping.json and the XlsxViewer boss handling both
 // key off the "soil samples.xlsx" name). Every other .xlsx is converted.
 const CSV_CONVERSION_EXEMPT = new Set(['soil samples.xlsx']);
+
+/**
+ * Whether a file sits at the top level of the project folder, rather than
+ * inside a subfolder a fix created. The folder view uses this to decide what
+ * to draw, and scripts/check-data.mjs uses it to assert that a fully fixed
+ * project has nothing but its README and licence loose at the top.
+ */
+export function isRootLevel(entry: FileEntry): boolean {
+  return entry.type === 'file' && !entry.path.replace('sample_project/', '').includes('/');
+}
 
 export function computeDisplayFiles(
   baseTree: FileEntry[],

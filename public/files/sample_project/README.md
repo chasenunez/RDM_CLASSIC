@@ -15,12 +15,19 @@ Files are grouped by role, so it is clear which are inputs and which are outputs
 
 | File | Description |
 | --- | --- |
-| `data/raw_alpine_soil_data.xlsx` | Original field measurements, one row per sample site. Read-only; never edited. |
-| `data/20260315_AlpineSoil_Chem_v1.0.xlsx` | Cleaned soil chemistry, derived from the raw file. This is the table to analyse. |
+| `data/raw_alpine_soil_data.csv` | Original field measurements, one row per sample site. Read-only; never edited. Keeps the name it arrived with. |
+| `data/20260315_AlpineSoil_Chem_v1.0.csv` | Cleaned soil chemistry, derived from the raw file. This is the table to analyse. |
 | `code/20260410_AlpineSoil_Analysis_v1.0.py` | Analysis script (Python 3). Reads the cleaned file, writes per-site means. |
+| `figures/20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png` | Regression of the measured ratio against site. Figure 1 of the manuscript. |
+| `figures/20260322_AlpineSoil_Microscopy_Sample12_v1.0.png` | Microscopy image of sample 12, kept lossless. |
 | `manuscripts/20260501_AlpineSoil_Manuscript_v1.0.docx` | First complete draft. |
 | `manuscripts/20260501_AlpineSoil_Manuscript_v1.1.docx` | Draft revised after co-author review. |
 | `LICENSE.md` | Licence terms for the data and the code. |
+
+Both data files are stored as CSV, so they can be read without Excel. Every
+file except the raw one is named
+`YYYYMMDD_ProjectName_DocumentType_Version.extension`; the raw file keeps its
+original name because that name is part of its provenance.
 
 ## Methodological information
 

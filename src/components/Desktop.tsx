@@ -13,7 +13,7 @@ import { BinaryViewer } from './viewers/BinaryViewer';
 import { MarkdownViewer } from './viewers/MarkdownViewer';
 import { GifViewer } from './viewers/GifViewer';
 import type { WindowState, FileEntry } from '../types';
-import { computeDisplayFiles, computeArchiveFiles, FIX_ACTIONS, ORGANIZING_PROBLEM_ID, GIT_FOLDER_NAME } from '../lib/fixActions';
+import { computeDisplayFiles, computeArchiveFiles, isRootLevel, FIX_ACTIONS, ORGANIZING_PROBLEM_ID, GIT_FOLDER_NAME } from '../lib/fixActions';
 import { centeredAt, computeProjectFolderLayout } from '../lib/layout';
 import { targetIsTrash } from '../lib/learnPath';
 import { asset } from '../lib/asset';
@@ -143,7 +143,7 @@ function ViewerForWindow({ win }: { win: WindowState }) {
 }
 
 function FolderView() {
-  const { gameState, fileTree, dispatch } = useGame();
+  const { gameState, fileTree, dispatch, showContextMenu, isLearnMode } = useGame();
   // Clicking .git explains itself rather than opening. Local state, like the
   // Rules dialog: it answers a click on the folder and never competes with the
   // game's own modal sequence, which blocks the desktop while it is up.
@@ -179,10 +179,7 @@ function FolderView() {
     });
   }, [dispatch]);
 
-  const direct = displayFiles.filter(e => {
-    const parts = e.path.replace('sample_project/', '').split('/');
-    return parts.length === 1 && e.type === 'file';
-  });
+  const direct = displayFiles.filter(isRootLevel);
 
   const folders = displayFiles.filter(e => e.type === 'folder');
 
@@ -190,70 +187,105 @@ function FolderView() {
   const organizeMap = FIX_ACTIONS[ORGANIZING_PROBLEM_ID]?.organize ?? {};
   const openableFolders = new Set(Object.keys(organizeMap));
 
+  // What the window currently shows, for the info strip. Counts icons, which
+  // is what "items" means to someone looking at the window.
+  const itemCount = folders.length + direct.length + (showArchive ? 1 : 0);
+
+  // The missing-artifact menu, opened from a button instead of a right-click.
+  // Anchored under the button, which is all ContextMenu needs: it places
+  // itself from a point and keeps itself on screen.
+  const openMissingMenu = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    // Anchored to the button's far corner: ContextMenu flips to whichever
+    // corner keeps it on screen, so the menu lines up under the button
+    // instead of hanging off the side of it.
+    showContextMenu({ x: rect.right, y: rect.bottom, target: { kind: 'desktop' } });
+  }, [showContextMenu]);
+
   return (
-    <div className="folder-view">
-      {folders.map(entry => {
-        const folderKey = entry.name.replace(/\/$/, '');
-        const isOpenable = openableFolders.has(folderKey);
-        const isGit = entry.name === GIT_FOLDER_NAME;
-        // .git answers a single click as well as a double, because it is the one
-        // folder here that does not open, and a dead icon invites clicking twice
-        // and concluding it is broken.
-        const activate = isGit
-          ? () => setShowGitInfo(true)
-          : isOpenable
-            ? () => openSubfolder(folderKey)
-            : undefined;
-        return (
+    <div className="folder-pane">
+      <div className="folder-header">
+        <span className="folder-header__count">
+          {itemCount} item{itemCount === 1 ? '' : 's'}
+        </span>
+        {/* Learn mode walks the player through problems in order and scores
+            nothing, so an unprompted way to report one does not belong there. */}
+        {!isLearnMode && (
+          <button
+            type="button"
+            className="folder-header__action"
+            onClick={openMissingMenu}
+            aria-haspopup="menu"
+            title={LABELS.reportMissing}
+          >
+            {LABELS.missingButton}
+          </button>
+        )}
+      </div>
+      <div className="folder-view">
+        {folders.map(entry => {
+          const folderKey = entry.name.replace(/\/$/, '');
+          const isOpenable = openableFolders.has(folderKey);
+          const isGit = entry.name === GIT_FOLDER_NAME;
+          // .git answers a single click as well as a double, because it is the one
+          // folder here that does not open, and a dead icon invites clicking twice
+          // and concluding it is broken.
+          const activate = isGit
+            ? () => setShowGitInfo(true)
+            : isOpenable
+              ? () => openSubfolder(folderKey)
+              : undefined;
+          return (
+            <div
+              key={entry.path}
+              className="file-icon"
+              role="button"
+              tabIndex={0}
+              aria-label={
+                isGit
+                  ? 'Folder: .git (click to find out what is in it)'
+                  : `Folder: ${entry.name}${isOpenable ? ' (double-click to open)' : ''}`
+              }
+              onClick={isGit ? activate : undefined}
+              onDoubleClick={activate}
+              onKeyDown={activate ? e => { if (e.key === 'Enter') activate(); } : undefined}
+            >
+              <img
+                className="file-icon__image"
+                src={asset(entry.icon)}
+                alt=""
+                draggable={false}
+              />
+              <span className="file-icon__label"><BreakableLabel text={entry.name} /></span>
+            </div>
+          );
+        })}
+
+        {direct.map(entry => (
+          <FileIcon key={entry.path} entry={entry} />
+        ))}
+
+        {showGitInfo && <GitFolderDialog onClose={() => setShowGitInfo(false)} />}
+
+        {showArchive && (
           <div
-            key={entry.path}
             className="file-icon"
             role="button"
             tabIndex={0}
-            aria-label={
-              isGit
-                ? 'Folder: .git (click to find out what is in it)'
-                : `Folder: ${entry.name}${isOpenable ? ' (double-click to open)' : ''}`
-            }
-            onClick={isGit ? activate : undefined}
-            onDoubleClick={activate}
-            onKeyDown={activate ? e => { if (e.key === 'Enter') activate(); } : undefined}
+            aria-label="archive/ (double-click to open)"
+            onDoubleClick={openArchive}
+            onKeyDown={e => { if (e.key === 'Enter') openArchive(); }}
           >
             <img
               className="file-icon__image"
-              src={asset(entry.icon)}
+              src={asset('/assets/folder.png')}
               alt=""
               draggable={false}
             />
-            <span className="file-icon__label"><BreakableLabel text={entry.name} /></span>
+            <span className="file-icon__label">archive/</span>
           </div>
-        );
-      })}
-
-      {direct.map(entry => (
-        <FileIcon key={entry.path} entry={entry} />
-      ))}
-
-      {showGitInfo && <GitFolderDialog onClose={() => setShowGitInfo(false)} />}
-
-      {showArchive && (
-        <div
-          className="file-icon"
-          role="button"
-          tabIndex={0}
-          aria-label="archive/ (double-click to open)"
-          onDoubleClick={openArchive}
-          onKeyDown={e => { if (e.key === 'Enter') openArchive(); }}
-        >
-          <img
-            className="file-icon__image"
-            src={asset('/assets/folder.png')}
-            alt=""
-            draggable={false}
-          />
-          <span className="file-icon__label">archive/</span>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

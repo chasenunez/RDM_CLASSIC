@@ -27,6 +27,8 @@ Adopt the pattern: `YYYYMMDD_ProjectName_DocumentType_Version.extension`
 
 Rules: no spaces (use underscores), no special characters, the date as YYYYMMDD, a descriptive project name, the document type, and a version number.
 
+Not every file takes the pattern. `README.md` and `LICENSE.md` keep their conventional names, because those exact words are what people and tools look for, and raw data keeps the name it arrived with, because that name is part of its provenance. Everything you produce yourself takes the pattern, figures included: a name like `fig1` records a position in a draft rather than what the figure shows, and positions move.
+
 **Resources**
 
 - Bulk Rename Utility (Windows): https://www.bulkrenameutility.co.uk/
@@ -97,7 +99,16 @@ Images:
 
 Spreadsheets: for sharing and long-term reuse, also export tabular data as **CSV** (comma-separated values). CSV is plain text, so any tool can open it and it will still be readable decades from now, no Excel required. Researchers naturally reach for Excel because it matches day-to-day reality, but the archived, shareable copy should be an open format like CSV.
 
-Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing. (Figures can keep short descriptive names like `fig1.png`: the naming rules just mean no spaces or special characters, and a lossless format.)
+Keep the original if your workflow needs it, but always save an additional copy in an open, non-proprietary format for archiving and sharing.
+
+**Rename while you are in there.** Re-saving a file is a free opportunity to fix its name, so both figures get the naming convention at the same time as the format:
+
+| Original | Fixed |
+|----------|-------|
+| `fig1.jpg` | `20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png` |
+| `microscopy_sample_12.jpg` | `20260322_AlpineSoil_Microscopy_Sample12_v1.0.png` |
+
+`fig1` says where the figure sits in one draft, not what it shows, and that position changes with the next revision.
 
 **Resources**
 
@@ -145,7 +156,7 @@ Raw data is the ground truth of your research. If something goes wrong downstrea
 
 Follow these raw-data rules:
 
-1. **Never delete raw data.** Archive it in a read-only location.
+1. **Never delete raw data.** Archive it in a read-only location, under the name it arrived with: that name is part of the record of what you were given. The naming convention applies to the files you derive from it.
 2. **Never edit raw data directly.** All cleaning and processing must happen in a separate script that reads the raw file and writes a new processed file.
 3. **Follow the 3-2-1 rule**: keep at least **3** copies of your data, on **2** different types of media (for example your computer and an institutional server), with **1** copy kept off-site (a repository or cloud backup). Two copies on the same laptop is not a backup.
 4. **Make raw files read-only** (`chmod 444` on Linux/Mac, or lock the file in your OS) so they can't be accidentally modified.

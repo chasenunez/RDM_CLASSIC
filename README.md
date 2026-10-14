@@ -26,9 +26,12 @@ Management** workshop.
 - **Double-click** a file to open it. Spreadsheets render as tables, code as
   numbered lines, images as images. Some problems are only visible inside a
   file, so right-click the offending cell or line.
-- **Right-click empty space** for a list of things a good project should have,
+- **Click "What's missing?"** in the strip at the top of the project window,
+  or right-click empty space, for a list of things a good project should have,
   and report whichever you think is missing. Picking one reports it directly.
-  Watch out: some entries on that list are already in the project.
+  Watch out: some entries on that list are already in the project. The button
+  exists because the right-click was undiscoverable, and because nothing wires
+  a long-press to the empty space, so on a touch screen it is the way in.
 - Opening the messy spreadsheet starts a **minigame**. It has nine separate
   data-quality faults and you have to find all of them before it gets cleaned
   up. Everything else is fixed one problem at a time.
@@ -67,6 +70,7 @@ The other scripts:
 | Command | Does |
 |---------|------|
 | `npm run typecheck` | `tsc --noEmit`. Worth running constantly; it catches most data-file mistakes |
+| `npm run check-data` | Checks the data files against each other. Catches what the types can't; see [Checking the data](#checking-the-data) |
 | `npm run build` | Bundles everything into `dist/` |
 | `npm run preview` | Serves the built `dist/` so you can check it before deploying |
 
@@ -168,8 +172,9 @@ you can hang on it:
 Triggers always use the **bare filename**, never the nested path. One file can
 carry several triggers, and one problem can have triggers across several files.
 
-**5. Check it.** Run `npm run typecheck` and `npm run dev`, then find the thing
-yourself. The app reads the JSON at runtime, so there is nothing to regenerate.
+**5. Check it.** Run `npm run typecheck`, then `npm run check-data`, then
+`npm run dev` and find the thing yourself. The app reads the JSON at runtime, so
+there is nothing to regenerate.
 
 ### Putting a file in a subfolder
 
@@ -190,7 +195,8 @@ name:
 
 ```ts
 organize: {
-  'data':        ['raw_alpine_soil_data.xlsx', 'fig1.png', 'my_new_data.csv'],
+  'data':        ['raw_alpine_soil_data.xlsx', 'my_new_data.csv'],
+  'figures':     ['20260420_AlpineSoil_Fig1_RatioBySite_v1.0.png', … ],
   'manuscripts': [ … ],
   'code':        [ … ],
 },
@@ -219,7 +225,8 @@ fixed. Each problem `id` maps to a `FixAction`:
 - [ ] Entry in `src/data/file-tree.json` with the right `viewerType`
 - [ ] Problem `id` exists in `src/data/problems.json`
 - [ ] Trigger in `src/data/mapping.json` uses the bare filename and a real `id`
-- [ ] `npm run typecheck` passes and you can find the thing in `npm run dev`
+- [ ] `npm run typecheck` and `npm run check-data` both pass, and you can find
+      the thing in `npm run dev`
 
 ## Trigger reference
 
@@ -278,6 +285,30 @@ deliberate: the ambiguous `col1` / `col2` headers are reportable but unstyled,
 because noticing them is the whole exercise. If you widen `cellClass`, widen the
 triggers to match.
 
+## Checking the data
+
+`npm run check-data` runs [`scripts/check-data.mjs`](scripts/check-data.mjs),
+which asserts the things the type system cannot see. Every rule in it exists
+because breaking it produces a game that still compiles, still loads, and is
+quietly wrong somewhere a player will eventually stand.
+
+| Check | What it catches |
+|-------|-----------------|
+| `files-on-disk` | A file-tree entry or a fix's `add` naming a file that isn't in `public/files/` |
+| `duplicate-add` | A fix adding a file the base tree already has, which renders it twice |
+| `archive-subset` | A fix archiving a file it never removed, so it shows up in two windows |
+| `trigger-reachable` | A trigger on a file nothing provides, or a `cell` trigger on a text file |
+| `problem-ids` | `mapping.json` or `FIX_ACTIONS` naming a problem that isn't in `problems.json`, and any problem or sub-problem that no trigger can reach |
+| `missing-menu` | Two problems claiming the same absence, or a decoy colliding with a real one |
+| `organize-map` | A bucket with no folder, or a name listed before its own fix renames it |
+| `fixed-project-tidy` | A file still loose at the top level once every problem is fixed |
+| `learn-path` | A learn-mode step naming a file or a problem that doesn't exist |
+
+The script reads `src/lib/fixActions.ts` by compiling it with the repo's own
+TypeScript, rather than restating the fix rules in JavaScript. A second copy of
+those rules could agree with itself and still be wrong about the game. The
+compiled output goes to `node_modules/.cache/rdm-check/`, which is ignored.
+
 ## Project structure
 
 ```
@@ -289,7 +320,7 @@ RDM_CLASSIC/
 │   └── fonts/                   # Press Start 2P, hosted locally so it works offline
 ├── src/
 │   ├── components/
-│   │   ├── Desktop.tsx          # desktop, folder view, window rendering
+│   │   ├── Desktop.tsx          # desktop, folder view and its info strip, window rendering
 │   │   ├── MenuBar.tsx          # top menu bar
 │   │   ├── Window.tsx           # draggable, resizable, focusable window chrome
 │   │   ├── FileIcon.tsx         # file icon; double-click opens, right-click reports
@@ -336,6 +367,8 @@ RDM_CLASSIC/
 │   ├── GameContext.tsx          # all state: one reducer plus localStorage
 │   ├── App.tsx                  # root component, overlays, end sequence
 │   └── main.tsx
+├── scripts/
+│   └── check-data.mjs           # npm run check-data: the invariants above
 ├── index.html
 ├── vite.config.ts
 ├── tsconfig.json
@@ -355,8 +388,8 @@ open windows and the mute flag live in a single `PersistedState`, managed by a
 `useReducer` in `GameContext.tsx` with eleven named actions. A one-line
 `useEffect` writes the whole object to `localStorage` after every change, and
 that is the entire save system. The storage key is versioned
-(`rdm-scavenger-hunt:v4`) so saves that reference retired problem ids get
-discarded rather than half-loaded.
+(`rdm-scavenger-hunt:v6`) so saves that reference retired problem ids, or file
+names that have since changed, get discarded rather than half-loaded.
 
 Ephemeral UI state, meaning which dialog is up and what the player just
 right-clicked, stays in ordinary `useState` and deliberately does not go in the
@@ -383,6 +416,19 @@ A few smaller things worth knowing before you change them:
   contents on every render by replaying each fixed problem's `FixAction`. Save,
   reload and undo all fall out of that for free, because the state is only ever a
   list of ids.
+- **The fixed project obeys the rules it teaches.** Every file the fixes
+  produce follows `YYYYMMDD_ProjectName_DocumentType_Version.extension`, with
+  two deliberate exemptions that the teaching text names out loud: `README.md`
+  and `LICENSE.md` keep their conventional names, because those exact words are
+  what people and tools look for, and the recovered raw file keeps the name it
+  arrived with, because that name is part of its provenance. If you add a fix
+  that produces a file, name it to the pattern or add it to the exemptions in
+  `TOP_LEVEL_BY_DESIGN` and say why. `fig1.png` used to be a third, undeclared
+  exemption, and reviewers rightly read it as an oversight.
+- **Renaming a displayed file means bumping the storage key.** A window is
+  persisted by file *name*, so a save from before a rename reopens a window
+  pointing at a file that no longer exists. `STORAGE_KEY` in
+  `lib/persistence.ts` is at `rdm-scavenger-hunt:v6` for exactly that reason.
 - **`matchTrigger.ts` has no React in it.** It is the only genuinely
   game-specific algorithm, and keeping it pure means you can reason about the
   grading rules without rendering anything.

@@ -1,9 +1,13 @@
 import type { PersistedState } from '../types';
 
-// Bumped to v5 when learn mode arrived and PersistedState gained `mode` and
-// `learnStep`. Older saves have neither and no idea which mode they belong
-// to, so they are discarded rather than guessed at.
-const STORAGE_KEY = 'rdm-scavenger-hunt:v5';
+// Bumped to v6 when the two figures were renamed to the project's own naming
+// convention. openWindows stores a file by name, so a v5 save could reopen a
+// window pointing at a name that is no longer on disk.
+//
+// Previously: v5 when learn mode arrived and PersistedState gained `mode` and
+// `learnStep`; v4 when "File/folder organization" split into a folder-layout
+// problem and a separate "Version control" problem.
+const STORAGE_KEY = 'rdm-scavenger-hunt:v6';
 
 export function loadState(): PersistedState | null {
   try {

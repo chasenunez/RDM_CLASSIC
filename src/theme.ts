@@ -87,4 +87,9 @@ export const LABELS = {
   // dialog's "What's the problem here?", and takes no ellipsis because it names
   // the question being asked rather than a command that opens something.
   reportMissing:      "What's missing here?",
+  // Label on the folder window's info strip. Says what the control does
+  // rather than showing a "+", which would promise a file-creation tool the
+  // game does not have. Deliberately echoes reportMissing so the button and
+  // the menu it opens read as one thing.
+  missingButton:      "What's missing?",
 } as const;
